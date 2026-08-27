@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Lms-backend.Api/Lms-backend.Api.csproj" />
+    <Project Path="src/Lms-backend.Application/Lms-backend.Application.csproj" />
+    <Project Path="src/Lms-backend.Domain/Lms-backend.Domain.csproj" />
+    <Project Path="src/Lms-backend.Infrastructure/Lms-backend.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Lms-backend.IntegrationTests/Lms-backend.IntegrationTests.csproj" />
+    <Project Path="tests/Lms-backend.UnitTests/Lms-backend.UnitTests.csproj" />
+  </Folder>
+</Solution>

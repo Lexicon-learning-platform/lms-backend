@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "BOCWwLdyBYM=",
+  "success": true,
+  "projectFilePath": "/home/blacke/repos/lexicon/workspace/csharp-fullstack/Lms-backend/src/Lms-backend.Api/Lms-backend.Api.csproj",
+  "expectedPackageFiles": [
+    "/home/blacke/.nuget/packages/microsoft.aspnetcore.openapi/10.0.11/microsoft.aspnetcore.openapi.10.0.11.nupkg.sha512",
+    "/home/blacke/.nuget/packages/microsoft.openapi/2.7.5/microsoft.openapi.2.7.5.nupkg.sha512"
+  ],
+  "logs": []
+}
