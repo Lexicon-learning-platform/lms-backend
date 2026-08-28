@@ -8,7 +8,7 @@ namespace Lms_backend.Api.Entities
 
         public DateTime CreatedAt { get; set; }
 
-        public DateTime UpdatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
 
         public int? ModuleId { get; set; }
 

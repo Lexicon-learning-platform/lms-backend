@@ -8,7 +8,7 @@ namespace Lms_backend.Api.Entities
 
         public DateTime CreatedAt { get; set; }
 
-        public DateTime UpdatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
 
         public int? OwnerId { get; set; }   // Foreign key to the entity who owns the resource
 
