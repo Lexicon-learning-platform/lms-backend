@@ -8,6 +8,11 @@ namespace Lms_backend.Api.Configurations
     {
         public void Configure(EntityTypeBuilder<Activity> builder)
         {
+
+            builder.HasOne<Module>(a => a.Module)
+                    .WithMany(m => m.Activities)
+                    .HasForeignKey(a => a.ModuleId);
+
             builder.HasKey(a => a.ActivityId);
 
             builder.Property(a => a.CreatedAt)

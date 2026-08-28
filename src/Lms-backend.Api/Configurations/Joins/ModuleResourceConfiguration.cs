@@ -9,6 +9,17 @@ namespace Lms_backend.Api.Configurations.Joins
     {
         public void Configure(EntityTypeBuilder<ModuleResource> builder)
         {
+
+            builder.HasOne(mr => mr.Module)
+        .WithMany(m => m.ModuleResources)
+        .HasForeignKey(mr => mr.ModuleId)
+        .OnDelete(DeleteBehavior.ClientCascade);
+
+            builder.HasOne(mr => mr.Resource)
+        .WithMany()
+        .HasForeignKey(mr => mr.ResourceId)
+        .OnDelete(DeleteBehavior.ClientCascade);
+
             builder.HasKey(j => j.Id);
         }
     }

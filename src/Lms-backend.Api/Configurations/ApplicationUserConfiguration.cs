@@ -8,6 +8,10 @@ namespace Lms_backend.Api.Configurations
     {
         public void Configure(EntityTypeBuilder<ApplicationUser> builder)
         {
+            builder.HasOne<Course>(u => u.Course)
+                    .WithMany(c => c.ApplicationUsers)
+                    .HasForeignKey(u => u.CourseId);
+
             builder.HasKey(u => u.UserId);
 
             builder.Property(u => u.CreatedAt)

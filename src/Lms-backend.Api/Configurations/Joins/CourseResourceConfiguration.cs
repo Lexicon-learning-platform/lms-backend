@@ -9,6 +9,16 @@ namespace Lms_backend.Api.Configurations.Joins
     {
         public void Configure(EntityTypeBuilder<CourseResource> builder)
         {
+            builder.HasOne(cr => cr.Course)
+        .WithMany(c => c.CourseResources)
+        .HasForeignKey(cr => cr.CourseId)
+        .OnDelete(DeleteBehavior.ClientCascade);
+
+            builder.HasOne(mr => mr.Resource)
+        .WithMany()
+        .HasForeignKey(mr => mr.ResourceId)
+        .OnDelete(DeleteBehavior.ClientCascade);
+
             builder.HasKey(j => j.Id);
         }
     }
