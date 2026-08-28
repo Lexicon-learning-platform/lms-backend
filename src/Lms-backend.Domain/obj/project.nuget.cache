@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "4ENHqiY1K30=",
+  "dgSpecHash": "m8hS4NKg6d0=",
   "success": true,
-  "projectFilePath": "/home/blacke/repos/lexicon/workspace/csharp-fullstack/Lms-backend/src/Lms-backend.Domain/Lms-backend.Domain.csproj",
+  "projectFilePath": "C:\\Users\\jonat\\source\\repos\\lms-backend\\src\\Lms-backend.Domain\\Lms-backend.Domain.csproj",
   "expectedPackageFiles": [],
   "logs": []
 }

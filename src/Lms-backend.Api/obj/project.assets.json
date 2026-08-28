@@ -136,24 +136,31 @@
     ]
   },
   "packageFolders": {
-    "/home/blacke/.nuget/packages/": {}
+    "C:\\Users\\jonat\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/home/blacke/repos/lexicon/workspace/csharp-fullstack/Lms-backend/src/Lms-backend.Api/Lms-backend.Api.csproj",
+      "projectUniqueName": "C:\\Users\\jonat\\source\\repos\\lms-backend\\src\\Lms-backend.Api\\Lms-backend.Api.csproj",
       "projectName": "Lms-backend.Api",
-      "projectPath": "/home/blacke/repos/lexicon/workspace/csharp-fullstack/Lms-backend/src/Lms-backend.Api/Lms-backend.Api.csproj",
-      "packagesPath": "/home/blacke/.nuget/packages/",
-      "outputPath": "/home/blacke/repos/lexicon/workspace/csharp-fullstack/Lms-backend/src/Lms-backend.Api/obj/",
+      "projectPath": "C:\\Users\\jonat\\source\\repos\\lms-backend\\src\\Lms-backend.Api\\Lms-backend.Api.csproj",
+      "packagesPath": "C:\\Users\\jonat\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\jonat\\source\\repos\\lms-backend\\src\\Lms-backend.Api\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+      ],
       "configFilePaths": [
-        "/home/blacke/.nuget/NuGet/NuGet.Config"
+        "C:\\Users\\jonat\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "net10.0"
       ],
       "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -161,8 +168,8 @@
           "framework": "net10.0",
           "targetAlias": "net10.0",
           "projectReferences": {
-            "/home/blacke/repos/lexicon/workspace/csharp-fullstack/Lms-backend/src/Lms-backend.Application/Lms-backend.Application.csproj": {
-              "projectPath": "/home/blacke/repos/lexicon/workspace/csharp-fullstack/Lms-backend/src/Lms-backend.Application/Lms-backend.Application.csproj"
+            "C:\\Users\\jonat\\source\\repos\\lms-backend\\src\\Lms-backend.Application\\Lms-backend.Application.csproj": {
+              "projectPath": "C:\\Users\\jonat\\source\\repos\\lms-backend\\src\\Lms-backend.Application\\Lms-backend.Application.csproj"
             }
           }
         }
@@ -177,7 +184,7 @@
         "auditLevel": "low",
         "auditMode": "all"
       },
-      "SdkAnalysisLevel": "10.0.400"
+      "SdkAnalysisLevel": "10.0.300"
     },
     "frameworks": {
       "net10.0": {
@@ -208,7 +215,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/10.0.400/PortableRuntimeIdentifierGraph.json",
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.301/PortableRuntimeIdentifierGraph.json",
         "packagesToPrune": {
           "Microsoft.AspNetCore": "(,10.0.32767]",
           "Microsoft.AspNetCore.Antiforgery": "(,10.0.32767]",
