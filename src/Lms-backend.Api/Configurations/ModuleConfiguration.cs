@@ -8,7 +8,30 @@ namespace Lms_backend.Api.Configurations
     {
         public void Configure(EntityTypeBuilder<Module> builder)
         {
-            throw new NotImplementedException();
+            builder.HasKey(m => m.ModuleId);
+
+            builder.Property(m => m.CreatedAt)
+                    .IsRequired()
+                    .HasColumnType("datetime2");
+
+            builder.Property(m => m.UpdatedAt)
+                    .HasColumnType("datetime2");
+
+            builder.Property(m => m.Name)
+                    .HasMaxLength(50)
+                    .HasColumnType("nvarchar");
+
+            builder.Property(m => m.Description)
+                    .HasMaxLength(200)
+                    .HasColumnType("nvarchar");
+
+            builder.Property(m => m.DurationDays)
+                    .HasColumnType("int");
+
+            builder.HasData(
+
+                            //Seed-data
+                            );
         }
     }
 }

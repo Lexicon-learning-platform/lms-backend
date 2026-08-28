@@ -9,7 +9,7 @@ namespace Lms_backend.Api.Configurations.Joins
     {
         public void Configure(EntityTypeBuilder<CourseResource> builder)
         {
-            throw new NotImplementedException();
+            builder.HasKey(j => j.Id);
         }
     }
 }
