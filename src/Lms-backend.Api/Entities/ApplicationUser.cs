@@ -1,4 +1,6 @@
-﻿namespace Lms_backend.Api.Entities
+﻿using Lms_backend.Api.Entities.Joins;
+
+namespace Lms_backend.Api.Entities
 {
     public record ApplicationUser
     {
@@ -13,5 +15,10 @@
         public string? LastName { get; set; }
 
         public int? CourseId { get; set; }
+
+        public Course? Course { get; set; } = null;
+
+        public ICollection<UserResource> UserResources { get; set; } = new List<UserResource>();
+
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace Lms_backend.Api.Entities
+﻿using Lms_backend.Api.Entities.Joins;
+
+namespace Lms_backend.Api.Entities
 {
     public record Course
     {
@@ -16,6 +18,13 @@
 
         public int? Duration { get; set; }
 
-        public ICollection<Module>? Modules { get; set; }
+        public ICollection<ApplicationUser> ApplicationUsers { get; set; } = new List<ApplicationUser>();
+
+        public ICollection<Module>? Modules { get; set; } = new List<Module>();
+
+        public ICollection<CourseResource> CourseResources { get; set; } = new List<CourseResource>();
+
+        public ICollection<CourseModule> CourseModules { get; set; } = new List<CourseModule>();
+
     }
 }

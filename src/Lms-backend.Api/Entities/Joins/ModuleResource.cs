@@ -1,6 +1,6 @@
 ﻿namespace Lms_backend.Api.Entities.Joins
 {
-    public class ModuleResource
+    public record ModuleResource
     {
         public Guid Id { get; set; }
 

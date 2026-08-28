@@ -1,4 +1,5 @@
-﻿using Lms_backend.Api.Enums;
+﻿using Lms_backend.Api.Entities.Joins;
+using Lms_backend.Api.Enums;
 
 namespace Lms_backend.Api.Entities
 {
@@ -12,6 +13,8 @@ namespace Lms_backend.Api.Entities
 
         public int? ModuleId { get; set; }
 
+        public Module? Module { get; set; } = null;
+
         public ActivityType ActivityType { get; set; }
 
         public string? Name { get; set; }
@@ -21,5 +24,7 @@ namespace Lms_backend.Api.Entities
         public int StartTimeOffset { get; set; }
 
         public int DurationMinutes { get; set; }
+
+        public ICollection<ActivityResource> ActivityResources { get; set; } = new List<ActivityResource>();
     }
 }

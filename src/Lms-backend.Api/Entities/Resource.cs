@@ -1,4 +1,5 @@
-﻿using Lms_backend.Api.Enums;
+﻿using Lms_backend.Api.Entities.Joins;
+using Lms_backend.Api.Enums;
 
 namespace Lms_backend.Api.Entities
 {
@@ -19,5 +20,6 @@ namespace Lms_backend.Api.Entities
         public ResourceType ResourceType { get; set; }
 
         public string? Data { get; set; }
+
     }
 }
