@@ -1,7 +1,8 @@
 using Lms_backend.Domain.Entities;
-﻿namespace Lms_backend.Domain.Entities.Joins
+using Lms_backend.Domain.Interfaces;
+namespace Lms_backend.Domain.Entities.Joins
 {
-    public record ActivityResource
+    public record ActivityResource : IEntity
     {
         public Guid Id { get; set; }
 

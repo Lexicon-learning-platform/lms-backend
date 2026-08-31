@@ -1,12 +1,13 @@
-using Lms_backend.Domain.Entities.Joins;
 using Lms_backend.Domain.Entities;
+using Lms_backend.Domain.Entities.Joins;
 using Lms_backend.Domain.Enums;
+using Lms_backend.Domain.Interfaces;
 
 namespace Lms_backend.Domain.Entities
 {
-    public record Activity
+    public record Activity : IEntity
     {
-        public Guid ActivityId { get; set; }
+        public Guid Id { get; set; }
 
         public DateTime CreatedAt { get; set; }
 

@@ -13,7 +13,7 @@ namespace Lms_backend.Infrastructure.Configurations
                     .WithMany(m => m.Activities)
                     .HasForeignKey(a => a.ModuleId);
 
-            builder.HasKey(a => a.ActivityId);
+            builder.HasKey(a => a.Id);
 
             builder.Property(a => a.CreatedAt)
                     .IsRequired()
