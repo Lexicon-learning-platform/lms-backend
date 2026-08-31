@@ -2,15 +2,16 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Lms_backend.Api.Configurations.Joins
+namespace Lms_backend.Infrastructure.Configurations.Joins
 {
-    public class CourseResourceConfiguration : IEntityTypeConfiguration<CourseResource>
+    public class ModuleResourceConfiguration : IEntityTypeConfiguration<ModuleResource>
     {
-        public void Configure(EntityTypeBuilder<CourseResource> builder)
+        public void Configure(EntityTypeBuilder<ModuleResource> builder)
         {
-            builder.HasOne(cr => cr.Course)
-        .WithMany(c => c.CourseResources)
-        .HasForeignKey(cr => cr.CourseId)
+
+            builder.HasOne(mr => mr.Module)
+        .WithMany(m => m.ModuleResources)
+        .HasForeignKey(mr => mr.ModuleId)
         .OnDelete(DeleteBehavior.ClientCascade);
 
             builder.HasOne(mr => mr.Resource)

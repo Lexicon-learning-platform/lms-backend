@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Lms_backend.Api.Configurations
+namespace Lms_backend.Infrastructure.Configurations
 {
     public class ResourceConfiguration : IEntityTypeConfiguration<Resource>
     {

@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Lms_backend.Api.Configurations.Joins
+namespace Lms_backend.Infrastructure.Configurations.Joins
 {
     public class CourseModuleConfiguration : IEntityTypeConfiguration<CourseModule>
     {

@@ -2,15 +2,15 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Lms_backend.Api.Configurations.Joins
+namespace Lms_backend.Infrastructure.Configurations.Joins
 {
-    public class UserResourceConfiguration : IEntityTypeConfiguration<UserResource>
+    public class ActivityResourceConfiguration : IEntityTypeConfiguration<ActivityResource>
     {
-        public void Configure(EntityTypeBuilder<UserResource> builder)
+        public void Configure(EntityTypeBuilder<ActivityResource> builder)
         {
-            builder.HasOne(er => er.User)
-        .WithMany(u => u.UserResources)
-        .HasForeignKey(er => er.UserId)
+            builder.HasOne(ar => ar.Activity)
+        .WithMany(a => a.ActivityResources)
+        .HasForeignKey(ar => ar.ActivityId)
         .OnDelete(DeleteBehavior.ClientCascade);
 
             builder.HasOne(mr => mr.Resource)
