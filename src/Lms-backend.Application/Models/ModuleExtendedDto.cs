@@ -9,5 +9,6 @@ public class ModuleExtendedDto
     public string Description { get; set; } = string.Empty;
     public DateOnly StartDate { get; set; }
     public int Duration { get; set; }
+    public ActivityDto[] Activities { get; set; } = [];
     public ResourceDto[] Resources { get; set; } = [];
 }
