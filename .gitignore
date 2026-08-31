@@ -2,20 +2,4 @@
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
 
-/.vs/Lms-backend/CopilotIndices/18.7.1238.64283/CodeChunks.db
-/.vs/Lms-backend/CopilotIndices/18.7.1238.64283/CodeChunks.db-shm
-/.vs/Lms-backend/CopilotIndices/18.7.1238.64283/CodeChunks.db-wal
-/.vs/Lms-backend/CopilotIndices/18.7.1238.64283/SemanticSymbols.db
-/.vs/Lms-backend/CopilotIndices/18.7.1238.64283/SemanticSymbols.db-shm
-/.vs/Lms-backend/CopilotIndices/18.7.1238.64283/SemanticSymbols.db-wal
-/.vs/Lms-backend.slnx/DesignTimeBuild/.dtbcache.v2
-/.vs/Lms-backend.slnx/FileContentIndex/3f0daeb6-a62f-4b4b-a6d3-469956cca5a6.vsidx
-/.vs/Lms-backend.slnx/FileContentIndex/58505797-a11e-4f57-a9ea-ae2b8e7862dd.vsidx
-/.vs/Lms-backend.slnx/FileContentIndex/5e84f32d-4f71-4436-a0b0-3b3d4e449c5c.vsidx
-/.vs/Lms-backend.slnx/FileContentIndex/b022c77c-6e63-4571-bb92-b71d63ad08a3.vsidx
-/.vs/Lms-backend.slnx/FileContentIndex/bc88d43c-9e7f-4f94-be7f-766cf0642a30.vsidx
-/.vs/Lms-backend.slnx/v18/DocumentLayout.backup.json
-/.vs/Lms-backend.slnx/v18/DocumentLayout.json
-/.vs/Lms-backend.slnx/v18/TestStore/0/000.testlog
-/.vs/Lms-backend.slnx/v18/TestStore/0/testlog.manifest
-/.vs/Lms-backend.slnx/v18/.suo
+/.vs/
