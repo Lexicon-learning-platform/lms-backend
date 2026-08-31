@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Lms-backend.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ad3ca37a3ef75c63538d2a6c35b848aead7eb8c5")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0a095fde9eecb312355d677b5b641c5eddcc8813")]
 [assembly: System.Reflection.AssemblyProductAttribute("Lms-backend.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Lms-backend.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

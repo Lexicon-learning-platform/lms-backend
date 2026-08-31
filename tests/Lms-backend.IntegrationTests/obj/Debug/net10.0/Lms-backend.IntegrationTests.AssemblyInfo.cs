@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Lms-backend.IntegrationTests")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+500c666f87f49b9d2034a9e382774f1700c039f2")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0a095fde9eecb312355d677b5b641c5eddcc8813")]
 [assembly: System.Reflection.AssemblyProductAttribute("Lms-backend.IntegrationTests")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Lms-backend.IntegrationTests")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
