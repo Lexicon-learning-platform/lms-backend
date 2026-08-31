@@ -1,6 +1,7 @@
-﻿using Lms_backend.Api.Entities.Joins;
+using Lms_backend.Domain.Entities;
+using Lms_backend.Domain.Entities.Joins;
 
-namespace Lms_backend.Api.Entities
+namespace Lms_backend.Domain.Entities
 {
     public record Course
     {

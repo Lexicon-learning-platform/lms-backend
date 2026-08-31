@@ -1,4 +1,5 @@
-﻿namespace Lms_backend.Api.Entities.Joins
+using Lms_backend.Domain.Entities;
+﻿namespace Lms_backend.Domain.Entities.Joins
 {
     public record ActivityResource
     {

@@ -1,4 +1,4 @@
-﻿using Lms_backend.Api.Entities;
+﻿using Lms_backend.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -16,7 +16,7 @@ namespace Lms_backend.Api.Configurations
 
             builder.Property(r => r.UpdatedAt)
                     .HasColumnType("datetime2");
-            
+
             builder.Property(r => r.OwnerId)
                    .HasColumnType("int");
 

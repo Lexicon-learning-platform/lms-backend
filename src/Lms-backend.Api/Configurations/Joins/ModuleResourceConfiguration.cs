@@ -1,5 +1,4 @@
-﻿using Lms_backend.Api.Entities;
-using Lms_backend.Api.Entities.Joins;
+﻿using Lms_backend.Domain.Entities.Joins;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

@@ -1,4 +1,4 @@
-﻿namespace Lms_backend.Api.Enums
+﻿namespace Lms_backend.Domain.Enums
 {
     public enum ActivityType
     {

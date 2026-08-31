@@ -1,7 +1,8 @@
-﻿using Lms_backend.Api.Entities.Joins;
-using Lms_backend.Api.Enums;
+using Lms_backend.Domain.Entities.Joins;
+using Lms_backend.Domain.Entities;
+using Lms_backend.Domain.Enums;
 
-namespace Lms_backend.Api.Entities
+namespace Lms_backend.Domain.Entities
 {
     public record Activity
     {
