@@ -1,11 +1,12 @@
 using Lms_backend.Domain.Entities;
 using Lms_backend.Domain.Entities.Joins;
+using Lms_backend.Domain.Interfaces;
 
 namespace Lms_backend.Domain.Entities
 {
-    public record Module
+    public record Module : IEntity
     {
-        public Guid ModuleId { get; set; }
+        public Guid Id { get; set; }
 
         public DateTime CreatedAt { get; set; }
 
