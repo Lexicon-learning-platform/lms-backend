@@ -1,0 +1,9 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs/
+/src/Lms-backend.Api/obj/Debug/net10.0/Lms-backend.Api.AssemblyInfo.cs
+/src/Lms-backend.Api/obj/Debug/net10.0/Lms-backend.Api.AssemblyInfoInputs.cache
+/tests/Lms-backend.IntegrationTests/obj/Debug/net10.0/Lms-backend.IntegrationTests.AssemblyInfo.cs
+/tests/Lms-backend.IntegrationTests/obj/Debug/net10.0/Lms-backend.IntegrationTests.AssemblyInfoInputs.cache
