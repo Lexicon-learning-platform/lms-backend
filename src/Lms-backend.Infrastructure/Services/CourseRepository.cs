@@ -6,10 +6,16 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Lms_backend.Infrastructure.Services;
 
-public class CourseRepository(AppDbContext context) : RepositoryBase<Course, CourseResource>(context), ICourseRepository
+public class CourseRepository(AppDbContext context) : RepositoryWithResourceBase<Course, CourseResource>(context), ICourseRepository
 {
     protected override DbSet<Course> Set => Context.Courses;
     protected override DbSet<CourseResource> JoinSet => Context.CourseResources;
+
+    protected override IQueryable<CourseResource> JoinsForEntity(Guid entityId) =>
+        JoinSet.Where(j => j.CourseId == entityId);
+
+    protected override CourseResource CreateJoin(Guid entityId, Guid resourceId) =>
+        new() { CourseId = entityId, ResourceId = resourceId };
 
     public Task<(IEnumerable<Course>, PaginationMetadata?)> GetCoursesAsync(SearchParams searchParams, int page, int pageSize, CancellationToken token)
     {

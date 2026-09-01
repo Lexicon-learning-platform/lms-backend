@@ -6,10 +6,16 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Lms_backend.Infrastructure.Services;
 
-public class ModuleRepository(AppDbContext context) : RepositoryBase<Module, ModuleResource>(context), IModuleRepository
+public class ModuleRepository(AppDbContext context) : RepositoryWithResourceBase<Module, ModuleResource>(context), IModuleRepository
 {
     protected override DbSet<Module> Set => Context.Modules;
     protected override DbSet<ModuleResource> JoinSet => Context.ModuleResources;
+
+    protected override IQueryable<ModuleResource> JoinsForEntity(Guid entityId) =>
+        JoinSet.Where(j => j.ModuleId == entityId);
+
+    protected override ModuleResource CreateJoin(Guid entityId, Guid resourceId) =>
+        new() { ModuleId = entityId, ResourceId = resourceId };
 
     public Task<(IEnumerable<Module>, PaginationMetadata?)> GetModulesAsync(SearchParams searchParams, int page, int pageSize, CancellationToken token)
     {

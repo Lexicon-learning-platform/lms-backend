@@ -1,7 +1,8 @@
 using Lms_backend.Domain.Entities;
+using Lms_backend.Domain.Interfaces;
 ﻿namespace Lms_backend.Domain.Entities.Joins
 {
-    public record UserResource
+    public record UserResource : IResourceJoin
     {
         public Guid Id { get; set; }
 
