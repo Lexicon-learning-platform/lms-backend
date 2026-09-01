@@ -71,7 +71,7 @@ public class ActivitiesController(IActivitiesService service) : ControllerBase
     [HttpPost("{id}/resources")]
     public async Task<IActionResult> CreateActivityResource(Guid id, ResourceForChangeDto data, CancellationToken token = default)
     {
-        var result = service.AddResource(id, data, token);
+        var result = await service.AddResource(id, data, token);
         return CreatedAtRoute("GetActivityResource", new { id, result.Id }, result);
     }
 
