@@ -13,6 +13,11 @@ public class ModulesService(IModuleRepository repository) : IModulesService
         throw new NotImplementedException();
     }
 
+    public Task<bool> AttachResource(Guid id, Guid resourceId, CancellationToken token = default)
+    {
+        throw new NotImplementedException();
+    }
+
     public Task<ModuleDto> Create(ModuleForChangeDto data, CancellationToken token = default)
     {
         throw new NotImplementedException();
@@ -33,7 +38,7 @@ public class ModulesService(IModuleRepository repository) : IModulesService
         throw new NotImplementedException();
     }
 
-    public Task RemoveResource(Guid id, Guid resourceId, CancellationToken token = default)
+    public Task DetachResource(Guid id, Guid resourceId, CancellationToken token = default)
     {
         throw new NotImplementedException();
     }

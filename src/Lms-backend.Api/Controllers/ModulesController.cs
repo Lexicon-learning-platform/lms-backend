@@ -75,6 +75,13 @@ public class ModulesController(IModulesService service) : ControllerBase
         return CreatedAtRoute("GetModuleResource", new { id, result.Id }, result);
     }
 
+    [HttpPost("{id}/resources/{resourceId}")]
+    public async Task<IActionResult> AttachModuleResource(Guid id, Guid resourceId, CancellationToken token = default)
+    {
+        var attached = await service.AttachResource(id, resourceId, token);
+        return attached ? CreatedAtRoute("GetModuleResource", new { id, resourceId }, null) : NoContent();
+    }
+
     [HttpPut("{id}/resources/{resourceId}")]
     public async Task<IActionResult> UpdateModuleResource(Guid id, Guid resourceId, ResourceForChangeDto data, CancellationToken token = default)
     {
@@ -92,7 +99,7 @@ public class ModulesController(IModulesService service) : ControllerBase
     [HttpDelete("{id}/resources/{resourceId}")]
     public async Task<IActionResult> RemoveModuleResource(Guid id, Guid resourceId, CancellationToken token = default)
     {
-        await service.RemoveResource(id, resourceId, token);
+        await service.DetachResource(id, resourceId, token);
         return NoContent();
     }
 }
