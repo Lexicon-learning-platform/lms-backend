@@ -9,7 +9,7 @@ namespace Lms_backend.Infrastructure.Services;
 public class ModuleRepository(AppDbContext context) : RepositoryBase<Module, ModuleResource>(context), IModuleRepository
 {
     protected override DbSet<Module> Set => Context.Modules;
-    protected override DbSet<ModuleResource> ResourceSet => Context.ModuleResources;
+    protected override DbSet<ModuleResource> JoinSet => Context.ModuleResources;
 
     public Task<(IEnumerable<Module>, PaginationMetadata?)> GetModulesAsync(SearchParams searchParams, int page, int pageSize, CancellationToken token)
     {

@@ -9,7 +9,7 @@ namespace Lms_backend.Infrastructure.Services;
 public class ActivityRepository(AppDbContext context) : RepositoryBase<Activity, ActivityResource>(context), IActivityRepository
 {
     protected override DbSet<Activity> Set => Context.Activities;
-    protected override DbSet<ActivityResource> ResourceSet => Context.ActivityResources;
+    protected override DbSet<ActivityResource> JoinSet => Context.ActivityResources;
 
     public Task<(IEnumerable<Activity>, PaginationMetadata?)> GetActivitiesAsync(SearchParams searchParams, int page, int pageSize, CancellationToken token)
     {

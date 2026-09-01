@@ -9,7 +9,7 @@ public abstract class RepositoryBase<TEntity, TJoin>(AppDbContext context) : IRe
 {
     protected AppDbContext Context { get; } = context;
     protected abstract DbSet<TEntity> Set { get; }
-    protected abstract DbSet<TJoin> ResourceSet { get; }
+    protected abstract DbSet<TJoin> JoinSet { get; }
 
     public async Task AddAsync(TEntity entity, CancellationToken token)
     {

@@ -9,7 +9,7 @@ namespace Lms_backend.Infrastructure.Services;
 public class CourseRepository(AppDbContext context) : RepositoryBase<Course, CourseResource>(context), ICourseRepository
 {
     protected override DbSet<Course> Set => Context.Courses;
-    protected override DbSet<CourseResource> ResourceSet => Context.CourseResources;
+    protected override DbSet<CourseResource> JoinSet => Context.CourseResources;
 
     public Task<(IEnumerable<Course>, PaginationMetadata?)> GetCoursesAsync(SearchParams searchParams, int page, int pageSize, CancellationToken token)
     {
