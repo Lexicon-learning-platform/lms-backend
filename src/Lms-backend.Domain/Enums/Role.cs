@@ -1,0 +1,9 @@
+﻿namespace Lms_backend.Domain.Enums
+{
+    public enum Role
+    {
+        Student,
+        Teacher,
+        Admin
+    }
+}
