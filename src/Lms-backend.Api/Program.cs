@@ -1,7 +1,9 @@
 using Lms_backend.Application.Interfaces;
 using Lms_backend.Application.Services;
+using Lms_backend.Infrastructure;
 using Lms_backend.Infrastructure.Interfaces;
 using Lms_backend.Infrastructure.Services;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +12,12 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+
+// Postgres config
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("postgres")
+    ?? throw new InvalidProgramException()
+));
 
 // Dependency injections
 builder.Services.AddScoped<ICourseRepository, CourseRepository>();
