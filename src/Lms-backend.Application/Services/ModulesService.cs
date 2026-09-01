@@ -1,11 +1,12 @@
 using Lms_backend.Application.Interfaces;
 using Lms_backend.Application.Models;
+using Lms_backend.Infrastructure.Interfaces;
 using Lms_backend.Infrastructure.Models;
 using Microsoft.AspNetCore.JsonPatch.SystemTextJson;
 
 namespace Lms_backend.Application.Services;
 
-public class ModulesService : IModulesService
+public class ModulesService(IModuleRepository repository) : IModulesService
 {
     public Task<ResourceDto> AddResource(Guid id, ResourceForChangeDto data, CancellationToken token = default)
     {
