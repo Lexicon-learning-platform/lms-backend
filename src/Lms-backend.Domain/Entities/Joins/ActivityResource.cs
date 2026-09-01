@@ -6,9 +6,9 @@ namespace Lms_backend.Domain.Entities.Joins
     {
         public Guid Id { get; set; }
 
-        public int ActivityId { get; set; }
+        public Guid ActivityId { get; set; }
 
-        public int ResourceId { get; set; }
+        public Guid ResourceId { get; set; }
 
         public Activity? Activity { get; set; }
 
