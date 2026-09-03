@@ -2,7 +2,7 @@ using Lms_backend.Domain.Interfaces;
 
 namespace Lms_backend.Domain.Entities.Joins
 {
-    public record CourseResource : IEntity
+    public record CourseResource : IResourceJoin
     {
         public Guid Id { get; set; }
 

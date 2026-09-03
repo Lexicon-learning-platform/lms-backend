@@ -9,7 +9,7 @@ namespace Lms_backend.Api.Controllers;
 
 [ApiController]
 [Route("api/modules")]
-public class ModulesControllerController(IModulesService service) : ControllerBase
+public class ModulesController(IModulesService service) : ControllerBase
 {
     // Base modules endpoints
     [HttpGet]
@@ -71,8 +71,15 @@ public class ModulesControllerController(IModulesService service) : ControllerBa
     [HttpPost("{id}/resources")]
     public async Task<IActionResult> CreateModuleResource(Guid id, ResourceForChangeDto data, CancellationToken token = default)
     {
-        var result = service.AddResource(id, data, token);
+        var result = await service.AddResource(id, data, token);
         return CreatedAtRoute("GetModuleResource", new { id, result.Id }, result);
+    }
+
+    [HttpPost("{id}/resources/{resourceId}")]
+    public async Task<IActionResult> AttachModuleResource(Guid id, Guid resourceId, CancellationToken token = default)
+    {
+        var attached = await service.AttachResource(id, resourceId, token);
+        return attached ? CreatedAtRoute("GetModuleResource", new { id, resourceId }, null) : NoContent();
     }
 
     [HttpPut("{id}/resources/{resourceId}")]
@@ -92,7 +99,7 @@ public class ModulesControllerController(IModulesService service) : ControllerBa
     [HttpDelete("{id}/resources/{resourceId}")]
     public async Task<IActionResult> RemoveModuleResource(Guid id, Guid resourceId, CancellationToken token = default)
     {
-        await service.RemoveResource(id, resourceId, token);
+        await service.DetachResource(id, resourceId, token);
         return NoContent();
     }
 }

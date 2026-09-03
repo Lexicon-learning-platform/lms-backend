@@ -1,10 +1,11 @@
 using Lms_backend.Domain.Enums;
+using Lms_backend.Domain.Interfaces;
 
 namespace Lms_backend.Domain.Entities
 {
-    public record Resource
+    public record Resource: IEntity
     {
-        public Guid ResourceId { get; set; }
+        public Guid Id { get; set; }
 
         public DateTime CreatedAt { get; set; }
 
