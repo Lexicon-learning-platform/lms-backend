@@ -41,8 +41,8 @@ public class ModuleRepository(AppDbContext context) : RepositoryWithResourceBase
         var pagination = new PaginationMetadata(totalCount, pageSize, page);
 
         var courses = await query
-            .OrderBy(c => c.Name)
-            .Include(c => c.Activities)
+            .OrderBy(m => m.Name)
+            .Include(m => m.Activities)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync(token);
@@ -63,13 +63,13 @@ public class ModuleRepository(AppDbContext context) : RepositoryWithResourceBase
     private async Task<Module?> GetModuleInternalAsync(Guid id, bool readOnly, CancellationToken token)
     {
         var query = Set
-            .Include(c => c.Activities)
-            .Include(c => c.Resources).ThenInclude(cr => cr.Resource)
+            .Include(m => m.Activities)
+            .Include(m => m.Resources).ThenInclude(mr => mr.Resource)
             .AsSplitQuery()
             .AsQueryable();
 
         if (readOnly) query = query.AsNoTracking();
 
-        return await query.FirstOrDefaultAsync(c => c.Id == id, token);
+        return await query.FirstOrDefaultAsync(m => m.Id == id, token);
     }
 }

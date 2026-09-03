@@ -33,15 +33,15 @@ public class ActivityRepository(AppDbContext context) : RepositoryWithResourceBa
 
         if (readOnly) query = query.AsNoTracking();
 
-        if (!string.IsNullOrWhiteSpace(searchParams.Name)) query = query.Where(c => c.Name.Contains(searchParams.Name));
-        if (!string.IsNullOrWhiteSpace(searchParams.Search)) query = query.Where(c => c.Name.Contains(searchParams.Search) || c.Description.Contains(searchParams.Search));
-        if (searchParams.Type.HasValue) query = query.Where(c => c.ActivityType == searchParams.Type.Value);
+        if (!string.IsNullOrWhiteSpace(searchParams.Name)) query = query.Where(a => a.Name.Contains(searchParams.Name));
+        if (!string.IsNullOrWhiteSpace(searchParams.Search)) query = query.Where(a => a.Name.Contains(searchParams.Search) || a.Description.Contains(searchParams.Search));
+        if (searchParams.Type.HasValue) query = query.Where(a => a.ActivityType == searchParams.Type.Value);
 
         var totalCount = await query.CountAsync(token);
         var pagination = new PaginationMetadata(totalCount, pageSize, page);
 
         var activities = await query
-            .OrderBy(c => c.StartTimeOffset).ThenBy(c => c.Name)
+            .OrderBy(a => a.StartTimeOffset).ThenBy(a => a.Name)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync(token);
@@ -62,12 +62,12 @@ public class ActivityRepository(AppDbContext context) : RepositoryWithResourceBa
     private async Task<Activity?> GetActivityInternalAsync(Guid id, bool readOnly, CancellationToken token)
     {
         var query = Set
-            .Include(c => c.Resources).ThenInclude(cr => cr.Resource)
+            .Include(a => a.Resources).ThenInclude(ar => ar.Resource)
             .AsSplitQuery()
             .AsQueryable();
 
         if (readOnly) query = query.AsNoTracking();
 
-        return await query.FirstOrDefaultAsync(c => c.Id == id, token);
+        return await query.FirstOrDefaultAsync(a => a.Id == id, token);
     }
 }
