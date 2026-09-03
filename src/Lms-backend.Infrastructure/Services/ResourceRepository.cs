@@ -11,21 +11,52 @@ public class ResourceRepository(AppDbContext context) : RepositoryBase<Resource>
 
     public Task<Resource?> GetResourceAsync(Guid id, CancellationToken token)
     {
-        throw new NotImplementedException();
+        return GetResourceInternalAsync(id, false, token);
     }
 
     public Task<Resource?> GetResourceReadOnlyAsync(Guid id, CancellationToken token)
     {
-        throw new NotImplementedException();
+        return GetResourceInternalAsync(id, true, token);
+    }
+
+    private async Task<Resource?> GetResourceInternalAsync(Guid id, bool readOnly, CancellationToken token)
+    {
+        var query = Set.AsQueryable();
+
+        if (readOnly) query = query.AsNoTracking();
+
+        return await query.FirstOrDefaultAsync(r => r.Id == id, token);
     }
 
     public Task<(IEnumerable<Resource>, PaginationMetadata?)> GetResourcesAsync(SearchParams searchParams, int page, int pageSize, CancellationToken token)
     {
-        throw new NotImplementedException();
+        return GetResourcesInternalAsync(searchParams, page, pageSize, false, token);
     }
 
     public Task<(IEnumerable<Resource>, PaginationMetadata?)> GetResourcesReadOnlyAsync(SearchParams searchParams, int page, int pageSize, CancellationToken token)
     {
-        throw new NotImplementedException();
+        return GetResourcesInternalAsync(searchParams, page, pageSize, true, token);
+    }
+
+    private async Task<(IEnumerable<Resource>, PaginationMetadata?)> GetResourcesInternalAsync(SearchParams searchParams, int page, int pageSize, bool readOnly, CancellationToken token)
+    {
+        var query = Set.AsSplitQuery().AsQueryable();
+
+        if (readOnly) query = query.AsNoTracking();
+
+        if (!string.IsNullOrWhiteSpace(searchParams.Name)) query = query.Where(a => a.Name.Contains(searchParams.Name));
+        if (!string.IsNullOrWhiteSpace(searchParams.Search)) query = query.Where(a => a.Name.Contains(searchParams.Search) || a.Description.Contains(searchParams.Search));
+        // if (searchParams.Type.HasValue) query = query.Where(a => a.ActivityType == searchParams.Type.Value);
+
+        var totalCount = await query.CountAsync(token);
+        var pagination = new PaginationMetadata(totalCount, pageSize, page);
+
+        var activities = await query
+            .OrderBy(r => r.CreatedAt).ThenBy(r => r.Name)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(token);
+
+        return (activities, pagination);
     }
 }
