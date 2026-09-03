@@ -11,7 +11,11 @@ namespace Lms_backend.Infrastructure.Configurations
             builder.HasKey(m => m.Id);
 
             builder.Property(m => m.CreatedAt)
-                    .IsRequired();
+                    .IsRequired()
+                    .HasDefaultValueSql("now()");
+
+            builder.Property(m => m.UpdatedAt)
+                    .HasDefaultValueSql("now()");
 
             builder.Property(m => m.Name)
                     .HasMaxLength(50);

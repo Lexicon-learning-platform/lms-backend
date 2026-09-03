@@ -16,7 +16,11 @@ namespace Lms_backend.Infrastructure.Configurations
             builder.HasKey(a => a.Id);
 
             builder.Property(a => a.CreatedAt)
-                    .IsRequired();
+                    .IsRequired()
+                    .HasDefaultValueSql("now()");
+
+            builder.Property(a => a.UpdatedAt)
+                    .HasDefaultValueSql("now()");
 
             builder.Property(a => a.ActivityType)
                     .IsRequired();

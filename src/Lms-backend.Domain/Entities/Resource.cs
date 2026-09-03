@@ -1,11 +1,9 @@
-using System.ComponentModel.DataAnnotations;
 using Lms_backend.Domain.Enums;
 
 namespace Lms_backend.Domain.Entities
 {
     public record Resource
     {
-        [Key]
         public Guid ResourceId { get; set; }
 
         public DateTime CreatedAt { get; set; }

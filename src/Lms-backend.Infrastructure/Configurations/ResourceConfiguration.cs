@@ -16,7 +16,11 @@ namespace Lms_backend.Infrastructure.Configurations
                     .OnDelete(DeleteBehavior.ClientCascade);
 
             builder.Property(r => r.CreatedAt)
-                    .IsRequired();
+                    .IsRequired()
+                    .HasDefaultValueSql("now()");
+
+            builder.Property(r => r.UpdatedAt)
+                    .HasDefaultValueSql("now()");
 
             builder.Property(r => r.Name)
                     .HasMaxLength(50);

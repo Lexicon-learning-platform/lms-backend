@@ -1,11 +1,9 @@
-using System.ComponentModel.DataAnnotations;
 using Lms_backend.Domain.Entities.Joins;
 
 namespace Lms_backend.Domain.Entities
 {
     public record ApplicationUser
     {
-        [Key]
         public Guid UserId { get; set; }
 
         public DateTime CreatedAt { get; set; }

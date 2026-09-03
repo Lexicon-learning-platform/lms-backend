@@ -19,6 +19,9 @@ namespace Lms_backend.Infrastructure.Configurations.Joins
         .OnDelete(DeleteBehavior.ClientCascade);
 
             builder.HasKey(j => j.Id);
+
+            builder.HasIndex(j => new { j.UserId, j.ResourceId })
+                    .IsUnique();
         }
     }
 }

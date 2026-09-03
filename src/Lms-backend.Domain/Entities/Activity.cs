@@ -1,5 +1,3 @@
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using Lms_backend.Domain.Entities.Joins;
 using Lms_backend.Domain.Enums;
 using Lms_backend.Domain.Interfaces;
@@ -8,7 +6,6 @@ namespace Lms_backend.Domain.Entities
 {
     public record Activity : IEntity
     {
-        [Key]
         public Guid Id { get; set; }
 
         public DateTime CreatedAt { get; set; }
@@ -16,7 +13,6 @@ namespace Lms_backend.Domain.Entities
         public DateTime UpdatedAt { get; set; }
 
         public Guid ModuleId { get; set; }
-        [ForeignKey("ModuleId")]
         public Module Modules { get; set; } = default!;
 
         public ActivityType ActivityType { get; set; }

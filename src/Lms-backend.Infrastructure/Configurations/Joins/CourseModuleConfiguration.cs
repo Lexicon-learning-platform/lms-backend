@@ -21,6 +21,8 @@ namespace Lms_backend.Infrastructure.Configurations.Joins
 
             builder.HasKey(j => j.Id);
 
+            builder.HasIndex(j => new { j.CourseId, j.ModuleId })
+                    .IsUnique();
         }
     }
 }

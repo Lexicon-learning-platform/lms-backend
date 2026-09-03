@@ -1,4 +1,3 @@
-using System.ComponentModel.DataAnnotations;
 using Lms_backend.Domain.Entities.Joins;
 using Lms_backend.Domain.Interfaces;
 
@@ -6,7 +5,6 @@ namespace Lms_backend.Domain.Entities
 {
     public record Module : IEntity
     {
-        [Key]
         public Guid Id { get; set; }
 
         public DateTime CreatedAt { get; set; }
