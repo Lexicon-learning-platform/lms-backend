@@ -29,7 +29,23 @@ public class ActivityRepository(AppDbContext context) : RepositoryWithResourceBa
 
     private async Task<(IEnumerable<Activity>, PaginationMetadata?)> GetActivitiesInternalAsync(SearchParams searchParams, int page, int pageSize, bool readOnly, CancellationToken token)
     {
-        throw new NotImplementedException();
+        var query = Set.AsSplitQuery().AsQueryable();
+
+        if (readOnly) query = query.AsNoTracking();
+
+        if (!string.IsNullOrWhiteSpace(searchParams.Name)) query = query.Where(c => c.Name.Contains(searchParams.Name));
+        if (!string.IsNullOrWhiteSpace(searchParams.Search)) query = query.Where(c => c.Name.Contains(searchParams.Search) || c.Description.Contains(searchParams.Search));
+
+        var totalCount = await query.CountAsync(token);
+        var pagination = new PaginationMetadata(totalCount, pageSize, page);
+
+        var activities = await query
+            .OrderBy(c => c.StartTimeOffset).ThenBy(c => c.Name)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(token);
+
+        return (activities, pagination);
     }
 
     public Task<Activity?> GetActivityAsync(Guid id, CancellationToken token)
@@ -44,6 +60,13 @@ public class ActivityRepository(AppDbContext context) : RepositoryWithResourceBa
 
     private async Task<Activity?> GetActivityInternalAsync(Guid id, bool readOnly, CancellationToken token)
     {
-        throw new NotImplementedException();
+        var query = Set
+            .Include(c => c.Resources).ThenInclude(cr => cr.Resource)
+            .AsSplitQuery()
+            .AsQueryable();
+
+        if (readOnly) query = query.AsNoTracking();
+
+        return await query.FirstOrDefaultAsync(c => c.Id == id, token);
     }
 }
