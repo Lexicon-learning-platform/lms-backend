@@ -11,25 +11,13 @@ namespace Lms_backend.Infrastructure.Configurations
             builder.HasKey(c => c.Id);
 
             builder.Property(c => c.CreatedAt)
-                    .IsRequired()
-                    .HasColumnType("datetime2");
-
-            builder.Property(c => c.UpdatedAt)
-                    .HasColumnType("datetime2");
+                    .IsRequired();
 
             builder.Property(c => c.Name)
-                    .HasMaxLength(50)
-                    .HasColumnType("nvarchar");
+                    .HasMaxLength(50);
 
             builder.Property(c => c.Description)
-                    .HasMaxLength(200)
-                    .HasColumnType("nvarchar");
-
-            builder.Property(c => c.StartDate)
-                    .HasColumnType("datetime2");
-
-            builder.Property(c => c.Duration)
-                    .HasColumnType("int");
+                    .HasMaxLength(200);
 
             builder.HasData(
 

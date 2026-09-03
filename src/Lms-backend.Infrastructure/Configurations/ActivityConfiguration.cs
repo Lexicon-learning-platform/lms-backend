@@ -9,41 +9,29 @@ namespace Lms_backend.Infrastructure.Configurations
         public void Configure(EntityTypeBuilder<Activity> builder)
         {
 
-            builder.HasOne<Module>(a => a.Module)
+            builder.HasOne<Module>(a => a.Modules)
                     .WithMany(m => m.Activities)
                     .HasForeignKey(a => a.ModuleId);
 
             builder.HasKey(a => a.Id);
 
             builder.Property(a => a.CreatedAt)
-                    .IsRequired()
-                    .HasColumnType("datetime2");
-
-            builder.Property(a => a.UpdatedAt)
-                    .HasColumnType("datetime2");
-
-            builder.Property(a => a.ModuleId)
-                    .HasColumnType("int");
+                    .IsRequired();
 
             builder.Property(a => a.ActivityType)
-                    .IsRequired()
-                    .HasColumnType("int");
+                    .IsRequired();
 
             builder.Property(a => a.Name)
-                    .HasMaxLength(50)
-                    .HasColumnType("nvarchar");
+                    .HasMaxLength(50);
 
             builder.Property(a => a.Description)
-                    .HasMaxLength(200)
-                    .HasColumnType("nvarchar");
+                    .HasMaxLength(200);
 
             builder.Property(a => a.StartTimeOffset)
-                    .IsRequired()
-                    .HasColumnType("int");
+                    .IsRequired();
 
             builder.Property(a => a.DurationMinutes)
-                    .IsRequired()
-                    .HasColumnType("int");
+                    .IsRequired();
 
             builder.HasData(
 

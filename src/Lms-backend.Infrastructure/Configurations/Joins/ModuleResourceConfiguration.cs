@@ -10,7 +10,7 @@ namespace Lms_backend.Infrastructure.Configurations.Joins
         {
 
             builder.HasOne(mr => mr.Module)
-        .WithMany(m => m.ModuleResources)
+        .WithMany(m => m.Resources)
         .HasForeignKey(mr => mr.ModuleId)
         .OnDelete(DeleteBehavior.ClientCascade);
 

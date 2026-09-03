@@ -1,17 +1,22 @@
-using Lms_backend.Domain.Entities;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using Lms_backend.Domain.Interfaces;
+
 namespace Lms_backend.Domain.Entities.Joins
 {
     public record CourseResource : IEntity
     {
+        [Key]
         public Guid Id { get; set; }
 
-        public int CourseId { get; set; }
+        public Guid CourseId { get; set; }
 
-        public int ResourceId { get; set; }
+        public Guid ResourceId { get; set; }
 
-        public Course? Course { get; set; }
+        [ForeignKey("CourseId")]
+        public Course Course { get; set; } = default!;
 
-        public Resource? Resource { get; set; }
+        [ForeignKey("ResourceId")]
+        public Resource Resource { get; set; } = default!;
     }
 }

@@ -1,16 +1,23 @@
-using Lms_backend.Domain.Entities;
-﻿namespace Lms_backend.Domain.Entities.Joins
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Lms_backend.Domain.Entities.Joins
 {
     public record CourseModule
     {
+        [Key]
         public Guid Id { get; set; }
 
-        public int CourseId { get; set; }
+        public Guid CourseId { get; set; }
 
-        public int ModuleId { get; set; }
+        public Guid ModuleId { get; set; }
 
-        public Course? Course { get; set; }
+        [ForeignKey("CourseId")]
+        public Course Course { get; set; } = default!;
 
-        public Module? Module { get; set; }
+        [ForeignKey("ModuleId")]
+        public Module Module { get; set; } = default!;
+
+        public int StartTimeOffset { get; set; }
     }
 }

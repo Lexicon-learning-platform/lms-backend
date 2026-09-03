@@ -9,7 +9,7 @@ namespace Lms_backend.Infrastructure.Configurations.Joins
         public void Configure(EntityTypeBuilder<UserResource> builder)
         {
             builder.HasOne(er => er.User)
-        .WithMany(u => u.UserResources)
+        .WithMany(u => u.Resources)
         .HasForeignKey(er => er.UserId)
         .OnDelete(DeleteBehavior.ClientCascade);
 

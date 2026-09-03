@@ -10,12 +10,12 @@ namespace Lms_backend.Infrastructure.Configurations.Joins
         {
 
             builder.HasOne(cm => cm.Course)
-.WithMany(c => c.CourseModules)
+.WithMany(c => c.Modules)
 .HasForeignKey(cm => cm.CourseId)
 .OnDelete(DeleteBehavior.ClientCascade);
 
             builder.HasOne(cm => cm.Module)
-        .WithMany(m => m.CourseModules)
+        .WithMany(m => m.Courses)
         .HasForeignKey(cm => cm.ModuleId)
         .OnDelete(DeleteBehavior.ClientCascade);
 

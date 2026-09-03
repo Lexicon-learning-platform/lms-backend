@@ -1,4 +1,4 @@
-using Lms_backend.Domain.Entities;
+using System.ComponentModel.DataAnnotations;
 using Lms_backend.Domain.Entities.Joins;
 using Lms_backend.Domain.Interfaces;
 
@@ -6,22 +6,23 @@ namespace Lms_backend.Domain.Entities
 {
     public record Module : IEntity
     {
+        [Key]
         public Guid Id { get; set; }
 
         public DateTime CreatedAt { get; set; }
 
-        public DateTime? UpdatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
 
-        public string? Name { get; set; }
+        public string Name { get; set; } = default!;
 
-        public string? Description { get; set; }
+        public string Description { get; set; } = default!;
 
-        public int? DurationDays { get; set; }
+        public int Duration { get; set; }
 
-        public ICollection<ModuleResource> ModuleResources { get; set; } = new List<ModuleResource>();
-        public ICollection<CourseModule> CourseModules { get; set; } = new List<CourseModule>();
+        public ICollection<ModuleResource> Resources { get; set; } = [];
+        public ICollection<CourseModule> Courses { get; set; } = [];
 
-        public ICollection<Activity> Activities { get; set; } = new List<Activity>();
+        public ICollection<Activity> Activities { get; set; } = [];
 
     }
 }

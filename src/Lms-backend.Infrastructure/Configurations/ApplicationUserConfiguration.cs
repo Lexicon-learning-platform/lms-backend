@@ -9,28 +9,19 @@ namespace Lms_backend.Infrastructure.Configurations
         public void Configure(EntityTypeBuilder<ApplicationUser> builder)
         {
             builder.HasOne<Course>(u => u.Course)
-                    .WithMany(c => c.ApplicationUsers)
+                    .WithMany(c => c.Users)
                     .HasForeignKey(u => u.CourseId);
 
             builder.HasKey(u => u.UserId);
 
             builder.Property(u => u.CreatedAt)
-                    .IsRequired()
-                    .HasColumnType("datetime2");
-
-            builder.Property(u => u.UpdatedAt)
-                    .HasColumnType("datetime2");
+                    .IsRequired();
 
             builder.Property(u => u.GivenName)
-                    .HasMaxLength(50)
-                    .HasColumnType("nvarchar");
+                    .HasMaxLength(50);
 
             builder.Property(u => u.LastName)
-                    .HasMaxLength(50)
-                    .HasColumnType("nvarchar");
-
-            builder.Property(u => u.CourseId)
-                    .HasColumnType("int");
+                    .HasMaxLength(50);
 
             builder.HasData(
 

@@ -9,7 +9,7 @@ namespace Lms_backend.Infrastructure.Configurations.Joins
         public void Configure(EntityTypeBuilder<ActivityResource> builder)
         {
             builder.HasOne(ar => ar.Activity)
-        .WithMany(a => a.ActivityResources)
+        .WithMany(a => a.Resources)
         .HasForeignKey(ar => ar.ActivityId)
         .OnDelete(DeleteBehavior.ClientCascade);
 
