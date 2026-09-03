@@ -40,8 +40,11 @@ public class ModuleRepository(AppDbContext context) : RepositoryWithResourceBase
         var totalCount = await query.CountAsync(token);
         var pagination = new PaginationMetadata(totalCount, pageSize, page);
 
-        var courses = await query
-            .OrderBy(m => m.Name)
+        var orderedQuery = searchParams.CourseId.HasValue
+            ? query.OrderBy(m => m.Courses.First(cm => cm.CourseId == searchParams.CourseId.Value).StartTimeOffset).ThenBy(m => m.Name)
+            : query.OrderBy(m => m.Name);
+
+        var courses = await orderedQuery
             .Include(m => m.Activities)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
