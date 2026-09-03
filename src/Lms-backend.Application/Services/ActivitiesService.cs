@@ -23,7 +23,7 @@ public class ActivitiesService(IActivityRepository repository) : IActivitiesServ
         throw new NotImplementedException();
     }
 
-    public Task<(IEnumerable<ActivityDto>, PaginationMetadata?)> GetMany(SearchParams searchParams, int? page = 1, int? pageSize = 10, CancellationToken token = default)
+    public Task<(IEnumerable<ActivityDto>, PaginationMetadata?)> GetMany(ActivitySearchParams searchParams, int? page = 1, int? pageSize = 10, CancellationToken token = default)
     {
         throw new NotImplementedException();
     }

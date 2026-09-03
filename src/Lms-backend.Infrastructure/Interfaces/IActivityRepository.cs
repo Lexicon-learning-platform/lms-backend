@@ -6,8 +6,8 @@ namespace Lms_backend.Infrastructure.Interfaces;
 
 public interface IActivityRepository : IRepositoryWithResourceBase<Activity, ActivityResource>
 {
-    Task<(IEnumerable<Activity>, PaginationMetadata?)> GetActivitiesAsync(SearchParams searchParams, int page, int pageSize, CancellationToken token);
-    Task<(IEnumerable<Activity>, PaginationMetadata?)> GetActivitiesReadOnlyAsync(SearchParams searchParams, int page, int pageSize, CancellationToken token);
+    Task<(IEnumerable<Activity>, PaginationMetadata?)> GetActivitiesAsync(ActivitySearchParams searchParams, int page, int pageSize, CancellationToken token);
+    Task<(IEnumerable<Activity>, PaginationMetadata?)> GetActivitiesReadOnlyAsync(ActivitySearchParams searchParams, int page, int pageSize, CancellationToken token);
     Task<Activity?> GetActivityAsync(Guid id, CancellationToken token);
     Task<Activity?> GetActivityReadOnlyAsync(Guid id, CancellationToken token);
 }

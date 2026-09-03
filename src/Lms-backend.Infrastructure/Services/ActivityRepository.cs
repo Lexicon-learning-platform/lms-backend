@@ -17,17 +17,17 @@ public class ActivityRepository(AppDbContext context) : RepositoryWithResourceBa
     protected override ActivityResource CreateJoin(Guid entityId, Guid resourceId) =>
         new() { ActivityId = entityId, ResourceId = resourceId };
 
-    public Task<(IEnumerable<Activity>, PaginationMetadata?)> GetActivitiesAsync(SearchParams searchParams, int page, int pageSize, CancellationToken token)
+    public Task<(IEnumerable<Activity>, PaginationMetadata?)> GetActivitiesAsync(ActivitySearchParams searchParams, int page, int pageSize, CancellationToken token)
     {
         return GetActivitiesInternalAsync(searchParams, page, pageSize, false, token);
     }
 
-    public Task<(IEnumerable<Activity>, PaginationMetadata?)> GetActivitiesReadOnlyAsync(SearchParams searchParams, int page, int pageSize, CancellationToken token)
+    public Task<(IEnumerable<Activity>, PaginationMetadata?)> GetActivitiesReadOnlyAsync(ActivitySearchParams searchParams, int page, int pageSize, CancellationToken token)
     {
         return GetActivitiesInternalAsync(searchParams, page, pageSize, true, token);
     }
 
-    private async Task<(IEnumerable<Activity>, PaginationMetadata?)> GetActivitiesInternalAsync(SearchParams searchParams, int page, int pageSize, bool readOnly, CancellationToken token)
+    private async Task<(IEnumerable<Activity>, PaginationMetadata?)> GetActivitiesInternalAsync(ActivitySearchParams searchParams, int page, int pageSize, bool readOnly, CancellationToken token)
     {
         var query = Set.AsSplitQuery().AsQueryable();
 
@@ -35,6 +35,7 @@ public class ActivityRepository(AppDbContext context) : RepositoryWithResourceBa
 
         if (!string.IsNullOrWhiteSpace(searchParams.Name)) query = query.Where(c => c.Name.Contains(searchParams.Name));
         if (!string.IsNullOrWhiteSpace(searchParams.Search)) query = query.Where(c => c.Name.Contains(searchParams.Search) || c.Description.Contains(searchParams.Search));
+        if (searchParams.Type.HasValue) query = query.Where(c => c.ActivityType == searchParams.Type.Value);
 
         var totalCount = await query.CountAsync(token);
         var pagination = new PaginationMetadata(totalCount, pageSize, page);

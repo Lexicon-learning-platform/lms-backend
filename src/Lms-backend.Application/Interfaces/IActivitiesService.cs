@@ -7,7 +7,7 @@ namespace Lms_backend.Application.Interfaces;
 
 public interface IActivitiesService
 {
-    Task<(IEnumerable<ActivityDto>, PaginationMetadata?)> GetMany(SearchParams searchParams, int? page = DefaultValues.page, int? pageSize = DefaultValues.pageSize, CancellationToken token = default);
+    Task<(IEnumerable<ActivityDto>, PaginationMetadata?)> GetMany(ActivitySearchParams searchParams, int? page = DefaultValues.page, int? pageSize = DefaultValues.pageSize, CancellationToken token = default);
     Task<ActivityExtendedDto> GetOne(Guid id, CancellationToken token = default);
     Task<ActivityDto> Create(ActivityForChangeDto data, CancellationToken token = default);
     Task Update(Guid id, ActivityForChangeDto data, CancellationToken token = default);
