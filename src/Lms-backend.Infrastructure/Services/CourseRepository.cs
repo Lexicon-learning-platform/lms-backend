@@ -43,7 +43,7 @@ public class CourseRepository(AppDbContext context) : RepositoryWithResourceBase
             .ThenBy(c => c.Name)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
-            .Include(c => c.CourseModules)
+            .Include(c => c.Modules)
             .ToListAsync(token);
 
         return (courses, pagination);
