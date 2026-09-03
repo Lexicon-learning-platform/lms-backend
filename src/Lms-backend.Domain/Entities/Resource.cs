@@ -9,17 +9,18 @@ namespace Lms_backend.Domain.Entities
 
         public DateTime CreatedAt { get; set; }
 
-        public DateTime? UpdatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
 
-        public int? OwnerId { get; set; }   // Foreign key to the entity who owns the resource
+        public Guid OwnerId { get; set; }
 
-        public string? Name { get; set; }
+        public ApplicationUser Owner { get; set; } = default!;
 
-        public string? Description { get; set; }
+        public string Name { get; set; } = default!;
+
+        public string Description { get; set; } = default!;
 
         public ResourceType ResourceType { get; set; }
 
         public string? Data { get; set; }
-
     }
 }

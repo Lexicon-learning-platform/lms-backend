@@ -10,8 +10,8 @@ using Lms_backend.Domain.Interfaces;
 
         public Guid ResourceId { get; set; }
 
-        public ApplicationUser? User { get; set; }
+        public ApplicationUser User { get; set; } = default!;
 
-        public Resource? Resource { get; set; }
+        public Resource Resource { get; set; } = default!;
     }
 }

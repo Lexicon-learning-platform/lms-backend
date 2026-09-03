@@ -1,5 +1,5 @@
-using Lms_backend.Domain.Entities;
 using Lms_backend.Domain.Interfaces;
+
 namespace Lms_backend.Domain.Entities.Joins
 {
     public record CourseResource : IResourceJoin
@@ -10,8 +10,8 @@ namespace Lms_backend.Domain.Entities.Joins
 
         public Guid ResourceId { get; set; }
 
-        public Course? Course { get; set; }
+        public Course Course { get; set; } = default!;
 
-        public Resource? Resource { get; set; }
+        public Resource Resource { get; set; } = default!;
     }
 }
