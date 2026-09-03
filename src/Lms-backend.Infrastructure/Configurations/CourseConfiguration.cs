@@ -24,8 +24,36 @@ namespace Lms_backend.Infrastructure.Configurations
                     .HasMaxLength(200);
 
             builder.HasData(
-
-                //Seed-data
+                new Course
+                {
+                    Id = SeedIds.Courses.FullStack,
+                    CreatedAt = SeedIds.CreatedAt,
+                    UpdatedAt = SeedIds.CreatedAt,
+                    Name = "Full-Stack Web Development",
+                    Description = "Learn to build modern web applications end-to-end, from responsive front-ends to REST APIs and databases.",
+                    StartDate = new DateOnly(2026, 2, 2),
+                    Duration = 12
+                },
+                new Course
+                {
+                    Id = SeedIds.Courses.Backend,
+                    CreatedAt = SeedIds.CreatedAt,
+                    UpdatedAt = SeedIds.CreatedAt,
+                    Name = "Backend Development with C# & .NET",
+                    Description = "Deep dive into C#, object-oriented design, and building robust web APIs with ASP.NET Core and EF Core.",
+                    StartDate = new DateOnly(2026, 2, 2),
+                    Duration = 10
+                },
+                new Course
+                {
+                    Id = SeedIds.Courses.CloudDevOps,
+                    CreatedAt = SeedIds.CreatedAt,
+                    UpdatedAt = SeedIds.CreatedAt,
+                    Name = "Cloud & DevOps Engineering",
+                    Description = "Containerize, automate, and deploy applications using Docker, CI/CD pipelines, and cloud platforms.",
+                    StartDate = new DateOnly(2026, 3, 2),
+                    Duration = 8
+                }
                 );
         }
     }

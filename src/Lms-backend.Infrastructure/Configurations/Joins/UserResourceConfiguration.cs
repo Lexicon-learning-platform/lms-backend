@@ -1,4 +1,5 @@
 ﻿using Lms_backend.Domain.Entities.Joins;
+using Lms_backend.Infrastructure.Configurations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -22,6 +23,15 @@ namespace Lms_backend.Infrastructure.Configurations.Joins
 
             builder.HasIndex(j => new { j.UserId, j.ResourceId })
                     .IsUnique();
+
+            builder.HasData(
+                new UserResource
+                {
+                    Id = SeedIds.UserResources.MariaGitNotes,
+                    UserId = SeedIds.Users.Maria,
+                    ResourceId = SeedIds.Resources.MariaGitNotes
+                }
+            );
         }
     }
 }

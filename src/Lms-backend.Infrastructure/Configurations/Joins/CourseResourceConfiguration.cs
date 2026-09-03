@@ -1,4 +1,5 @@
 ﻿using Lms_backend.Domain.Entities.Joins;
+using Lms_backend.Infrastructure.Configurations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -22,6 +23,15 @@ namespace Lms_backend.Infrastructure.Configurations.Joins
 
             builder.HasIndex(j => new { j.CourseId, j.ResourceId })
                     .IsUnique();
+
+            builder.HasData(
+                new CourseResource
+                {
+                    Id = SeedIds.CourseResources.FullStackSyllabus,
+                    CourseId = SeedIds.Courses.FullStack,
+                    ResourceId = SeedIds.Resources.CourseSyllabusFullStack
+                }
+            );
         }
     }
 }

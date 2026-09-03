@@ -3,6 +3,7 @@ using System;
 using Lms_backend.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Lms_backend.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260903093145_SeedExampleData")]
+    partial class SeedExampleData
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -358,12 +361,6 @@ namespace Lms_backend.Infrastructure.Migrations
                             Id = new Guid("99999999-0000-0000-0000-000000000003"),
                             ActivityId = new Guid("66666666-0000-0000-0000-000000000006"),
                             ResourceId = new Guid("55555555-0000-0000-0000-000000000007")
-                        },
-                        new
-                        {
-                            Id = new Guid("99999999-0000-0000-0000-000000000004"),
-                            ActivityId = new Guid("66666666-0000-0000-0000-000000000007"),
-                            ResourceId = new Guid("55555555-0000-0000-0000-000000000010")
                         });
                 });
 
@@ -803,17 +800,6 @@ namespace Lms_backend.Infrastructure.Migrations
                             Name = "My Git Notes",
                             OwnerId = new Guid("44444444-0000-0000-0000-000000000002"),
                             ResourceType = 0,
-                            UpdatedAt = new DateTime(2026, 1, 15, 9, 0, 0, 0, DateTimeKind.Utc)
-                        },
-                        new
-                        {
-                            ResourceId = new Guid("55555555-0000-0000-0000-000000000010"),
-                            CreatedAt = new DateTime(2026, 1, 15, 9, 0, 0, 0, DateTimeKind.Utc),
-                            Data = "https://github.com/johan-berg/console-app-assignment",
-                            Description = "Johan Berg's submitted solution for the console application assignment.",
-                            Name = "Console App Assignment Submission",
-                            OwnerId = new Guid("44444444-0000-0000-0000-000000000003"),
-                            ResourceType = 2,
                             UpdatedAt = new DateTime(2026, 1, 15, 9, 0, 0, 0, DateTimeKind.Utc)
                         });
                 });

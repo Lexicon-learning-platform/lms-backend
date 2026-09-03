@@ -28,8 +28,42 @@ namespace Lms_backend.Infrastructure.Configurations
                     .HasMaxLength(50);
 
             builder.HasData(
-
-                //Seed-data
+                new ApplicationUser
+                {
+                    UserId = SeedIds.Users.Alex,
+                    CreatedAt = SeedIds.CreatedAt,
+                    UpdatedAt = SeedIds.CreatedAt,
+                    GivenName = "Alex",
+                    LastName = "Nilsson",
+                    CourseId = null
+                },
+                new ApplicationUser
+                {
+                    UserId = SeedIds.Users.Maria,
+                    CreatedAt = SeedIds.CreatedAt,
+                    UpdatedAt = SeedIds.CreatedAt,
+                    GivenName = "Maria",
+                    LastName = "Svensson",
+                    CourseId = SeedIds.Courses.FullStack
+                },
+                new ApplicationUser
+                {
+                    UserId = SeedIds.Users.Johan,
+                    CreatedAt = SeedIds.CreatedAt,
+                    UpdatedAt = SeedIds.CreatedAt,
+                    GivenName = "Johan",
+                    LastName = "Berg",
+                    CourseId = SeedIds.Courses.Backend
+                },
+                new ApplicationUser
+                {
+                    UserId = SeedIds.Users.Sara,
+                    CreatedAt = SeedIds.CreatedAt,
+                    UpdatedAt = SeedIds.CreatedAt,
+                    GivenName = "Sara",
+                    LastName = "Lindqvist",
+                    CourseId = SeedIds.Courses.CloudDevOps
+                }
                 );
         }
     }

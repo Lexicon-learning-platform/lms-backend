@@ -1,4 +1,5 @@
 ﻿using Lms_backend.Domain.Entities.Joins;
+using Lms_backend.Infrastructure.Configurations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -22,6 +23,33 @@ namespace Lms_backend.Infrastructure.Configurations.Joins
 
             builder.HasIndex(j => new { j.ActivityId, j.ResourceId })
                     .IsUnique();
+
+            builder.HasData(
+                new ActivityResource
+                {
+                    Id = SeedIds.ActivityResources.IntroToGitProGitBook,
+                    ActivityId = SeedIds.Activities.IntroToGit,
+                    ResourceId = SeedIds.Resources.ProGitBook
+                },
+                new ActivityResource
+                {
+                    Id = SeedIds.ActivityResources.GitBranchingExerciseCheatSheet,
+                    ActivityId = SeedIds.Activities.GitBranchingExercise,
+                    ResourceId = SeedIds.Resources.GitCheatSheet
+                },
+                new ActivityResource
+                {
+                    Id = SeedIds.ActivityResources.OopPracticeExerciseInstructions,
+                    ActivityId = SeedIds.Activities.OopPracticeExercise,
+                    ResourceId = SeedIds.Resources.OopPracticeInstructions
+                },
+                new ActivityResource
+                {
+                    Id = SeedIds.ActivityResources.ConsoleAppAssignmentTurnIn,
+                    ActivityId = SeedIds.Activities.ConsoleAppAssignment,
+                    ResourceId = SeedIds.Resources.JohanConsoleAppTurnIn
+                }
+            );
         }
     }
 }
