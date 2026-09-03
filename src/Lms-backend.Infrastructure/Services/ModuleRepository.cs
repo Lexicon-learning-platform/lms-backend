@@ -29,7 +29,24 @@ public class ModuleRepository(AppDbContext context) : RepositoryWithResourceBase
 
     private async Task<(IEnumerable<Module>, PaginationMetadata?)> GetModulesInternalAsync(SearchParams searchParams, int page, int pageSize, bool readOnly, CancellationToken token)
     {
-        throw new NotImplementedException();
+        var query = Set.AsSplitQuery().AsQueryable();
+
+        if (readOnly) query = query.AsNoTracking();
+
+        if (!string.IsNullOrWhiteSpace(searchParams.Name)) query = query.Where(c => c.Name.Contains(searchParams.Name));
+        if (!string.IsNullOrWhiteSpace(searchParams.Search)) query = query.Where(c => c.Name.Contains(searchParams.Search) || c.Description.Contains(searchParams.Search));
+
+        var totalCount = await query.CountAsync(token);
+        var pagination = new PaginationMetadata(totalCount, pageSize, page);
+
+        var courses = await query
+            .OrderBy(c => c.Name)
+            .Include(c => c.Activities)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(token);
+
+        return (courses, pagination);
     }
 
     public Task<Module?> GetModuleAsync(Guid id, CancellationToken token)
@@ -44,6 +61,14 @@ public class ModuleRepository(AppDbContext context) : RepositoryWithResourceBase
 
     private async Task<Module?> GetModuleInternalAsync(Guid id, bool readOnly, CancellationToken token)
     {
-        throw new NotImplementedException();
+        var query = Set
+            .Include(c => c.Activities)
+            .Include(c => c.Resources).ThenInclude(cr => cr.Resource)
+            .AsSplitQuery()
+            .AsQueryable();
+
+        if (readOnly) query = query.AsNoTracking();
+
+        return await query.FirstOrDefaultAsync(c => c.Id == id, token);
     }
 }
