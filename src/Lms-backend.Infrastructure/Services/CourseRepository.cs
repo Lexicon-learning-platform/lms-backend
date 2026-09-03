@@ -29,7 +29,24 @@ public class CourseRepository(AppDbContext context) : RepositoryWithResourceBase
 
     private async Task<(IEnumerable<Course>, PaginationMetadata?)> GetCoursesInternalAsync(SearchParams searchParams, int page, int pageSize, bool readOnly, CancellationToken token)
     {
-        throw new NotImplementedException();
+        var query = Set.AsQueryable();
+
+        if (readOnly) query = query.AsNoTracking();
+
+        if (!string.IsNullOrWhiteSpace(searchParams.Name)) query = query.Where(c => c.Name.Contains(searchParams.Name));
+        if (!string.IsNullOrWhiteSpace(searchParams.Search)) query = query.Where(c => c.Name.Contains(searchParams.Search) || c.Description.Contains(searchParams.Search));
+
+        var totalCount = await query.CountAsync(token);
+        var pagination = new PaginationMetadata(totalCount, pageSize, page);
+
+        var courses = await query.OrderBy(c => c.StartDate)
+            .ThenBy(c => c.Name)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .Include(c => c.CourseModules)
+            .ToListAsync(token);
+
+        return (courses, pagination);
     }
 
     public Task<Course?> GetCourseAsync(Guid id, CancellationToken token)
