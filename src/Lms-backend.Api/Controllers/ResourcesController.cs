@@ -1,6 +1,7 @@
 using System.Text.Json;
 using Lms_backend.Application.Interfaces;
 using Lms_backend.Application.Models;
+using Lms_backend.Domain.Enums;
 using Lms_backend.Infrastructure.Models;
 using Microsoft.AspNetCore.JsonPatch.SystemTextJson;
 using Microsoft.AspNetCore.Mvc;
@@ -13,9 +14,9 @@ public class ResourceController(IResourcesService service) : ControllerBase
 {
     // Base resource endpoints
     [HttpGet]
-    public async Task<IActionResult> GetResources(string? name, string? search, int? page, int? pageSize, CancellationToken token = default)
+    public async Task<IActionResult> GetResources(string? name, string? search, ResourceType type, int? page, int? pageSize, CancellationToken token = default)
     {
-        var (result, pagination) = await service.GetMany(new SearchParams(name, search), page, pageSize, token);
+        var (result, pagination) = await service.GetMany(new ResourceSearchParams(name, search, type), page, pageSize, token);
         if (pagination != null) Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(pagination));
         return Ok(result);
     }

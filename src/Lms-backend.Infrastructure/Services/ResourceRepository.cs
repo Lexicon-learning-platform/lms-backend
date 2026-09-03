@@ -28,17 +28,17 @@ public class ResourceRepository(AppDbContext context) : RepositoryBase<Resource>
         return await query.FirstOrDefaultAsync(r => r.Id == id, token);
     }
 
-    public Task<(IEnumerable<Resource>, PaginationMetadata?)> GetResourcesAsync(SearchParams searchParams, int page, int pageSize, CancellationToken token)
+    public Task<(IEnumerable<Resource>, PaginationMetadata?)> GetResourcesAsync(ResourceSearchParams searchParams, int page, int pageSize, CancellationToken token)
     {
         return GetResourcesInternalAsync(searchParams, page, pageSize, false, token);
     }
 
-    public Task<(IEnumerable<Resource>, PaginationMetadata?)> GetResourcesReadOnlyAsync(SearchParams searchParams, int page, int pageSize, CancellationToken token)
+    public Task<(IEnumerable<Resource>, PaginationMetadata?)> GetResourcesReadOnlyAsync(ResourceSearchParams searchParams, int page, int pageSize, CancellationToken token)
     {
         return GetResourcesInternalAsync(searchParams, page, pageSize, true, token);
     }
 
-    private async Task<(IEnumerable<Resource>, PaginationMetadata?)> GetResourcesInternalAsync(SearchParams searchParams, int page, int pageSize, bool readOnly, CancellationToken token)
+    private async Task<(IEnumerable<Resource>, PaginationMetadata?)> GetResourcesInternalAsync(ResourceSearchParams searchParams, int page, int pageSize, bool readOnly, CancellationToken token)
     {
         var query = Set.AsSplitQuery().AsQueryable();
 
@@ -46,7 +46,7 @@ public class ResourceRepository(AppDbContext context) : RepositoryBase<Resource>
 
         if (!string.IsNullOrWhiteSpace(searchParams.Name)) query = query.Where(a => a.Name.Contains(searchParams.Name));
         if (!string.IsNullOrWhiteSpace(searchParams.Search)) query = query.Where(a => a.Name.Contains(searchParams.Search) || a.Description.Contains(searchParams.Search));
-        // if (searchParams.Type.HasValue) query = query.Where(a => a.ActivityType == searchParams.Type.Value);
+        if (searchParams.Type.HasValue) query = query.Where(a => a.ResourceType == searchParams.Type.Value);
 
         var totalCount = await query.CountAsync(token);
         var pagination = new PaginationMetadata(totalCount, pageSize, page);
