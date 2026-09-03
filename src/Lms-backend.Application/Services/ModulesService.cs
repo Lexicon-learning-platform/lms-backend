@@ -23,7 +23,7 @@ public class ModulesService(IModuleRepository repository) : IModulesService
         throw new NotImplementedException();
     }
 
-    public Task<(IEnumerable<ModuleDto>, PaginationMetadata?)> GetMany(SearchParams searchParams, int? page = 1, int? pageSize = 10, CancellationToken token = default)
+    public Task<(IEnumerable<ModuleDto>, PaginationMetadata?)> GetMany(ModuleSearchParams searchParams, int? page = 1, int? pageSize = 10, CancellationToken token = default)
     {
         throw new NotImplementedException();
     }

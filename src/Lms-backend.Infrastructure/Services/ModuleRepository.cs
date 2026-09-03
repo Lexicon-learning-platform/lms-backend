@@ -17,24 +17,25 @@ public class ModuleRepository(AppDbContext context) : RepositoryWithResourceBase
     protected override ModuleResource CreateJoin(Guid entityId, Guid resourceId) =>
         new() { ModuleId = entityId, ResourceId = resourceId };
 
-    public Task<(IEnumerable<Module>, PaginationMetadata?)> GetModulesAsync(SearchParams searchParams, int page, int pageSize, CancellationToken token)
+    public Task<(IEnumerable<Module>, PaginationMetadata?)> GetModulesAsync(ModuleSearchParams searchParams, int page, int pageSize, CancellationToken token)
     {
         return GetModulesInternalAsync(searchParams, page, pageSize, false, token);
     }
 
-    public Task<(IEnumerable<Module>, PaginationMetadata?)> GetModulesReadOnlyAsync(SearchParams searchParams, int page, int pageSize, CancellationToken token)
+    public Task<(IEnumerable<Module>, PaginationMetadata?)> GetModulesReadOnlyAsync(ModuleSearchParams searchParams, int page, int pageSize, CancellationToken token)
     {
         return GetModulesInternalAsync(searchParams, page, pageSize, true, token);
     }
 
-    private async Task<(IEnumerable<Module>, PaginationMetadata?)> GetModulesInternalAsync(SearchParams searchParams, int page, int pageSize, bool readOnly, CancellationToken token)
+    private async Task<(IEnumerable<Module>, PaginationMetadata?)> GetModulesInternalAsync(ModuleSearchParams searchParams, int page, int pageSize, bool readOnly, CancellationToken token)
     {
         var query = Set.AsSplitQuery().AsQueryable();
 
         if (readOnly) query = query.AsNoTracking();
 
-        if (!string.IsNullOrWhiteSpace(searchParams.Name)) query = query.Where(c => c.Name.Contains(searchParams.Name));
-        if (!string.IsNullOrWhiteSpace(searchParams.Search)) query = query.Where(c => c.Name.Contains(searchParams.Search) || c.Description.Contains(searchParams.Search));
+        if (!string.IsNullOrWhiteSpace(searchParams.Name)) query = query.Where(m => m.Name.Contains(searchParams.Name));
+        if (!string.IsNullOrWhiteSpace(searchParams.Search)) query = query.Where(m => m.Name.Contains(searchParams.Search) || m.Description.Contains(searchParams.Search));
+        if (searchParams.CourseId.HasValue) query = query.Where(m => m.Courses.Any(cm => cm.CourseId == searchParams.CourseId.Value));
 
         var totalCount = await query.CountAsync(token);
         var pagination = new PaginationMetadata(totalCount, pageSize, page);
