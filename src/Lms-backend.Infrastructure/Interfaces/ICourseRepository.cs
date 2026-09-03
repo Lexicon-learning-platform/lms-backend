@@ -4,7 +4,7 @@ using Lms_backend.Infrastructure.Models;
 
 namespace Lms_backend.Infrastructure.Interfaces;
 
-public interface ICourseRepository : IRepositoryBase<Course, CourseResource>
+public interface ICourseRepository : IRepositoryWithResourceBase<Course, CourseResource>
 {
     Task<(IEnumerable<Course>, PaginationMetadata?)> GetCoursesAsync(SearchParams searchParams, int page, int pageSize, CancellationToken token);
     Task<(IEnumerable<Course>, PaginationMetadata?)> GetCoursesReadOnlyAsync(SearchParams searchParams, int page, int pageSize, CancellationToken token);

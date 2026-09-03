@@ -5,9 +5,9 @@ using Lms_backend.Domain.Entities;
     {
         public Guid Id { get; set; }
 
-        public int CourseId { get; set; }
+        public Guid CourseId { get; set; }
 
-        public int ModuleId { get; set; }
+        public Guid ModuleId { get; set; }
 
         public Course? Course { get; set; }
 

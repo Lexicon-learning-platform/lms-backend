@@ -1,6 +1,8 @@
+using Lms_backend.Domain.Entities;
+
 namespace Lms_backend.Infrastructure.Interfaces;
 
-public interface IRepositoryBase<TEntity, TResource>
+public interface IRepositoryBase<TEntity>
 {
     Task<bool> ExistsAsync(Guid id, CancellationToken token);
     Task<IList<Guid>> GetMissingIdsAsync(ICollection<Guid> ids, CancellationToken token);

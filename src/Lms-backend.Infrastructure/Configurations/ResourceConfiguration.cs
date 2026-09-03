@@ -8,7 +8,7 @@ namespace Lms_backend.Infrastructure.Configurations
     {
         public void Configure(EntityTypeBuilder<Resource> builder)
         {
-            builder.HasKey(r => r.ResourceId);
+            builder.HasKey(r => r.Id);
 
             builder.Property(r => r.CreatedAt)
                     .IsRequired()

@@ -14,7 +14,8 @@ public interface IActivitiesService
     Task Update(Guid id, JsonPatchDocument<ActivityForChangeDto> data, CancellationToken token = default);
     Task Remove(Guid id, CancellationToken token = default);
     Task<ResourceDto> AddResource(Guid id, ResourceForChangeDto data, CancellationToken token = default);
+    Task<bool> AttachResource(Guid id, Guid resourceId, CancellationToken token = default);
     Task UpdateResource(Guid id, Guid resourceId, ResourceForChangeDto data, CancellationToken token = default);
     Task UpdateResource(Guid id, Guid resourceId, JsonPatchDocument<ResourceForChangeDto> data, CancellationToken token = default);
-    Task RemoveResource(Guid id, Guid resourceId, CancellationToken token = default);
+    Task DetachResource(Guid id, Guid resourceId, CancellationToken token = default);
 }
