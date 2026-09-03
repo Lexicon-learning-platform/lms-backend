@@ -1,9 +1,10 @@
 using Lms_backend.Domain.Entities;
 using Lms_backend.Domain.Entities.Joins;
+using Microsoft.AspNetCore.Identity;
 
 namespace Lms_backend.Domain.Entities
 {
-    public record ApplicationUser
+    public class ApplicationUser : IdentityUser
     {
         public Guid UserId { get; set; }
 
