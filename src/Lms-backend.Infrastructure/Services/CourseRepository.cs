@@ -29,7 +29,7 @@ public class CourseRepository(AppDbContext context) : RepositoryWithResourceBase
 
     private async Task<(IEnumerable<Course>, PaginationMetadata?)> GetCoursesInternalAsync(SearchParams searchParams, int page, int pageSize, bool readOnly, CancellationToken token)
     {
-        var query = Set.AsQueryable();
+        var query = Set.AsSplitQuery().AsQueryable();
 
         if (readOnly) query = query.AsNoTracking();
 
@@ -39,11 +39,11 @@ public class CourseRepository(AppDbContext context) : RepositoryWithResourceBase
         var totalCount = await query.CountAsync(token);
         var pagination = new PaginationMetadata(totalCount, pageSize, page);
 
-        var courses = await query.OrderBy(c => c.StartDate)
-            .ThenBy(c => c.Name)
+        var courses = await query
+            .OrderBy(c => c.StartDate).ThenBy(c => c.Name)
+            .Include(c => c.Modules).ThenInclude(cm => cm.Module)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
-            .Include(c => c.Modules)
             .ToListAsync(token);
 
         return (courses, pagination);
@@ -61,6 +61,14 @@ public class CourseRepository(AppDbContext context) : RepositoryWithResourceBase
 
     private async Task<Course?> GetCourseInternalAsync(Guid id, bool readOnly, CancellationToken token)
     {
-        throw new NotImplementedException();
+        var query = Set
+            .Include(c => c.Modules).ThenInclude(cm => cm.Module)
+            .Include(c => c.Resources).ThenInclude(cr => cr.Resource)
+            .AsSplitQuery()
+            .AsQueryable();
+
+        if (readOnly) query = query.AsNoTracking();
+
+        return await query.FirstOrDefaultAsync(c => c.Id == id, token);
     }
 }
