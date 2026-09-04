@@ -30,4 +30,15 @@ public static class ResourceMapper
             yield return ToStandardDto(item);
         }
     }
+
+    public static ResourceForChangeDto ToChangeDto(Resource entity)
+    {
+        return new ResourceForChangeDto()
+        {
+            Name = entity.Name,
+            Description = entity.Description,
+            Type = entity.ResourceType,
+            Data = entity.Data ?? string.Empty,
+        };
+    }
 }

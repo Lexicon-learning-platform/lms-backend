@@ -3,6 +3,7 @@ using Lms_backend.Application.Interfaces;
 using Lms_backend.Application.Mappers;
 using Lms_backend.Application.Models;
 using Lms_backend.Domain.Constants;
+using Lms_backend.Domain.Entities;
 using Lms_backend.Infrastructure.Interfaces;
 using Lms_backend.Infrastructure.Models;
 using Microsoft.AspNetCore.JsonPatch.SystemTextJson;
@@ -40,13 +41,29 @@ public class ResourcesService(IResourceRepository repository) : IResourcesServic
         await repository.SaveChangesAsync(token);
     }
 
-    public Task Update(Guid id, ResourceForChangeDto data, CancellationToken token = default)
+    public async Task Update(Guid id, ResourceForChangeDto data, CancellationToken token = default)
     {
-        throw new NotImplementedException();
+        var entity = await repository.GetResourceAsync(id, token) ?? throw new NotFoundException($"Resource '{id}' not found");
+        await ApplyUpdateAsync(entity, data, token);
     }
 
-    public Task Update(Guid id, JsonPatchDocument<ResourceForChangeDto> data, CancellationToken token = default)
+    public async Task Update(Guid id, JsonPatchDocument<ResourceForChangeDto> data, CancellationToken token = default)
     {
-        throw new NotImplementedException();
+        var entity = await repository.GetResourceAsync(id, token) ?? throw new NotFoundException($"Resource '{id}' not found");
+
+        var dto = ResourceMapper.ToChangeDto(entity);
+        data.ApplyTo(dto);
+
+        await ApplyUpdateAsync(entity, dto, token);
+    }
+
+    private async Task ApplyUpdateAsync(Resource entity, ResourceForChangeDto update, CancellationToken token)
+    {
+        entity.Name = update.Name;
+        entity.Description = update.Description;
+        entity.ResourceType = update.Type;
+        entity.Data = update.Data;
+
+        await repository.SaveChangesAsync(token);
     }
 }
