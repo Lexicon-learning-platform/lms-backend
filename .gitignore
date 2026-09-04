@@ -57,3 +57,7 @@ CodeCoverage/
 TestResult.xml
 nunit-*.xml
 /.vs/
+
+# IDE files
+.idea/
+*.DotSettings.user
