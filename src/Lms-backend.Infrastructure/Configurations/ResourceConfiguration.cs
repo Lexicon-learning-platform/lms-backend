@@ -38,7 +38,7 @@ namespace Lms_backend.Infrastructure.Configurations
             builder.HasData(
                 new Resource
                 {
-                    ResourceId = SeedIds.Resources.ProGitBook,
+                    Id = SeedIds.Resources.ProGitBook,
                     CreatedAt = SeedIds.CreatedAt,
                     UpdatedAt = SeedIds.CreatedAt,
                     OwnerId = SeedIds.Users.Alex,
@@ -49,7 +49,7 @@ namespace Lms_backend.Infrastructure.Configurations
                 },
                 new Resource
                 {
-                    ResourceId = SeedIds.Resources.GitCheatSheet,
+                    Id = SeedIds.Resources.GitCheatSheet,
                     CreatedAt = SeedIds.CreatedAt,
                     UpdatedAt = SeedIds.CreatedAt,
                     OwnerId = SeedIds.Users.Alex,
@@ -60,7 +60,7 @@ namespace Lms_backend.Infrastructure.Configurations
                 },
                 new Resource
                 {
-                    ResourceId = SeedIds.Resources.MdnJavaScript,
+                    Id = SeedIds.Resources.MdnJavaScript,
                     CreatedAt = SeedIds.CreatedAt,
                     UpdatedAt = SeedIds.CreatedAt,
                     OwnerId = SeedIds.Users.Alex,
@@ -71,7 +71,7 @@ namespace Lms_backend.Infrastructure.Configurations
                 },
                 new Resource
                 {
-                    ResourceId = SeedIds.Resources.CSharpConventions,
+                    Id = SeedIds.Resources.CSharpConventions,
                     CreatedAt = SeedIds.CreatedAt,
                     UpdatedAt = SeedIds.CreatedAt,
                     OwnerId = SeedIds.Users.Alex,
@@ -82,7 +82,7 @@ namespace Lms_backend.Infrastructure.Configurations
                 },
                 new Resource
                 {
-                    ResourceId = SeedIds.Resources.MsLearnAspNetCore,
+                    Id = SeedIds.Resources.MsLearnAspNetCore,
                     CreatedAt = SeedIds.CreatedAt,
                     UpdatedAt = SeedIds.CreatedAt,
                     OwnerId = SeedIds.Users.Alex,
@@ -93,7 +93,7 @@ namespace Lms_backend.Infrastructure.Configurations
                 },
                 new Resource
                 {
-                    ResourceId = SeedIds.Resources.DockerDocs,
+                    Id = SeedIds.Resources.DockerDocs,
                     CreatedAt = SeedIds.CreatedAt,
                     UpdatedAt = SeedIds.CreatedAt,
                     OwnerId = SeedIds.Users.Alex,
@@ -104,7 +104,7 @@ namespace Lms_backend.Infrastructure.Configurations
                 },
                 new Resource
                 {
-                    ResourceId = SeedIds.Resources.OopPracticeInstructions,
+                    Id = SeedIds.Resources.OopPracticeInstructions,
                     CreatedAt = SeedIds.CreatedAt,
                     UpdatedAt = SeedIds.CreatedAt,
                     OwnerId = SeedIds.Users.Alex,
@@ -115,7 +115,7 @@ namespace Lms_backend.Infrastructure.Configurations
                 },
                 new Resource
                 {
-                    ResourceId = SeedIds.Resources.CourseSyllabusFullStack,
+                    Id = SeedIds.Resources.CourseSyllabusFullStack,
                     CreatedAt = SeedIds.CreatedAt,
                     UpdatedAt = SeedIds.CreatedAt,
                     OwnerId = SeedIds.Users.Alex,
@@ -126,7 +126,7 @@ namespace Lms_backend.Infrastructure.Configurations
                 },
                 new Resource
                 {
-                    ResourceId = SeedIds.Resources.MariaGitNotes,
+                    Id = SeedIds.Resources.MariaGitNotes,
                     CreatedAt = SeedIds.CreatedAt,
                     UpdatedAt = SeedIds.CreatedAt,
                     OwnerId = SeedIds.Users.Maria,
@@ -137,7 +137,7 @@ namespace Lms_backend.Infrastructure.Configurations
                 },
                 new Resource
                 {
-                    ResourceId = SeedIds.Resources.JohanConsoleAppTurnIn,
+                    Id = SeedIds.Resources.JohanConsoleAppTurnIn,
                     CreatedAt = SeedIds.CreatedAt,
                     UpdatedAt = SeedIds.CreatedAt,
                     OwnerId = SeedIds.Users.Johan,

@@ -7,7 +7,7 @@ namespace Lms_backend.Application.Interfaces;
 
 public interface IModulesService
 {
-    Task<(IEnumerable<ModuleDto>, PaginationMetadata?)> GetMany(SearchParams searchParams, int? page = DefaultValues.page, int? pageSize = DefaultValues.pageSize, CancellationToken token = default);
+    Task<(IEnumerable<ModuleDto>, PaginationMetadata?)> GetMany(ModuleSearchParams searchParams, int? page = DefaultValues.page, int? pageSize = DefaultValues.pageSize, CancellationToken token = default);
     Task<ModuleExtendedDto> GetOne(Guid id, CancellationToken token = default);
     Task<ModuleDto> Create(ModuleForChangeDto data, CancellationToken token = default);
     Task Update(Guid id, ModuleForChangeDto data, CancellationToken token = default);

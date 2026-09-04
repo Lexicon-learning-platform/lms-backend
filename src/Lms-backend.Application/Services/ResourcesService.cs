@@ -13,7 +13,7 @@ public class ResourcesService(IResourceRepository repository) : IResourcesServic
         throw new NotImplementedException();
     }
 
-    public Task<(IEnumerable<ResourceDto>, PaginationMetadata?)> GetMany(SearchParams searchParams, int? page = 1, int? pageSize = 10, CancellationToken token = default)
+    public Task<(IEnumerable<ResourceDto>, PaginationMetadata?)> GetMany(ResourceSearchParams searchParams, int? page = 1, int? pageSize = 10, CancellationToken token = default)
     {
         throw new NotImplementedException();
     }
