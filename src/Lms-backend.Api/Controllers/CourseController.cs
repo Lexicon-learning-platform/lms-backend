@@ -71,8 +71,15 @@ public class CourseController(ICoursesService service) : ControllerBase
     [HttpPost("{id}/resources")]
     public async Task<IActionResult> CreateCourseResource(Guid id, ResourceForChangeDto data, CancellationToken token = default)
     {
-        var result = service.AddResource(id, data, token);
+        var result = await service.AddResource(id, data, token);
         return CreatedAtRoute("GetCourseResource", new { id, result.Id }, result);
+    }
+
+    [HttpPost("{id}/resources/{resourceId}")]
+    public async Task<IActionResult> AttachCourseResource(Guid id, Guid resourceId, CancellationToken token = default)
+    {
+        var attached = await service.AttachResource(id, resourceId, token);
+        return attached ? CreatedAtRoute("GetCourseResource", new { id, resourceId }, null) : NoContent();
     }
 
     [HttpPut("{id}/resources/{resourceId}")]
@@ -92,7 +99,7 @@ public class CourseController(ICoursesService service) : ControllerBase
     [HttpDelete("{id}/resources/{resourceId}")]
     public async Task<IActionResult> RemoveCourseResource(Guid id, Guid resourceId, CancellationToken token = default)
     {
-        await service.RemoveResource(id, resourceId, token);
+        await service.DetachResource(id, resourceId, token);
         return NoContent();
     }
 }

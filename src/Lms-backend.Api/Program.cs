@@ -23,9 +23,11 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddScoped<ICourseRepository, CourseRepository>();
 builder.Services.AddScoped<IModuleRepository, ModuleRepository>();
 builder.Services.AddScoped<IActivityRepository, ActivityRepository>();
+builder.Services.AddScoped<IResourceRepository, ResourceRepository>();
 builder.Services.AddScoped<ICoursesService, CoursesService>();
 builder.Services.AddScoped<IModulesService, ModulesService>();
 builder.Services.AddScoped<IActivitiesService, ActivitiesService>();
+builder.Services.AddScoped<IResourcesService, ResourcesService>();
 
 var app = builder.Build();
 

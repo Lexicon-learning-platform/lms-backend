@@ -6,24 +6,51 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Lms_backend.Infrastructure.Services;
 
-public class ModuleRepository(AppDbContext context) : RepositoryBase<Module, ModuleResource>(context), IModuleRepository
+public class ModuleRepository(AppDbContext context) : RepositoryWithResourceBase<Module, ModuleResource>(context), IModuleRepository
 {
     protected override DbSet<Module> Set => Context.Modules;
-    protected override DbSet<ModuleResource> ResourceSet => Context.ModuleResources;
+    protected override DbSet<ModuleResource> JoinSet => Context.ModuleResources;
 
-    public Task<(IEnumerable<Module>, PaginationMetadata?)> GetModulesAsync(SearchParams searchParams, int page, int pageSize, CancellationToken token)
+    protected override IQueryable<ModuleResource> JoinsForEntity(Guid entityId) =>
+        JoinSet.Where(j => j.ModuleId == entityId);
+
+    protected override ModuleResource CreateJoin(Guid entityId, Guid resourceId) =>
+        new() { ModuleId = entityId, ResourceId = resourceId };
+
+    public Task<(IEnumerable<Module>, PaginationMetadata?)> GetModulesAsync(ModuleSearchParams searchParams, int page, int pageSize, CancellationToken token)
     {
         return GetModulesInternalAsync(searchParams, page, pageSize, false, token);
     }
 
-    public Task<(IEnumerable<Module>, PaginationMetadata?)> GetModulesReadOnlyAsync(SearchParams searchParams, int page, int pageSize, CancellationToken token)
+    public Task<(IEnumerable<Module>, PaginationMetadata?)> GetModulesReadOnlyAsync(ModuleSearchParams searchParams, int page, int pageSize, CancellationToken token)
     {
         return GetModulesInternalAsync(searchParams, page, pageSize, true, token);
     }
 
-    private async Task<(IEnumerable<Module>, PaginationMetadata?)> GetModulesInternalAsync(SearchParams searchParams, int page, int pageSize, bool readOnly, CancellationToken token)
+    private async Task<(IEnumerable<Module>, PaginationMetadata?)> GetModulesInternalAsync(ModuleSearchParams searchParams, int page, int pageSize, bool readOnly, CancellationToken token)
     {
-        throw new NotImplementedException();
+        var query = Set.AsSplitQuery().AsQueryable();
+
+        if (readOnly) query = query.AsNoTracking();
+
+        if (!string.IsNullOrWhiteSpace(searchParams.Name)) query = query.Where(m => m.Name.Contains(searchParams.Name));
+        if (!string.IsNullOrWhiteSpace(searchParams.Search)) query = query.Where(m => m.Name.Contains(searchParams.Search) || m.Description.Contains(searchParams.Search));
+        if (searchParams.CourseId.HasValue) query = query.Where(m => m.Courses.Any(cm => cm.CourseId == searchParams.CourseId.Value));
+
+        var totalCount = await query.CountAsync(token);
+        var pagination = new PaginationMetadata(totalCount, pageSize, page);
+
+        var orderedQuery = searchParams.CourseId.HasValue
+            ? query.OrderBy(m => m.Courses.First(cm => cm.CourseId == searchParams.CourseId.Value).StartTimeOffset).ThenBy(m => m.Name)
+            : query.OrderBy(m => m.Name);
+
+        var courses = await orderedQuery
+            .Include(m => m.Activities)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(token);
+
+        return (courses, pagination);
     }
 
     public Task<Module?> GetModuleAsync(Guid id, CancellationToken token)
@@ -38,6 +65,14 @@ public class ModuleRepository(AppDbContext context) : RepositoryBase<Module, Mod
 
     private async Task<Module?> GetModuleInternalAsync(Guid id, bool readOnly, CancellationToken token)
     {
-        throw new NotImplementedException();
+        var query = Set
+            .Include(m => m.Activities)
+            .Include(m => m.Resources).ThenInclude(mr => mr.Resource)
+            .AsSplitQuery()
+            .AsQueryable();
+
+        if (readOnly) query = query.AsNoTracking();
+
+        return await query.FirstOrDefaultAsync(m => m.Id == id, token);
     }
 }

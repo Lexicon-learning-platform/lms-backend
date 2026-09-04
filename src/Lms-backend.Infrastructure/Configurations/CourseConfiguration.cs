@@ -12,28 +12,48 @@ namespace Lms_backend.Infrastructure.Configurations
 
             builder.Property(c => c.CreatedAt)
                     .IsRequired()
-                    .HasColumnType("datetime2");
+                    .HasDefaultValueSql("now()");
 
             builder.Property(c => c.UpdatedAt)
-                    .HasColumnType("datetime2");
+                    .HasDefaultValueSql("now()");
 
             builder.Property(c => c.Name)
-                    .HasMaxLength(50)
-                    .HasColumnType("nvarchar");
+                    .HasMaxLength(50);
 
             builder.Property(c => c.Description)
-                    .HasMaxLength(200)
-                    .HasColumnType("nvarchar");
-
-            builder.Property(c => c.StartDate)
-                    .HasColumnType("datetime2");
-
-            builder.Property(c => c.Duration)
-                    .HasColumnType("int");
+                    .HasMaxLength(200);
 
             builder.HasData(
-
-                //Seed-data
+                new Course
+                {
+                    Id = SeedIds.Courses.FullStack,
+                    CreatedAt = SeedIds.CreatedAt,
+                    UpdatedAt = SeedIds.CreatedAt,
+                    Name = "Full-Stack Web Development",
+                    Description = "Learn to build modern web applications end-to-end, from responsive front-ends to REST APIs and databases.",
+                    StartDate = new DateOnly(2026, 2, 2),
+                    Duration = 12
+                },
+                new Course
+                {
+                    Id = SeedIds.Courses.Backend,
+                    CreatedAt = SeedIds.CreatedAt,
+                    UpdatedAt = SeedIds.CreatedAt,
+                    Name = "Backend Development with C# & .NET",
+                    Description = "Deep dive into C#, object-oriented design, and building robust web APIs with ASP.NET Core and EF Core.",
+                    StartDate = new DateOnly(2026, 2, 2),
+                    Duration = 10
+                },
+                new Course
+                {
+                    Id = SeedIds.Courses.CloudDevOps,
+                    CreatedAt = SeedIds.CreatedAt,
+                    UpdatedAt = SeedIds.CreatedAt,
+                    Name = "Cloud & DevOps Engineering",
+                    Description = "Containerize, automate, and deploy applications using Docker, CI/CD pipelines, and cloud platforms.",
+                    StartDate = new DateOnly(2026, 3, 2),
+                    Duration = 8
+                }
                 );
         }
     }
