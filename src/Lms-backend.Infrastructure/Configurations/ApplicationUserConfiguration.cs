@@ -29,6 +29,7 @@ namespace Lms_backend.Infrastructure.Configurations
                 new ApplicationUser
                 {
                     Id = SeedIds.Users.Alex,
+                    ConcurrencyStamp = "268d2cf5-1946-4e8e-b915-7f66ea6abed8",
                     CreatedAt = SeedIds.CreatedAt,
                     UpdatedAt = SeedIds.CreatedAt,
                     GivenName = "Alex",
@@ -38,6 +39,7 @@ namespace Lms_backend.Infrastructure.Configurations
                 new ApplicationUser
                 {
                     Id = SeedIds.Users.Maria,
+                    ConcurrencyStamp = "01f429a1-8204-4597-bc2a-e763ee8e1e9b",
                     CreatedAt = SeedIds.CreatedAt,
                     UpdatedAt = SeedIds.CreatedAt,
                     GivenName = "Maria",
@@ -47,6 +49,7 @@ namespace Lms_backend.Infrastructure.Configurations
                 new ApplicationUser
                 {
                     Id = SeedIds.Users.Johan,
+                    ConcurrencyStamp = "48fd668d-3a3b-40d5-9c9e-e96de93a4458",
                     CreatedAt = SeedIds.CreatedAt,
                     UpdatedAt = SeedIds.CreatedAt,
                     GivenName = "Johan",
@@ -56,13 +59,14 @@ namespace Lms_backend.Infrastructure.Configurations
                 new ApplicationUser
                 {
                     Id = SeedIds.Users.Sara,
+                    ConcurrencyStamp = "4a08b3ba-e848-4ca6-aee6-51fa69ded960",
                     CreatedAt = SeedIds.CreatedAt,
                     UpdatedAt = SeedIds.CreatedAt,
                     GivenName = "Sara",
                     LastName = "Lindqvist",
                     CourseId = SeedIds.Courses.CloudDevOps
                 }
-                );
+            );
         }
     }
 }
