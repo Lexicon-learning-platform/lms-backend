@@ -2,6 +2,7 @@ using Lms_backend.Application.Exceptions;
 using Lms_backend.Application.Interfaces;
 using Lms_backend.Application.Mappers;
 using Lms_backend.Application.Models;
+using Lms_backend.Domain.Constants;
 using Lms_backend.Infrastructure.Interfaces;
 using Lms_backend.Infrastructure.Models;
 using Microsoft.AspNetCore.JsonPatch.SystemTextJson;
@@ -15,8 +16,12 @@ public class ResourcesService(IResourceRepository repository) : IResourcesServic
         throw new NotImplementedException();
     }
 
-    public Task<(IEnumerable<ResourceDto>, PaginationMetadata?)> GetMany(ResourceSearchParams searchParams, int? page = 1, int? pageSize = 10, CancellationToken token = default)
+    public async Task<(IEnumerable<ResourceDto>, PaginationMetadata?)> GetMany(ResourceSearchParams searchParams, int? page, int? pageSize, CancellationToken token = default)
     {
+        if (page == null || page < DefaultValues.page) page = DefaultValues.page;
+        if (pageSize == null || pageSize <= DefaultValues.pageSize) pageSize = DefaultValues.pageSize;
+
+        var (entities, pagination) = await repository.GetResourcesReadOnlyAsync(searchParams, (int)page, (int)pageSize, token);
         throw new NotImplementedException();
     }
 
