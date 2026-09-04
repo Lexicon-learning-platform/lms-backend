@@ -14,12 +14,7 @@ public static class ResourceMapper
             Description = entity.Description,
             Type = entity.ResourceType,
             Data = entity.Data ?? string.Empty,
-            CreatedBy = new UserSimpleDto()
-            {
-                Id = entity.OwnerId,
-                GivenName = entity.Owner.GivenName,
-                LastName = entity.Owner.LastName,
-            },
+            CreatedBy = UserMapper.ToSimpleDto(entity.Owner),
         };
     }
 
