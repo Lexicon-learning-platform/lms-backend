@@ -12,8 +12,6 @@ namespace Lms_backend.Infrastructure.Configurations
                     .WithMany(c => c.ApplicationUsers)
                     .HasForeignKey(u => u.CourseId);
 
-            builder.HasKey(u => u.UserId);
-
             builder.Property(u => u.CreatedAt)
                     .IsRequired()
                     .HasColumnType("datetime2");

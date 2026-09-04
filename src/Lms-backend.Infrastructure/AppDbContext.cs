@@ -7,7 +7,7 @@ using Module = Lms_backend.Domain.Entities.Module;
 
 namespace Lms_backend.Infrastructure;
 
-public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbContext<ApplicationUser>(options)
+public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbContext<ApplicationUser, ApplicationRole, Guid>(options)
 {
     public DbSet<Course> Courses { get; set; }
     public DbSet<Module> Modules { get; set; }

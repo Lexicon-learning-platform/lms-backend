@@ -64,6 +64,7 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
+await RoleSeeder.SeedAsync(app.Services);
 
 app.UseHttpsRedirection();
 
