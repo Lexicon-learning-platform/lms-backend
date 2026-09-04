@@ -8,9 +8,11 @@ namespace Lms_backend.Domain.Entities
     {
         public Guid Id { get; set; }
 
-        public int UserId { get; set; }
+        public Guid UserId { get; set; }
 
-        public HashCode TokenHash { get; set; } = new HashCode();
+        public ApplicationUser User { get; set; } = default!;
+
+        public string TokenHash { get; set; } = string.Empty;
 
         public DateTime ExpiresAt { get; set; }
 
