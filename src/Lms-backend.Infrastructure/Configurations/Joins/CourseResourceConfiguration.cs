@@ -1,4 +1,5 @@
 ﻿using Lms_backend.Domain.Entities.Joins;
+using Lms_backend.Infrastructure.Configurations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -9,7 +10,7 @@ namespace Lms_backend.Infrastructure.Configurations.Joins
         public void Configure(EntityTypeBuilder<CourseResource> builder)
         {
             builder.HasOne(cr => cr.Course)
-        .WithMany(c => c.CourseResources)
+        .WithMany(c => c.Resources)
         .HasForeignKey(cr => cr.CourseId)
         .OnDelete(DeleteBehavior.ClientCascade);
 
@@ -19,6 +20,18 @@ namespace Lms_backend.Infrastructure.Configurations.Joins
         .OnDelete(DeleteBehavior.ClientCascade);
 
             builder.HasKey(j => j.Id);
+
+            builder.HasIndex(j => new { j.CourseId, j.ResourceId })
+                    .IsUnique();
+
+            builder.HasData(
+                new CourseResource
+                {
+                    Id = SeedIds.CourseResources.FullStackSyllabus,
+                    CourseId = SeedIds.Courses.FullStack,
+                    ResourceId = SeedIds.Resources.CourseSyllabusFullStack
+                }
+            );
         }
     }
 }

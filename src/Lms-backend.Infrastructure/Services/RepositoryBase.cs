@@ -1,14 +1,14 @@
+using Lms_backend.Domain.Entities;
 using Lms_backend.Domain.Interfaces;
 using Lms_backend.Infrastructure.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace Lms_backend.Infrastructure.Services;
 
-public abstract class RepositoryBase<TEntity, TResource>(AppDbContext context) : IRepositoryBase<TEntity, TResource> where TEntity : class, IEntity where TResource : class, IEntity
+public abstract class RepositoryBase<TEntity>(AppDbContext context) : IRepositoryBase<TEntity> where TEntity : class, IEntity
 {
     protected AppDbContext Context { get; } = context;
     protected abstract DbSet<TEntity> Set { get; }
-    protected abstract DbSet<TResource> ResourceSet { get; }
 
     public async Task AddAsync(TEntity entity, CancellationToken token)
     {

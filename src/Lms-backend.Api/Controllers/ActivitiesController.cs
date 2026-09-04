@@ -1,6 +1,7 @@
 using System.Text.Json;
 using Lms_backend.Application.Interfaces;
 using Lms_backend.Application.Models;
+using Lms_backend.Domain.Enums;
 using Lms_backend.Infrastructure.Models;
 using Microsoft.AspNetCore.JsonPatch.SystemTextJson;
 using Microsoft.AspNetCore.Mvc;
@@ -13,9 +14,9 @@ public class ActivitiesController(IActivitiesService service) : ControllerBase
 {
     // Base activity endpoints
     [HttpGet]
-    public async Task<IActionResult> GetActivities(string? name, string? search, int? page, int? pageSize, CancellationToken token = default)
+    public async Task<IActionResult> GetActivities(string? name, string? search, ActivityType? type, int? page, int? pageSize, CancellationToken token = default)
     {
-        var (result, pagination) = await service.GetMany(new SearchParams(name, search), page, pageSize, token);
+        var (result, pagination) = await service.GetMany(new ActivitySearchParams(name, search, type), page, pageSize, token);
         if (pagination != null) Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(pagination));
         return Ok(result);
     }
@@ -71,8 +72,15 @@ public class ActivitiesController(IActivitiesService service) : ControllerBase
     [HttpPost("{id}/resources")]
     public async Task<IActionResult> CreateActivityResource(Guid id, ResourceForChangeDto data, CancellationToken token = default)
     {
-        var result = service.AddResource(id, data, token);
+        var result = await service.AddResource(id, data, token);
         return CreatedAtRoute("GetActivityResource", new { id, result.Id }, result);
+    }
+
+    [HttpPost("{id}/resources/{resourceId}")]
+    public async Task<IActionResult> AttachActivityResource(Guid id, Guid resourceId, CancellationToken token = default)
+    {
+        var attached = await service.AttachResource(id, resourceId, token);
+        return attached ? CreatedAtRoute("GetActivityResource", new { id, resourceId }, null) : NoContent();
     }
 
     [HttpPut("{id}/resources/{resourceId}")]
@@ -92,7 +100,7 @@ public class ActivitiesController(IActivitiesService service) : ControllerBase
     [HttpDelete("{id}/resources/{resourceId}")]
     public async Task<IActionResult> RemoveActivityResource(Guid id, Guid resourceId, CancellationToken token = default)
     {
-        await service.RemoveResource(id, resourceId, token);
+        await service.DetachResource(id, resourceId, token);
         return NoContent();
     }
 }
