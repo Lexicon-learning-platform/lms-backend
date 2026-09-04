@@ -14,27 +14,25 @@ namespace Lms_backend.Infrastructure.Configurations
         {
             builder.HasKey(t => t.Id);
 
+            builder.HasOne(t => t.User)
+                    .WithMany()
+                    .HasForeignKey(t => t.UserId);
+
             builder.Property(t => t.UserId)
-                    .IsRequired()
-                    .HasColumnType("int");
+                    .IsRequired();
 
             builder.Property(t => t.TokenHash)
-                    .IsRequired()
-                    .HasColumnType("nvarchar");
-            
-            builder.Property(t => t.ExpiresAt)
-                    .IsRequired()
-                    .HasColumnType("datetime2");
+                    .IsRequired();
 
-            builder.Property(t => t.RevokedAt)
-                    .HasColumnType("datetime2");
+            builder.Property(t => t.ExpiresAt)
+                    .IsRequired();
+
+            builder.Property(t => t.RevokedAt);
 
             builder.Property(t => t.DeviceInfo)
-                    .HasMaxLength(50)
-                    .HasColumnType("nvarchar");
+                    .HasMaxLength(50);
 
-            builder.Property(t => t.LastUsedAt)
-                    .HasColumnType("datetime2");
+            builder.Property(t => t.LastUsedAt);
 
         }
     }
