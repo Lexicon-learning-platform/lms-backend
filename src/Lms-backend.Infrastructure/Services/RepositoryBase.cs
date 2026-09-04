@@ -31,7 +31,7 @@ public abstract class RepositoryBase<TEntity>(AppDbContext context) : IRepositor
         return [.. ids.Except(found)];
     }
 
-    public async Task<bool> SaveChangesAsync(TEntity entity, CancellationToken token)
+    public async Task<bool> SaveChangesAsync(CancellationToken token)
     {
         return await Context.SaveChangesAsync(token) > 0;
     }
