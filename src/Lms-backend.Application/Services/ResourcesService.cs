@@ -1,4 +1,6 @@
+using Lms_backend.Application.Exceptions;
 using Lms_backend.Application.Interfaces;
+using Lms_backend.Application.Mappers;
 using Lms_backend.Application.Models;
 using Lms_backend.Infrastructure.Interfaces;
 using Lms_backend.Infrastructure.Models;
@@ -18,9 +20,10 @@ public class ResourcesService(IResourceRepository repository) : IResourcesServic
         throw new NotImplementedException();
     }
 
-    public Task<ResourceDto> GetOne(Guid id, CancellationToken token = default)
+    public async Task<ResourceDto> GetOne(Guid id, CancellationToken token = default)
     {
-        throw new NotImplementedException();
+        var entity = await repository.GetResourceReadOnlyAsync(id, token) ?? throw new NotFoundException($"Resource '{id}' not found");
+        return ResourceMapper.ToStandardDto(entity);
     }
 
     public Task Remove(Guid id, CancellationToken token = default)
