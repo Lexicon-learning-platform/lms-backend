@@ -28,7 +28,7 @@ namespace Lms_backend.Infrastructure.Configurations
             builder.HasData(
                 new ApplicationUser
                 {
-                    UserId = SeedIds.Users.Alex,
+                    Id = SeedIds.Users.Alex,
                     CreatedAt = SeedIds.CreatedAt,
                     UpdatedAt = SeedIds.CreatedAt,
                     GivenName = "Alex",
@@ -37,7 +37,7 @@ namespace Lms_backend.Infrastructure.Configurations
                 },
                 new ApplicationUser
                 {
-                    UserId = SeedIds.Users.Maria,
+                    Id = SeedIds.Users.Maria,
                     CreatedAt = SeedIds.CreatedAt,
                     UpdatedAt = SeedIds.CreatedAt,
                     GivenName = "Maria",
@@ -46,7 +46,7 @@ namespace Lms_backend.Infrastructure.Configurations
                 },
                 new ApplicationUser
                 {
-                    UserId = SeedIds.Users.Johan,
+                    Id = SeedIds.Users.Johan,
                     CreatedAt = SeedIds.CreatedAt,
                     UpdatedAt = SeedIds.CreatedAt,
                     GivenName = "Johan",
@@ -55,7 +55,7 @@ namespace Lms_backend.Infrastructure.Configurations
                 },
                 new ApplicationUser
                 {
-                    UserId = SeedIds.Users.Sara,
+                    Id = SeedIds.Users.Sara,
                     CreatedAt = SeedIds.CreatedAt,
                     UpdatedAt = SeedIds.CreatedAt,
                     GivenName = "Sara",
