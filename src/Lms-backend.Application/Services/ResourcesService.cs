@@ -23,7 +23,7 @@ public class ResourcesService(IResourceRepository repository) : IResourcesServic
         if (pageSize == null || pageSize <= DefaultValues.pageSize) pageSize = DefaultValues.pageSize;
 
         var (entities, pagination) = await repository.GetResourcesReadOnlyAsync(searchParams, (int)page, (int)pageSize, token);
-        return (ResourceMapper.ToStandardDtoList(entities), pagination);
+        return (ResourceMapper.ToStandardDto(entities), pagination);
     }
 
     public async Task<ResourceDto> GetOne(Guid id, CancellationToken token = default)

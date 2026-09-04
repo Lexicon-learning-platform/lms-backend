@@ -18,7 +18,7 @@ public static class ResourceMapper
         };
     }
 
-    public static IEnumerable<ResourceDto> ToStandardDtoList(IEnumerable<Resource> entities)
+    public static IEnumerable<ResourceDto> ToStandardDto(IEnumerable<Resource> entities)
     {
         foreach (var item in entities)
         {
