@@ -21,7 +21,7 @@ public class ResourceRepository(AppDbContext context) : RepositoryBase<Resource>
 
     private async Task<Resource?> GetResourceInternalAsync(Guid id, bool readOnly, CancellationToken token)
     {
-        var query = Set.AsQueryable();
+        var query = Set.Include(r => r.Owner).AsQueryable();
 
         if (readOnly) query = query.AsNoTracking();
 
@@ -40,7 +40,7 @@ public class ResourceRepository(AppDbContext context) : RepositoryBase<Resource>
 
     private async Task<(IEnumerable<Resource>, PaginationMetadata?)> GetResourcesInternalAsync(ResourceSearchParams searchParams, int page, int pageSize, bool readOnly, CancellationToken token)
     {
-        var query = Set.AsSplitQuery().AsQueryable();
+        var query = Set.Include(r => r.Owner).AsSplitQuery().AsQueryable();
 
         if (readOnly) query = query.AsNoTracking();
 
