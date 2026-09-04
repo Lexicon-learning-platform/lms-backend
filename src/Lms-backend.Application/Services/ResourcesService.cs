@@ -31,9 +31,13 @@ public class ResourcesService(IResourceRepository repository) : IResourcesServic
         return ResourceMapper.ToStandardDto(entity);
     }
 
-    public Task Remove(Guid id, CancellationToken token = default)
+    public async Task Remove(Guid id, CancellationToken token = default)
     {
-        throw new NotImplementedException();
+        var entity = await repository.GetResourceAsync(id, token);
+        if (entity == null) return;
+
+        repository.Delete(entity);
+        await repository.SaveChangesAsync(token);
     }
 
     public Task Update(Guid id, ResourceForChangeDto data, CancellationToken token = default)
