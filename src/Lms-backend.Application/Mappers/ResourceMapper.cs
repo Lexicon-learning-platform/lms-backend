@@ -22,4 +22,12 @@ public static class ResourceMapper
             },
         };
     }
+
+    public static IEnumerable<ResourceDto> ToStandardDtoList(IEnumerable<Resource> entities)
+    {
+        foreach (var item in entities)
+        {
+            yield return ToStandardDto(item);
+        }
+    }
 }
