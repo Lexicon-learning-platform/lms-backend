@@ -24,8 +24,8 @@ namespace Lms_backend.Api.Controllers
         {
             
             var result = service.Login(model);
-            
-            
+
+
             if (result == null)
                 return Unauthorized("Ogiltiga användaruppgifter.");
 
@@ -68,11 +68,11 @@ namespace Lms_backend.Api.Controllers
         [HttpPost("logout")]
         public IActionResult Logout()
         {
+            bool result;
             var refreshToken = Request.Cookies["refreshToken"];
             if (!string.IsNullOrEmpty(refreshToken))
             {
-                service.Logout();
-                //TODO: Ta bort refresh token från databas istället för från minnet
+                result = service.Logout(refreshToken);
                 Response.Cookies.Delete("refreshToken");
             }
             return Ok("Utloggad.");
