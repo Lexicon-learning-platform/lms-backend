@@ -1,3 +1,4 @@
+using Lms_backend.Api.Middleware;
 using Lms_backend.Application.Interfaces;
 using Lms_backend.Application.Services;
 using Lms_backend.Domain.Entities;
@@ -8,6 +9,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Register global exception handler
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
 
 // Add services to the container.
 
@@ -61,6 +66,9 @@ builder.Services.AddScoped<IActivitiesService, ActivitiesService>();
 builder.Services.AddScoped<IResourcesService, ResourcesService>();
 
 var app = builder.Build();
+
+// Use global exception handler
+app.UseExceptionHandler();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
