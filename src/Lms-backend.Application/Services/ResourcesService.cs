@@ -2,6 +2,7 @@ using Lms_backend.Application.Exceptions;
 using Lms_backend.Application.Interfaces;
 using Lms_backend.Application.Mappers;
 using Lms_backend.Application.Models;
+using Lms_backend.Application.Validators;
 using Lms_backend.Domain.Constants;
 using Lms_backend.Domain.Entities;
 using Lms_backend.Infrastructure.Interfaces;
@@ -59,6 +60,8 @@ public class ResourcesService(IResourceRepository repository) : IResourcesServic
 
     private async Task ApplyUpdateAsync(Resource entity, ResourceForChangeDto update, CancellationToken token)
     {
+        ResourceValidator.ValidateChangeDto(update);
+
         entity.Name = update.Name;
         entity.Description = update.Description;
         entity.ResourceType = update.Type;
