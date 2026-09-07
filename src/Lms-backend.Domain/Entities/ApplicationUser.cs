@@ -1,11 +1,11 @@
 using Lms_backend.Domain.Entities.Joins;
+using Lms_backend.Domain.Interfaces;
+using Microsoft.AspNetCore.Identity;
 
 namespace Lms_backend.Domain.Entities
 {
-    public record ApplicationUser
+    public class ApplicationUser : IdentityUser<Guid>, IEntity
     {
-        public Guid UserId { get; set; }
-
         public DateTime CreatedAt { get; set; }
 
         public DateTime UpdatedAt { get; set; }

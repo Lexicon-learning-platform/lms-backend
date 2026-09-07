@@ -62,6 +62,7 @@ namespace Lms_backend.Api.Controllers
 );
 
             refreshTokens.Add(refreshToken);
+            //TODO: Spara refresh token i databas istället för i minnet
 
             //Make cookie
             var cookieOptions = new CookieOptions
@@ -87,6 +88,7 @@ namespace Lms_backend.Api.Controllers
             var handler = new JwtSecurityTokenHandler();
             var token = handler.ReadJwtToken(refreshToken);
             if (!refreshTokens.Any(t => t.RawData == refreshToken))
+                //TODO: Kontrollera refresh token i databas istället för i minnet
                 return Unauthorized("Ogiltig refresh token.");
             var claims = token.Claims.ToList();
             var accessKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtSettings:AccessSecret"]!));
@@ -111,6 +113,7 @@ namespace Lms_backend.Api.Controllers
             if (!string.IsNullOrEmpty(refreshToken))
             {
                 refreshTokens.RemoveAll(t => t.RawData == refreshToken);
+                //TODO: Ta bort refresh token från databas istället för från minnet
                 Response.Cookies.Delete("refreshToken");
             }
             return Ok("Utloggad.");
