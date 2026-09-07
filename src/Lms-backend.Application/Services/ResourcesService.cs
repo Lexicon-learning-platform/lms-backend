@@ -13,9 +13,16 @@ namespace Lms_backend.Application.Services;
 
 public class ResourcesService(IResourceRepository repository) : IResourcesService
 {
-    public Task<ResourceDto> Create(ResourceForChangeDto data, CancellationToken token = default)
+    public async Task<ResourceDto> Create(ResourceForChangeDto data, CancellationToken token = default)
     {
-        throw new NotImplementedException();
+        ResourceValidator.ValidateChangeDto(data);
+
+        var entity = ResourceMapper.ToEntity(data);
+
+        await repository.AddAsync(entity, token);
+        await repository.SaveChangesAsync(token);
+
+        return ResourceMapper.ToStandardDto(entity);
     }
 
     public async Task<(IEnumerable<ResourceDto>, PaginationMetadata?)> GetMany(ResourceSearchParams searchParams, int? page, int? pageSize, CancellationToken token = default)

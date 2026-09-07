@@ -36,4 +36,15 @@ public static class ResourceMapper
             Data = entity.Data ?? string.Empty,
         };
     }
+
+    public static Resource ToEntity(ResourceForChangeDto data)
+    {
+        return new Resource()
+        {
+            Name = data.Name,
+            Description = data.Description,
+            ResourceType = data.Type,
+            Data = data.Data,
+        };
+    }
 }
