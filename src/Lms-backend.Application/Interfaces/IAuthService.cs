@@ -12,7 +12,7 @@ namespace Lms_backend.Application.Interfaces
         List<JwtSecurityToken> Login(LoginModel model);
 
         JwtSecurityToken GetNewToken(string refreshToken);
-        Task<IActionResult> Logout();
+        bool Logout(string refreshToken);
 
     }
 }

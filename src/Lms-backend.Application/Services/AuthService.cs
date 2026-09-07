@@ -14,9 +14,6 @@ namespace Lms_backend.Application.Services
     {
         private readonly IConfiguration _configuration = configuration;
 
-        private List<JwtSecurityToken> refreshTokens = new List<JwtSecurityToken>();
-        //This will be redundant when we implement a database to store refresh tokens
-
         public List<JwtSecurityToken> Login(LoginModel model)
         {
             //Check if the user exists and the password is correct
@@ -56,22 +53,19 @@ namespace Lms_backend.Application.Services
 );
             //TODO: Spara refresh token i databas istället för i minnet
 
+            string tokenString = new JwtSecurityTokenHandler().WriteToken(refreshToken);
+
+            repository.StoreRefreshTokenAsync(tokenString, model.Username);
 
             return new List<JwtSecurityToken> { accessToken, refreshToken };
         }
 
-        public Task<IActionResult> Logout()
-        {
-            //Delete the refresh token from the database or in-memory list
-            throw new NotImplementedException();
-        }
 
         public JwtSecurityToken GetNewToken(string refreshToken)
         {
             var handler = new JwtSecurityTokenHandler();
             var token = handler.ReadJwtToken(refreshToken);
-            if (!refreshTokens.Any(t => t.RawData == refreshToken))
-                //TODO: Kontrollera refresh token i databas istället för i minnet
+            if (!repository.IsRefreshTokenValidAsync(refreshToken).Result)
                 return null;
             var claims = token.Claims.ToList();
             var accessKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtSettings:AccessSecret"]!));
@@ -87,5 +81,12 @@ namespace Lms_backend.Application.Services
             return newAccessToken;
 
         }
+
+        public bool Logout(string refreshToken)
+        {
+            //Delete the refresh token from the database or in-memory list
+            return repository.RevokeRefreshTokenAsync(refreshToken).Result;
+        }
+
     }
 }
