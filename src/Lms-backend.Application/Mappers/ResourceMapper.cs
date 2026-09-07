@@ -37,7 +37,7 @@ public static class ResourceMapper
         };
     }
 
-    public static Resource ToEntity(ResourceForChangeDto data)
+    public static Resource ToEntity(ResourceForChangeDto data, Guid creatorId)
     {
         return new Resource()
         {
@@ -45,6 +45,7 @@ public static class ResourceMapper
             Description = data.Description,
             ResourceType = data.Type,
             Data = data.Data,
+            OwnerId = creatorId,
         };
     }
 }

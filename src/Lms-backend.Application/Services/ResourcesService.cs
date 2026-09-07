@@ -13,19 +13,21 @@ namespace Lms_backend.Application.Services;
 
 public class ResourcesService(IResourceRepository repository) : IResourcesService
 {
-    public async Task<ResourceDto> Create(ResourceForChangeDto data, CancellationToken token = default)
+    public async Task<ResourceDto> Create(ResourceForChangeDto data, Guid userId, bool canModerate, CancellationToken token = default)
     {
         ResourceValidator.ValidateChangeDto(data);
 
-        var entity = ResourceMapper.ToEntity(data);
+        var entity = ResourceMapper.ToEntity(data, userId);
 
         await repository.AddAsync(entity, token);
         await repository.SaveChangesAsync(token);
 
-        return ResourceMapper.ToStandardDto(entity);
+        // refetch to properly fill in user info
+        var createdEntity = await repository.GetResourceReadOnlyAsync(entity.Id, token);
+        return ResourceMapper.ToStandardDto(createdEntity!);
     }
 
-    public async Task<(IEnumerable<ResourceDto>, PaginationMetadata?)> GetMany(ResourceSearchParams searchParams, int? page, int? pageSize, CancellationToken token = default)
+    public async Task<(IEnumerable<ResourceDto>, PaginationMetadata?)> GetMany(ResourceSearchParams searchParams, int? page = 1, int? pageSize = 10, CancellationToken token = default)
     {
         if (page == null || page < DefaultValues.page) page = DefaultValues.page;
         if (pageSize == null || pageSize <= DefaultValues.pageSize) pageSize = DefaultValues.pageSize;
@@ -40,24 +42,27 @@ public class ResourcesService(IResourceRepository repository) : IResourcesServic
         return ResourceMapper.ToStandardDto(entity);
     }
 
-    public async Task Remove(Guid id, CancellationToken token = default)
+    public async Task Remove(Guid id, Guid userId, bool canModerate, CancellationToken token = default)
     {
         var entity = await repository.GetResourceAsync(id, token);
         if (entity == null) return;
+        EnsureOwnerOrModerator(entity, userId, canModerate);
 
         repository.Delete(entity);
         await repository.SaveChangesAsync(token);
     }
 
-    public async Task Update(Guid id, ResourceForChangeDto data, CancellationToken token = default)
+    public async Task Update(Guid id, ResourceForChangeDto data, Guid userId, bool canModerate, CancellationToken token = default)
     {
         var entity = await repository.GetResourceAsync(id, token) ?? throw new NotFoundException($"Resource '{id}' not found");
+        EnsureOwnerOrModerator(entity, userId, canModerate);
         await ApplyUpdateAsync(entity, data, token);
     }
 
-    public async Task Update(Guid id, JsonPatchDocument<ResourceForChangeDto> data, CancellationToken token = default)
+    public async Task Update(Guid id, JsonPatchDocument<ResourceForChangeDto> data, Guid userId, bool canModerate, CancellationToken token = default)
     {
         var entity = await repository.GetResourceAsync(id, token) ?? throw new NotFoundException($"Resource '{id}' not found");
+        EnsureOwnerOrModerator(entity, userId, canModerate);
 
         var dto = ResourceMapper.ToChangeDto(entity);
         data.ApplyTo(dto);
@@ -75,5 +80,12 @@ public class ResourcesService(IResourceRepository repository) : IResourcesServic
         entity.Data = update.Data;
 
         await repository.SaveChangesAsync(token);
+    }
+
+    private static void EnsureOwnerOrModerator(Resource entity, Guid currentUserId, bool canModerate)
+    {
+        if (canModerate) return;
+
+        if (entity.OwnerId != currentUserId) throw new ForbiddenException("You can only modify your own resources");
     }
 }
