@@ -24,16 +24,18 @@ namespace Lms_backend.Infrastructure.Configurations
                     .HasDefaultValueSql("now()");
 
             builder.Property(r => r.Name)
+                    .IsRequired()
                     .HasMaxLength(50);
 
             builder.Property(r => r.Description)
+                    .IsRequired()
                     .HasMaxLength(200);
 
             builder.Property(r => r.ResourceType)
                     .IsRequired();
 
             builder.Property(r => r.Data)
-                    .HasMaxLength(200);
+                    .HasMaxLength(2000);
 
             builder.HasData(
                 new Resource

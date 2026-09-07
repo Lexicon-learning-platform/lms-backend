@@ -1,6 +1,7 @@
 using System.Text.Json;
 using Lms_backend.Application.Interfaces;
 using Lms_backend.Application.Models;
+using Lms_backend.Domain.Constants;
 using Lms_backend.Domain.Enums;
 using Lms_backend.Infrastructure.Models;
 using Microsoft.AspNetCore.JsonPatch.SystemTextJson;
@@ -12,6 +13,8 @@ namespace Lms_backend.Api.Controllers;
 [Route("api/resources")]
 public class ResourceController(IResourcesService service) : ControllerBase
 {
+    // TODO: replace usage of this var with User.GetUserId() once auth is implemented
+    private readonly Guid testingUserId = Guid.Parse("44444444-0000-0000-0000-000000000002");
     // Base resource endpoints
     [HttpGet]
     public async Task<IActionResult> GetResources(string? name, string? search, ResourceType type, int? page, int? pageSize, CancellationToken token = default)
@@ -31,28 +34,30 @@ public class ResourceController(IResourcesService service) : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CreateResource(ResourceForChangeDto data, CancellationToken token = default)
     {
-        var result = await service.Create(data, token);
+        var result = await service.Create(data, testingUserId, CanModerate, token);
         return CreatedAtRoute("GetResource", new { result.Id }, result);
     }
 
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateResource(Guid id, ResourceForChangeDto data, CancellationToken token = default)
     {
-        await service.Update(id, data, token);
+        await service.Update(id, data, testingUserId, CanModerate, token);
         return NoContent();
     }
 
     [HttpPatch("{id}")]
     public async Task<IActionResult> PatchResource(Guid id, JsonPatchDocument<ResourceForChangeDto> data, CancellationToken token = default)
     {
-        await service.Update(id, data, token);
+        await service.Update(id, data, testingUserId, CanModerate, token);
         return NoContent();
     }
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> RemoveResource(Guid id, CancellationToken token = default)
     {
-        await service.Remove(id, token);
+        await service.Remove(id, testingUserId, CanModerate, token);
         return NoContent();
     }
+
+    private bool CanModerate => User.IsInRole(Roles.Admin);
 }
