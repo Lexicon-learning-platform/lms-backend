@@ -4,6 +4,7 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using Lms_backend.Domain.Entities;
 
 namespace Lms_backend.Api.Controllers
 {
@@ -119,12 +120,5 @@ namespace Lms_backend.Api.Controllers
             return Ok("Utloggad.");
         }
 
-
-        public class LoginModel
-        {
-            public string Username { get; set; } = string.Empty;
-            public string Role { get; set; } = string.Empty;
-            public string Password { get; set; } = string.Empty;
-        }
     }
 }
