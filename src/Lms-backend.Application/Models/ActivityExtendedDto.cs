@@ -9,5 +9,5 @@ public class ActivityExtendedDto
     public string Description { get; set; } = string.Empty;
     public int StartOffest { get; set; }
     public int Duration { get; set; }
-    public ResourceSimpleDto[] Resources { get; set; } = [];
+    public IEnumerable<ResourceSimpleDto> Resources { get; set; } = [];
 }

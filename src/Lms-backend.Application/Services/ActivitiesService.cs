@@ -1,3 +1,4 @@
+using Lms_backend.Application.Exceptions;
 using Lms_backend.Application.Interfaces;
 using Lms_backend.Application.Mappers;
 using Lms_backend.Application.Models;
@@ -34,9 +35,12 @@ public class ActivitiesService(IActivityRepository repository) : IActivitiesServ
         return (ActivityMapper.ToStandardDto(entities), pagination);
     }
 
-    public Task<ActivityExtendedDto> GetOne(Guid moduleId, Guid id, CancellationToken token = default)
+    public async Task<ActivityExtendedDto> GetOne(Guid moduleId, Guid id, CancellationToken token = default)
     {
-        throw new NotImplementedException();
+        var entity = await repository.GetActivityReadOnlyAsync(moduleId, id, token) ?? throw new NotFoundException($"Activity '{id}' not found");
+        var resources = await repository.GetResourcesAsync(id, token) ?? [];
+
+        return ActivityMapper.ToExtendedDto(entity, resources);
     }
 
     public Task Remove(Guid moduleId, Guid id, CancellationToken token = default)

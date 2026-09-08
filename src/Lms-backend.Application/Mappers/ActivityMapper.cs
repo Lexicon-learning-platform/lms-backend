@@ -23,4 +23,19 @@ public static class ActivityMapper
             yield return ToStandardDto(item);
         }
     }
+
+    public static ActivityExtendedDto ToExtendedDto(Activity entity, IEnumerable<Resource> resources)
+    {
+        return new ActivityExtendedDto()
+        {
+            Id = entity.Id,
+            CreatedAt = entity.CreatedAt,
+            UpdatedAt = entity.UpdatedAt,
+            Name = entity.Name,
+            Description = entity.Description,
+            StartOffest = entity.StartTimeOffset,
+            Duration = entity.DurationMinutes,
+            Resources = ResourceMapper.ToSimpleDto(resources),
+        };
+    }
 }
