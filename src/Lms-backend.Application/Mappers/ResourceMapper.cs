@@ -37,6 +37,25 @@ public static class ResourceMapper
         };
     }
 
+    public static ResourceSimpleDto ToSimpleDto(Resource entity)
+    {
+        return new ResourceSimpleDto()
+        {
+            Id = entity.Id,
+            CreatedBy = UserMapper.ToSimpleDto(entity.Owner),
+            Name = entity.Name,
+            Type = entity.ResourceType,
+        };
+    }
+
+    public static IEnumerable<ResourceSimpleDto> ToSimpleDto(IEnumerable<Resource> entities)
+    {
+        foreach (var item in entities)
+        {
+            yield return ToSimpleDto(item);
+        }
+    }
+
     public static Resource ToEntity(ResourceForChangeDto data, Guid creatorId)
     {
         return new Resource()
