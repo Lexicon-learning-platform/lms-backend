@@ -12,7 +12,7 @@ namespace Lms_backend.Api.Controllers;
 public class CourseController(ICoursesService service) : ControllerBase
 {
     // Base course endpoints
-    [HttpGet("user")]
+    [HttpGet("my-course")]
     public async Task<IActionResult> GetCurrentUserCourse(CancellationToken token = default)
     {
         // TODO: Get user ID from claims when auth is finished
