@@ -63,7 +63,7 @@ public class ActivityRepository(AppDbContext context) : RepositoryWithResourceBa
     {
         var query = Set
             .Where(a => a.ModuleId == moduleId)
-            .Include(a => a.Resources).ThenInclude(ar => ar.Resource)
+            .Include(a => a.Resources).ThenInclude(ar => ar.Resource).ThenInclude(arr => arr.Owner)
             .AsSplitQuery()
             .AsQueryable();
 

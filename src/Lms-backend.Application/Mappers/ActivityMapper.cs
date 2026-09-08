@@ -26,7 +26,7 @@ public static class ActivityMapper
         }
     }
 
-    public static ActivityExtendedDto ToExtendedDto(Activity entity, IEnumerable<Resource> resources)
+    public static ActivityExtendedDto ToExtendedDto(Activity entity)
     {
         return new ActivityExtendedDto()
         {
@@ -38,7 +38,7 @@ public static class ActivityMapper
             StartOffset = entity.StartTimeOffset,
             Duration = entity.DurationMinutes,
             Type = entity.ActivityType,
-            Resources = ResourceMapper.ToSimpleDto(resources),
+            Resources = entity.Resources.Select(r=> ResourceMapper.ToSimpleDto(r.Resource)),
         };
     }
 

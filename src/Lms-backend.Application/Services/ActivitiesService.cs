@@ -47,9 +47,8 @@ public class ActivitiesService(IActivityRepository repository) : IActivitiesServ
     public async Task<ActivityExtendedDto> GetOne(Guid moduleId, Guid id, CancellationToken token = default)
     {
         var entity = await repository.GetActivityReadOnlyAsync(moduleId, id, token) ?? throw new NotFoundException($"Activity '{id}' not found");
-        var resources = await repository.GetResourcesAsync(id, token) ?? [];
 
-        return ActivityMapper.ToExtendedDto(entity, resources);
+        return ActivityMapper.ToExtendedDto(entity);
     }
 
     public async Task Remove(Guid moduleId, Guid id, CancellationToken token = default)
