@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Lms_backend.Domain.Entities;
 
 namespace Lms_backend.Infrastructure.Interfaces
 {
-    public interface IAuthRepository
+    public interface IAuthRepository : IRepositoryBase<RefreshToken>
     {
-        Task<bool> StoreRefreshTokenAsync(string refreshToken, string userName);
+        Task<bool> StoreRefreshTokenAsync(string refreshToken, Guid userId);
         Task<bool> IsRefreshTokenValidAsync(string refreshToken);
         Task<bool> RevokeRefreshTokenAsync(string refreshToken);
     }

@@ -1,7 +1,6 @@
 ﻿using Lms_backend.Application.Interfaces;
 using Lms_backend.Domain.Entities;
 using Lms_backend.Infrastructure.Interfaces;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -51,11 +50,15 @@ namespace Lms_backend.Application.Services
                 expires: DateTime.UtcNow.AddDays(7),
                 signingCredentials: refreshCreds
 );
-            //TODO: Spara refresh token i databas istället för i minnet
+
+            //TODO: Get user ID from database and store it with the refresh token in the database or in-memory list
+
+            Guid UserId = Guid.NewGuid(); // Replace with actual user ID from database
+
 
             string tokenString = new JwtSecurityTokenHandler().WriteToken(refreshToken);
 
-            repository.StoreRefreshTokenAsync(tokenString, model.Username);
+            repository.StoreRefreshTokenAsync(tokenString, UserId);
 
             return new List<JwtSecurityToken> { accessToken, refreshToken };
         }
