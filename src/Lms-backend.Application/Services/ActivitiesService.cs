@@ -11,11 +11,20 @@ using Microsoft.AspNetCore.JsonPatch.SystemTextJson;
 
 namespace Lms_backend.Application.Services;
 
-public class ActivitiesService(IActivityRepository repository) : IActivitiesService
+public class ActivitiesService(IActivityRepository repository, IResourceRepository resourceRepository) : IActivitiesService
 {
-    public Task<ResourceDto> AddResource(Guid moduleId, Guid id, ResourceForChangeDto data, CancellationToken token = default)
+    public async Task<ResourceDto> AddResource(Guid moduleId, Guid id, Guid userId, ResourceForChangeDto data, CancellationToken token = default)
     {
-        throw new NotImplementedException();
+        var entity = await repository.GetActivityAsync(moduleId, id, token) ?? throw new NotFoundException($"Activity '{id}' not found");
+        ResourceValidator.ValidateChangeDto(data);
+
+        var resource = ResourceMapper.ToEntity(data, userId);
+        await resourceRepository.AddAsync(resource, token);
+        await repository.AttachResourceAsync(entity.Id, resource.Id, token);
+        await repository.SaveChangesAsync(token);
+
+        var createdResource = await resourceRepository.GetResourceReadOnlyAsync(resource.Id, token);
+        return ResourceMapper.ToStandardDto(createdResource!);
     }
 
     public async Task<bool> AttachResource(Guid moduleId, Guid id, Guid resourceId, CancellationToken token = default)

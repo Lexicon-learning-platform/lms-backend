@@ -13,7 +13,7 @@ public interface IActivitiesService
     Task Update(Guid moduleId, Guid id, ActivityForChangeDto data, CancellationToken token = default);
     Task Update(Guid moduleId, Guid id, JsonPatchDocument<ActivityForChangeDto> data, CancellationToken token = default);
     Task Remove(Guid moduleId, Guid id, CancellationToken token = default);
-    Task<ResourceDto> AddResource(Guid moduleId, Guid id, ResourceForChangeDto data, CancellationToken token = default);
+    Task<ResourceDto> AddResource(Guid moduleId, Guid id, Guid userId, ResourceForChangeDto data, CancellationToken token = default);
     Task<bool> AttachResource(Guid moduleId, Guid id, Guid resourceId, CancellationToken token = default);
     Task UpdateResource(Guid moduleId, Guid id, Guid resourceId, ResourceForChangeDto data, CancellationToken token = default);
     Task UpdateResource(Guid moduleId, Guid id, Guid resourceId, JsonPatchDocument<ResourceForChangeDto> data, CancellationToken token = default);
