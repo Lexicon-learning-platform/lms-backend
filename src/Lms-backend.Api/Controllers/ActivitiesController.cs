@@ -12,6 +12,8 @@ namespace Lms_backend.Api.Controllers;
 [Route("api/modules/{moduleId}/activities")]
 public class ActivitiesController(IActivitiesService service) : ControllerBase
 {
+    // TODO: replace usage of this var with User.GetUserId() once auth is implemented
+    private readonly Guid testingUserId = Guid.Parse("44444444-0000-0000-0000-000000000002");
     // Base activity endpoints
     [HttpGet]
     public async Task<IActionResult> GetActivities([FromRoute] Guid moduleId, [FromQuery] string? name, [FromQuery] string? search, [FromQuery] ActivityType? type, [FromQuery] int? page, [FromQuery] int? pageSize, CancellationToken token = default)
@@ -31,8 +33,8 @@ public class ActivitiesController(IActivitiesService service) : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CreateActivity([FromRoute] Guid moduleId, [FromBody] ActivityForChangeDto data, CancellationToken token = default)
     {
-        var result = await service.Create(moduleId, data, token);
-        return CreatedAtRoute("GetActivity", new { result.Id }, result);
+        var result = await service.Create(moduleId, testingUserId, data, token);
+        return CreatedAtRoute("GetActivity", new { moduleId, result.Id }, result);
     }
 
     [HttpPut("{id}")]

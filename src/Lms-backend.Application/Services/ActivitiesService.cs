@@ -2,6 +2,7 @@ using Lms_backend.Application.Exceptions;
 using Lms_backend.Application.Interfaces;
 using Lms_backend.Application.Mappers;
 using Lms_backend.Application.Models;
+using Lms_backend.Application.Validators;
 using Lms_backend.Domain.Constants;
 using Lms_backend.Infrastructure.Interfaces;
 using Lms_backend.Infrastructure.Models;
@@ -21,9 +22,16 @@ public class ActivitiesService(IActivityRepository repository) : IActivitiesServ
         throw new NotImplementedException();
     }
 
-    public Task<ActivityDto> Create(Guid moduleId, ActivityForChangeDto data, CancellationToken token = default)
+    public async Task<ActivityDto> Create(Guid moduleId, Guid userId, ActivityForChangeDto data, CancellationToken token = default)
     {
-        throw new NotImplementedException();
+        ActivityValidator.ValidateChangeDto(data);
+
+        var entity = ActivityMapper.ToEntity(data, moduleId);
+        await repository.AddAsync(entity, token);
+        await repository.SaveChangesAsync(token);
+
+        Console.WriteLine($"Created: {entity}");
+        return ActivityMapper.ToStandardDto(entity);
     }
 
     public async Task<(IEnumerable<ActivityDto>, PaginationMetadata?)> GetMany(Guid moduleId, ActivitySearchParams searchParams, int? page = 1, int? pageSize = 10, CancellationToken token = default)
@@ -43,9 +51,13 @@ public class ActivitiesService(IActivityRepository repository) : IActivitiesServ
         return ActivityMapper.ToExtendedDto(entity, resources);
     }
 
-    public Task Remove(Guid moduleId, Guid id, CancellationToken token = default)
+    public async Task Remove(Guid moduleId, Guid id, CancellationToken token = default)
     {
-        throw new NotImplementedException();
+        var entity = await repository.GetActivityAsync(moduleId, id, token);
+        if (entity == null) return;
+
+        repository.Delete(entity);
+        await repository.SaveChangesAsync(token);
     }
 
     public Task DetachResource(Guid moduleId, Guid id, Guid resourceId, CancellationToken token = default)
