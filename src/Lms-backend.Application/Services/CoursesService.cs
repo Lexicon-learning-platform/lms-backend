@@ -1,4 +1,5 @@
 using Lms_backend.Application.Interfaces;
+using Lms_backend.Application.Mappers;
 using Lms_backend.Application.Models;
 using Lms_backend.Infrastructure.Interfaces;
 using Lms_backend.Infrastructure.Models;
@@ -8,6 +9,14 @@ namespace Lms_backend.Application.Services;
 
 public class CoursesService(ICourseRepository repository) : ICoursesService
 {
+    
+    public async Task<CourseWithActivitiesDto?> GetByUserId(Guid userId, CancellationToken token = default)
+    {
+        var entity = await repository.GetCourseByUserIdReadOnlyAsync(userId, token);
+        return entity is null ? null : CourseMapper.ToWithActivitiesDto(entity);
+    }
+    
+    
     public Task<ResourceDto> AddResource(Guid id, ResourceForChangeDto data, CancellationToken token = default)
     {
         throw new NotImplementedException();

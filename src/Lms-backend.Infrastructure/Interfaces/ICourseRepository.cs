@@ -10,4 +10,5 @@ public interface ICourseRepository : IRepositoryWithResourceBase<Course, CourseR
     Task<(IEnumerable<Course>, PaginationMetadata?)> GetCoursesReadOnlyAsync(SearchParams searchParams, int page, int pageSize, CancellationToken token);
     Task<Course?> GetCourseAsync(Guid id, CancellationToken token);
     Task<Course?> GetCourseReadOnlyAsync(Guid id, CancellationToken token);
+    Task<Course?> GetCourseByUserIdReadOnlyAsync(Guid userId, CancellationToken token);
 }

@@ -18,4 +18,5 @@ public interface ICoursesService
     Task UpdateResource(Guid id, Guid resourceId, ResourceForChangeDto data, CancellationToken token = default);
     Task UpdateResource(Guid id, Guid resourceId, JsonPatchDocument<ResourceForChangeDto> data, CancellationToken token = default);
     Task DetachResource(Guid id, Guid resourceId, CancellationToken token = default);
+    Task<CourseWithActivitiesDto?> GetByUserId(Guid userId, CancellationToken token = default);
 }
