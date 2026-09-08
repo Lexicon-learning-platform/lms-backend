@@ -18,9 +18,14 @@ public class ActivitiesService(IActivityRepository repository) : IActivitiesServ
         throw new NotImplementedException();
     }
 
-    public Task<bool> AttachResource(Guid moduleId, Guid id, Guid resourceId, CancellationToken token = default)
+    public async Task<bool> AttachResource(Guid moduleId, Guid id, Guid resourceId, CancellationToken token = default)
     {
-        throw new NotImplementedException();
+        var entity = await repository.GetActivityAsync(moduleId, id, token) ?? throw new NotFoundException($"Activity '{id}' not found");
+
+        var attached = await repository.AttachResourceAsync(entity.Id, resourceId, token);
+        if (attached) await repository.SaveChangesAsync(token);
+
+        return attached;
     }
 
     public async Task<ActivityDto> Create(Guid moduleId, Guid userId, ActivityForChangeDto data, CancellationToken token = default)
@@ -60,9 +65,12 @@ public class ActivitiesService(IActivityRepository repository) : IActivitiesServ
         await repository.SaveChangesAsync(token);
     }
 
-    public Task DetachResource(Guid moduleId, Guid id, Guid resourceId, CancellationToken token = default)
+    public async Task DetachResource(Guid moduleId, Guid id, Guid resourceId, CancellationToken token = default)
     {
-        throw new NotImplementedException();
+        var entity = await repository.GetActivityAsync(moduleId, id, token) ?? throw new NotFoundException($"Activity '{id}' not found");
+
+        await repository.DetachResourceAsync(entity.Id, resourceId, token);
+        await repository.SaveChangesAsync(token);
     }
 
     public async Task Update(Guid moduleId, Guid id, ActivityForChangeDto data, CancellationToken token = default)
