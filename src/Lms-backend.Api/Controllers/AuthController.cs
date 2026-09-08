@@ -13,7 +13,7 @@ namespace Lms_backend.Api.Controllers
         [HttpPost("login")]
         public IActionResult Login([FromBody] LoginModel model)
         {
-            
+
             var result = service.Login(model);
 
 
@@ -69,5 +69,19 @@ namespace Lms_backend.Api.Controllers
             return Ok("Utloggad.");
         }
 
+        [HttpPost("register")]
+        public IActionResult RegisterStudent([FromBody] RegisterModel model)
+        {
+            var success = service.RegisterStudent(model);
+
+            if(!success)
+                return BadRequest("Registrering misslyckades.");
+            
+            else
+                return Ok("Student registered successfully.");
+        }
+
+
+        
     }
 }
