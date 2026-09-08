@@ -8,19 +8,12 @@ namespace Lms_backend.Domain.Entities
     public class ApplicationUser : IdentityUser<Guid>, IEntity
     {
         public DateTime CreatedAt { get; set; }
-
         public DateTime UpdatedAt { get; set; }
-
-        public string GivenName { get; set; } = default!;
-
-        public string LastName { get; set; } = default!;
-
+        public string? GivenName { get; set; } = default!;
+        public string? LastName { get; set; } = default!;
         public Guid? CourseId { get; set; }
-
         public Course? Course { get; set; } = null;
-
         public string Role { get; set; } = Roles.Student;
         public ICollection<UserResource> Resources { get; set; } = [];
-
     }
 }
