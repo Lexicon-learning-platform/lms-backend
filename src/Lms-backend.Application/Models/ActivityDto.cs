@@ -7,7 +7,7 @@ public class ActivityDto
     public Guid Id { get; set; }
     public string Name { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
-    public DateTime StartTime { get; set; }
+    public int StartOffset { get; set; }
     public int Duration { get; set; }
     public ActivityType Type { get; set; }
 }

@@ -12,7 +12,8 @@ public static class ActivityMapper
             Id = entity.Id,
             Name = entity.Name,
             Description = entity.Description,
-            Duration = entity.DurationMinutes
+            Duration = entity.DurationMinutes,
+            Type = entity.ActivityType,
         };
     }
 
@@ -33,8 +34,9 @@ public static class ActivityMapper
             UpdatedAt = entity.UpdatedAt,
             Name = entity.Name,
             Description = entity.Description,
-            StartOffest = entity.StartTimeOffset,
+            StartOffset = entity.StartTimeOffset,
             Duration = entity.DurationMinutes,
+            Type = entity.ActivityType,
             Resources = ResourceMapper.ToSimpleDto(resources),
         };
     }
