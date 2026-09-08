@@ -4,6 +4,7 @@ using Lms_backend.Application.Mappers;
 using Lms_backend.Application.Models;
 using Lms_backend.Application.Validators;
 using Lms_backend.Domain.Constants;
+using Lms_backend.Domain.Entities;
 using Lms_backend.Infrastructure.Interfaces;
 using Lms_backend.Infrastructure.Models;
 using Microsoft.AspNetCore.JsonPatch.SystemTextJson;
@@ -65,14 +66,19 @@ public class ActivitiesService(IActivityRepository repository) : IActivitiesServ
         throw new NotImplementedException();
     }
 
-    public Task Update(Guid moduleId, Guid id, ActivityForChangeDto data, CancellationToken token = default)
+    public async Task Update(Guid moduleId, Guid id, ActivityForChangeDto data, CancellationToken token = default)
     {
-        throw new NotImplementedException();
+        var entity = await repository.GetActivityReadOnlyAsync(moduleId, id, token) ?? throw new NotFoundException($"Activity '{id}' not found");
+        await ApplyUpdateAsync(entity, data, token);
     }
 
-    public Task Update(Guid moduleId, Guid id, JsonPatchDocument<ActivityForChangeDto> data, CancellationToken token = default)
+    public async Task Update(Guid moduleId, Guid id, JsonPatchDocument<ActivityForChangeDto> data, CancellationToken token = default)
     {
-        throw new NotImplementedException();
+        var entity = await repository.GetActivityReadOnlyAsync(moduleId, id, token) ?? throw new NotFoundException($"Activity '{id}' not found");
+
+        var dto = ActivityMapper.ToChangeDto(entity);
+        data.ApplyTo(dto);
+        await ApplyUpdateAsync(entity, dto, token);
     }
 
     public Task UpdateResource(Guid moduleId, Guid id, Guid resourceId, ResourceForChangeDto data, CancellationToken token = default)
@@ -83,5 +89,18 @@ public class ActivitiesService(IActivityRepository repository) : IActivitiesServ
     public Task UpdateResource(Guid moduleId, Guid id, Guid resourceId, JsonPatchDocument<ResourceForChangeDto> data, CancellationToken token = default)
     {
         throw new NotImplementedException();
+    }
+
+    public async Task ApplyUpdateAsync(Activity entity, ActivityForChangeDto dto, CancellationToken token)
+    {
+        ActivityValidator.ValidateChangeDto(dto);
+
+        entity.Name = dto.Name;
+        entity.Description = dto.Description;
+        entity.StartTimeOffset = dto.StartOffset;
+        entity.DurationMinutes = dto.Duration;
+        entity.ActivityType = dto.Type;
+
+        await repository.SaveChangesAsync(token);
     }
 }

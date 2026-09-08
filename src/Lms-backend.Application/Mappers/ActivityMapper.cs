@@ -54,4 +54,16 @@ public static class ActivityMapper
             ModuleId = moduleId,
         };
     }
+
+    public static ActivityForChangeDto ToChangeDto(Activity entity)
+    {
+        return new ActivityForChangeDto()
+        {
+            Name = entity.Name,
+            Description = entity.Description,
+            StartOffset = entity.StartTimeOffset,
+            Duration = entity.DurationMinutes,
+            Type = entity.ActivityType,
+        };
+    }
 }
