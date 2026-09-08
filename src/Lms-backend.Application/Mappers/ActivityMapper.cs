@@ -5,13 +5,12 @@ namespace Lms_backend.Application.Mappers;
 
 public static class ActivityMapper
 {
-    public static ActivityDto ToDto(Activity entity)
+    public static ActivitySimpleDto ToDto(Activity entity)
     {
-        return new ActivityDto
+        return new ActivitySimpleDto
         {
             Id = entity.Id,
             Name = entity.Name,
-            Description = entity.Description,
             Duration = entity.DurationMinutes
         };
     }
