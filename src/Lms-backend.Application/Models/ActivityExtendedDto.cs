@@ -1,3 +1,5 @@
+using Lms_backend.Domain.Enums;
+
 namespace Lms_backend.Application.Models;
 
 public class ActivityExtendedDto
@@ -9,5 +11,6 @@ public class ActivityExtendedDto
     public string Description { get; set; } = string.Empty;
     public int StartOffest { get; set; }
     public int Duration { get; set; }
+    public ActivityType Type { get; set; }
     public IEnumerable<ResourceSimpleDto> Resources { get; set; } = [];
 }

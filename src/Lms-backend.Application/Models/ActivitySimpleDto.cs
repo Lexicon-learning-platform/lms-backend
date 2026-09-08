@@ -1,3 +1,5 @@
+using Lms_backend.Domain.Enums;
+
 namespace Lms_backend.Application.Models;
 
 public class ActivitySimpleDto
@@ -6,4 +8,5 @@ public class ActivitySimpleDto
     public string Name { get; set; } = string.Empty;
     public DateTime StartTime { get; set; }
     public int Duration { get; set; }
+    public ActivityType Type { get; set; }
 }
