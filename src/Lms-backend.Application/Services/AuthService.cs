@@ -1,29 +1,33 @@
 ﻿using Lms_backend.Application.Interfaces;
 using Lms_backend.Domain.Entities;
+using Lms_backend.Domain.Enums;
 using Lms_backend.Infrastructure.Interfaces;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using Org.BouncyCastle.Crypto.Generators;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
 namespace Lms_backend.Application.Services
 {
-    public class AuthService(IAuthRepository repository, IConfiguration configuration) : IAuthService
+    public class AuthService(IAuthRepository repository, IConfiguration configuration, UserManager<ApplicationUser> userManager) : IAuthService
     {
+        private readonly IAuthRepository _repository = repository;
         private readonly IConfiguration _configuration = configuration;
+        private readonly UserManager<ApplicationUser> _userManager = userManager;
 
-        public List<JwtSecurityToken> Login(LoginModel model)
+
+        public (List<JwtSecurityToken>? tokens, ActionResponse response) Login(LoginModel model)
         {
             //Check if the user exists and the password is correct
+            var user = _userManager.FindByNameAsync(model.Username).Result;
+            if (user==null) return (null, ActionResponse.UserNotFound);
 
-            // För enkelhetens skull kör vi en hårdkodad kontroll (ersätt med databas)
-            if (model.Username != "admin" || model.Password != "hemligt")
-                return null;
+            var legit = _userManager.CheckPasswordAsync(user, model.Password).Result;
+            if(!legit) return (null, ActionResponse.PasswordMismatch);
 
             //Build access and refresh tokens
-
             var claims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, model.Username),
@@ -54,14 +58,11 @@ namespace Lms_backend.Application.Services
 
             //TODO: Get user ID from database and store it with the refresh token in the database or in-memory list
 
-            Guid UserId = Guid.NewGuid(); // Replace with actual user ID from database
-
-
             string tokenString = new JwtSecurityTokenHandler().WriteToken(refreshToken);
 
-            repository.StoreRefreshTokenAsync(tokenString, UserId);
+            _repository.StoreRefreshTokenAsync(tokenString, user.Id);
 
-            return new List<JwtSecurityToken> { accessToken, refreshToken };
+            return (new List<JwtSecurityToken> { accessToken, refreshToken }, ActionResponse.Success);
         }
 
 
@@ -69,7 +70,7 @@ namespace Lms_backend.Application.Services
         {
             var handler = new JwtSecurityTokenHandler();
             var token = handler.ReadJwtToken(refreshToken);
-            if (!repository.IsRefreshTokenValidAsync(refreshToken).Result)
+            if (!_repository.IsRefreshTokenValidAsync(refreshToken).Result)
                 return null;
             var claims = token.Claims.ToList();
             var accessKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtSettings:AccessSecret"]!));
@@ -86,34 +87,36 @@ namespace Lms_backend.Application.Services
 
         }
 
-        public bool Logout(string refreshToken)
+        public ActionResponse Logout(string refreshToken)
         {
             //Delete the refresh token from the database or in-memory list
-            return repository.RevokeRefreshTokenAsync(refreshToken).Result;
+            return _repository.RevokeRefreshTokenAsync(refreshToken).Result;
         }
 
-        public bool RegisterStudent(RegisterModel model)
+        public ActionResponse RegisterStudent(RegisterModel model)
         {
             //Check if the user already exists
-            var existingUser = repository.GetUserByUsernameAsync(model.GivenName, model.LastName).Result;
+            var existingUser = _userManager.FindByNameAsync(model.Username).Result;
             if (existingUser != null)
-                return false;
+                return ActionResponse.UserAlreadyExists;
 
             //Create a new user and store it in the database
 
             ApplicationUser newUser = new ApplicationUser
             {
                 Id = Guid.NewGuid(),
-                GivenName = model.GivenName,
-                LastName = model.LastName,
+                UserName = model.Username,
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow,
-                PasswordHash = model.Password,      // In a real application, you should hash the password before storing it
                 Role = "Student"
             };
 
-            repository.CreateUserAsync(newUser);
-            return true;
+            //Behöver skapa användaren innan man kan hasha lösenordet
+            newUser.PasswordHash = _userManager.PasswordHasher.HashPassword(newUser, model.Password);
+
+            _userManager.CreateAsync(newUser);
+
+            return ActionResponse.Success;
         }
     }
 }
