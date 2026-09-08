@@ -1,14 +1,15 @@
 ﻿using Lms_backend.Domain.Entities;
+using Lms_backend.Domain.Enums;
 using System.IdentityModel.Tokens.Jwt;
 
 namespace Lms_backend.Application.Interfaces
 {
     public interface IAuthService
     {
-        List<JwtSecurityToken> Login(LoginModel model);
+        (List<JwtSecurityToken>? tokens, ActionResponse response) Login(LoginModel model);
 
         JwtSecurityToken GetNewToken(string refreshToken);
-        bool Logout(string refreshToken);
-        bool RegisterStudent(RegisterModel model);
+        ActionResponse Logout(string refreshToken);
+        ActionResponse RegisterStudent(RegisterModel model);
     }
 }

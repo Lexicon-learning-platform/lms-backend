@@ -2,6 +2,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using Lms_backend.Application.Interfaces;
 using Lms_backend.Domain.Entities;
+using Lms_backend.Domain.Enums;
 
 namespace Lms_backend.Api.Controllers
 {
@@ -17,11 +18,11 @@ namespace Lms_backend.Api.Controllers
             var result = service.Login(model);
 
 
-            if (result == null)
+            if (result.response != ActionResponse.Success)
                 return Unauthorized("Ogiltiga användaruppgifter.");
 
-            var accessToken = result[0];
-            var refreshToken = result[1];
+            var accessToken = result.tokens[0];
+            var refreshToken = result.tokens[1];
 
             //Make cookie
             var cookieOptions = new CookieOptions
@@ -59,7 +60,7 @@ namespace Lms_backend.Api.Controllers
         [HttpPost("logout")]
         public IActionResult Logout()
         {
-            bool result;
+            ActionResponse result;
             var refreshToken = Request.Cookies["refreshToken"];
             if (!string.IsNullOrEmpty(refreshToken))
             {
