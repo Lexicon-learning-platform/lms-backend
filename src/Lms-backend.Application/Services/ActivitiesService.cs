@@ -8,57 +8,57 @@ namespace Lms_backend.Application.Services;
 
 public class ActivitiesService(IActivityRepository repository) : IActivitiesService
 {
-    public Task<ResourceDto> AddResource(Guid id, ResourceForChangeDto data, CancellationToken token = default)
+    public Task<ResourceDto> AddResource(Guid moduleId, Guid id, ResourceForChangeDto data, CancellationToken token = default)
     {
         throw new NotImplementedException();
     }
 
-    public Task<bool> AttachResource(Guid id, Guid resourceId, CancellationToken token = default)
+    public Task<bool> AttachResource(Guid moduleId, Guid id, Guid resourceId, CancellationToken token = default)
     {
         throw new NotImplementedException();
     }
 
-    public Task<ActivityDto> Create(ActivityForChangeDto data, CancellationToken token = default)
+    public Task<ActivityDto> Create(Guid moduleId, ActivityForChangeDto data, CancellationToken token = default)
     {
         throw new NotImplementedException();
     }
 
-    public Task<(IEnumerable<ActivityDto>, PaginationMetadata?)> GetMany(ActivitySearchParams searchParams, int? page = 1, int? pageSize = 10, CancellationToken token = default)
+    public Task<(IEnumerable<ActivityDto>, PaginationMetadata?)> GetMany(Guid moduleId, ActivitySearchParams searchParams, int? page = 1, int? pageSize = 10, CancellationToken token = default)
     {
         throw new NotImplementedException();
     }
 
-    public Task<ActivityExtendedDto> GetOne(Guid id, CancellationToken token = default)
+    public Task<ActivityExtendedDto> GetOne(Guid moduleId, Guid id, CancellationToken token = default)
     {
         throw new NotImplementedException();
     }
 
-    public Task Remove(Guid id, CancellationToken token = default)
+    public Task Remove(Guid moduleId, Guid id, CancellationToken token = default)
     {
         throw new NotImplementedException();
     }
 
-    public Task DetachResource(Guid id, Guid resourceId, CancellationToken token = default)
+    public Task DetachResource(Guid moduleId, Guid id, Guid resourceId, CancellationToken token = default)
     {
         throw new NotImplementedException();
     }
 
-    public Task Update(Guid id, ActivityForChangeDto data, CancellationToken token = default)
+    public Task Update(Guid moduleId, Guid id, ActivityForChangeDto data, CancellationToken token = default)
     {
         throw new NotImplementedException();
     }
 
-    public Task Update(Guid id, JsonPatchDocument<ActivityForChangeDto> data, CancellationToken token = default)
+    public Task Update(Guid moduleId, Guid id, JsonPatchDocument<ActivityForChangeDto> data, CancellationToken token = default)
     {
         throw new NotImplementedException();
     }
 
-    public Task UpdateResource(Guid id, Guid resourceId, ResourceForChangeDto data, CancellationToken token = default)
+    public Task UpdateResource(Guid moduleId, Guid id, Guid resourceId, ResourceForChangeDto data, CancellationToken token = default)
     {
         throw new NotImplementedException();
     }
 
-    public Task UpdateResource(Guid id, Guid resourceId, JsonPatchDocument<ResourceForChangeDto> data, CancellationToken token = default)
+    public Task UpdateResource(Guid moduleId, Guid id, Guid resourceId, JsonPatchDocument<ResourceForChangeDto> data, CancellationToken token = default)
     {
         throw new NotImplementedException();
     }

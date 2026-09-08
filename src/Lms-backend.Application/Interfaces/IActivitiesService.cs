@@ -7,15 +7,15 @@ namespace Lms_backend.Application.Interfaces;
 
 public interface IActivitiesService
 {
-    Task<(IEnumerable<ActivityDto>, PaginationMetadata?)> GetMany(ActivitySearchParams searchParams, int? page = DefaultValues.page, int? pageSize = DefaultValues.pageSize, CancellationToken token = default);
-    Task<ActivityExtendedDto> GetOne(Guid id, CancellationToken token = default);
-    Task<ActivityDto> Create(ActivityForChangeDto data, CancellationToken token = default);
-    Task Update(Guid id, ActivityForChangeDto data, CancellationToken token = default);
-    Task Update(Guid id, JsonPatchDocument<ActivityForChangeDto> data, CancellationToken token = default);
-    Task Remove(Guid id, CancellationToken token = default);
-    Task<ResourceDto> AddResource(Guid id, ResourceForChangeDto data, CancellationToken token = default);
-    Task<bool> AttachResource(Guid id, Guid resourceId, CancellationToken token = default);
-    Task UpdateResource(Guid id, Guid resourceId, ResourceForChangeDto data, CancellationToken token = default);
-    Task UpdateResource(Guid id, Guid resourceId, JsonPatchDocument<ResourceForChangeDto> data, CancellationToken token = default);
-    Task DetachResource(Guid id, Guid resourceId, CancellationToken token = default);
+    Task<(IEnumerable<ActivityDto>, PaginationMetadata?)> GetMany(Guid moduleId, ActivitySearchParams searchParams, int? page = DefaultValues.page, int? pageSize = DefaultValues.pageSize, CancellationToken token = default);
+    Task<ActivityExtendedDto> GetOne(Guid moduleId, Guid id, CancellationToken token = default);
+    Task<ActivityDto> Create(Guid moduleId, ActivityForChangeDto data, CancellationToken token = default);
+    Task Update(Guid moduleId, Guid id, ActivityForChangeDto data, CancellationToken token = default);
+    Task Update(Guid moduleId, Guid id, JsonPatchDocument<ActivityForChangeDto> data, CancellationToken token = default);
+    Task Remove(Guid moduleId, Guid id, CancellationToken token = default);
+    Task<ResourceDto> AddResource(Guid moduleId, Guid id, ResourceForChangeDto data, CancellationToken token = default);
+    Task<bool> AttachResource(Guid moduleId, Guid id, Guid resourceId, CancellationToken token = default);
+    Task UpdateResource(Guid moduleId, Guid id, Guid resourceId, ResourceForChangeDto data, CancellationToken token = default);
+    Task UpdateResource(Guid moduleId, Guid id, Guid resourceId, JsonPatchDocument<ResourceForChangeDto> data, CancellationToken token = default);
+    Task DetachResource(Guid moduleId, Guid id, Guid resourceId, CancellationToken token = default);
 }
