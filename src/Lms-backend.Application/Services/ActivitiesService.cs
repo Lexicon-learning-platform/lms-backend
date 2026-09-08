@@ -97,14 +97,41 @@ public class ActivitiesService(IActivityRepository repository, IResourceReposito
         await ApplyUpdateAsync(entity, dto, token);
     }
 
-    public Task UpdateResource(Guid moduleId, Guid id, Guid resourceId, ResourceForChangeDto data, CancellationToken token = default)
+    public async Task UpdateResource(Guid moduleId, Guid id, Guid resourceId, ResourceForChangeDto data, CancellationToken token = default)
     {
-        throw new NotImplementedException();
+        var resource = await GetAttachedResourceAsync(moduleId, id, resourceId, token);
+        await ApplyResourceUpdateAsync(resource, data, token);
     }
 
-    public Task UpdateResource(Guid moduleId, Guid id, Guid resourceId, JsonPatchDocument<ResourceForChangeDto> data, CancellationToken token = default)
+    public async Task UpdateResource(Guid moduleId, Guid id, Guid resourceId, JsonPatchDocument<ResourceForChangeDto> data, CancellationToken token = default)
     {
-        throw new NotImplementedException();
+        var resource = await GetAttachedResourceAsync(moduleId, id, resourceId, token);
+
+        var dto = ResourceMapper.ToChangeDto(resource);
+        data.ApplyTo(dto);
+        await ApplyResourceUpdateAsync(resource, dto, token);
+    }
+
+    private async Task<Resource> GetAttachedResourceAsync(Guid moduleId, Guid id, Guid resourceId, CancellationToken token)
+    {
+        var entity = await repository.GetActivityAsync(moduleId, id, token) ?? throw new NotFoundException($"Activity '{id}' not found");
+
+        var resources = await repository.GetResourcesAsync(entity.Id, token);
+        if (!resources.Any(r => r.Id == resourceId)) throw new NotFoundException($"Resource '{resourceId}' not found on activity '{id}'");
+
+        return await resourceRepository.GetResourceAsync(resourceId, token) ?? throw new NotFoundException($"Resource '{resourceId}' not found");
+    }
+
+    private async Task ApplyResourceUpdateAsync(Resource entity, ResourceForChangeDto update, CancellationToken token)
+    {
+        ResourceValidator.ValidateChangeDto(update);
+
+        entity.Name = update.Name;
+        entity.Description = update.Description;
+        entity.ResourceType = update.Type;
+        entity.Data = update.Data;
+
+        await resourceRepository.SaveChangesAsync(token);
     }
 
     public async Task ApplyUpdateAsync(Activity entity, ActivityForChangeDto dto, CancellationToken token)
