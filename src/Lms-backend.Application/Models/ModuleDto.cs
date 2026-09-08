@@ -6,5 +6,5 @@ public class ModuleDto
     public string Title { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public int Duration { get; set; }
-    public ActivitySimpleDto[] Activities { get; set; } = [];
+    public ActivityDto[] Activities { get; set; } = [];
 }
