@@ -6,8 +6,7 @@ namespace Lms_backend.Domain.Entities
 {
     public class RegisterModel
     {
-        public string GivenName { get; set; } = string.Empty;
-        public string LastName { get; set; } = string.Empty;
+        public string Username { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
     }
 }
