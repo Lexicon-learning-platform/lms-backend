@@ -3,6 +3,7 @@ using Lms_backend.Domain.Entities;
 using Lms_backend.Infrastructure.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using Org.BouncyCastle.Crypto.Generators;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -91,5 +92,28 @@ namespace Lms_backend.Application.Services
             return repository.RevokeRefreshTokenAsync(refreshToken).Result;
         }
 
+        public bool RegisterStudent(RegisterModel model)
+        {
+            //Check if the user already exists
+            var existingUser = repository.GetUserByUsernameAsync(model.GivenName, model.LastName).Result;
+            if (existingUser != null)
+                return false;
+
+            //Create a new user and store it in the database
+
+            ApplicationUser newUser = new ApplicationUser
+            {
+                Id = Guid.NewGuid(),
+                GivenName = model.GivenName,
+                LastName = model.LastName,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow,
+                PasswordHash = model.Password,      // In a real application, you should hash the password before storing it
+                Role = "Student"
+            };
+
+            repository.CreateUserAsync(newUser);
+            return true;
+        }
     }
 }

@@ -9,6 +9,6 @@ namespace Lms_backend.Application.Interfaces
 
         JwtSecurityToken GetNewToken(string refreshToken);
         bool Logout(string refreshToken);
-
+        bool RegisterStudent(RegisterModel model);
     }
 }
