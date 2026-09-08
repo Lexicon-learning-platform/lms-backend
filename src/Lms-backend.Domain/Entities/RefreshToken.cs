@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Lms_backend.Domain.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Lms_backend.Domain.Entities
 {
-    public record RefreshToken
+    public record RefreshToken : IEntity
     {
         public Guid Id { get; set; }
 
