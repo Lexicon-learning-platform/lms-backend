@@ -1,3 +1,4 @@
+using Lms_backend.Domain.Constants;
 using Lms_backend.Domain.Entities.Joins;
 using Lms_backend.Domain.Interfaces;
 using Microsoft.AspNetCore.Identity;
@@ -18,6 +19,7 @@ namespace Lms_backend.Domain.Entities
 
         public Course? Course { get; set; } = null;
 
+        public string Role { get; set; } = Roles.Student;
         public ICollection<UserResource> Resources { get; set; } = [];
 
     }
