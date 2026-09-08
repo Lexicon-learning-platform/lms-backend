@@ -14,10 +14,6 @@ namespace Lms_backend.Api.Controllers
     [ApiController]
     public class AuthController(IAuthService service, IConfiguration configuration) : ControllerBase
     {
-        private readonly IConfiguration _configuration = configuration;
-
-        private readonly string ACCESS_TOKEN_SECRET = "youraccesstokensecret";
-        private readonly string REFRESH_TOKEN_SECRET = "yourrefreshtokensecret";
 
         [HttpPost("login")]
         public IActionResult Login([FromBody] LoginModel model)
