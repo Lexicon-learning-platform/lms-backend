@@ -52,8 +52,7 @@ builder.Services.AddIdentityCore<ApplicationUser>(options =>
     options.Password.RequiredLength = 6;
 })
     .AddRoles<ApplicationRole>()
-    .AddEntityFrameworkStores<AppDbContext>()
-    .AddApiEndpoints();
+    .AddEntityFrameworkStores<AppDbContext>();
 
 // Dependency injections
 builder.Services.AddScoped<ICourseRepository, CourseRepository>();
@@ -84,7 +83,5 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
-
-app.MapIdentityApi<ApplicationUser>();
 
 app.Run();

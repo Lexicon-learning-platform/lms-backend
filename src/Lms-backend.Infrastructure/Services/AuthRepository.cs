@@ -1,4 +1,5 @@
 ﻿using Lms_backend.Domain.Entities;
+using Lms_backend.Domain.Enums;
 using Lms_backend.Domain.Interfaces;
 using Lms_backend.Infrastructure.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -16,20 +17,20 @@ namespace Lms_backend.Infrastructure.Services
             return await query.AnyAsync();
         }
 
-        public async Task<bool> RevokeRefreshTokenAsync(string refreshToken)
+        public async Task<ActionResponse> RevokeRefreshTokenAsync(string refreshToken)
         {
             var query = Set.Where(rt => rt.TokenHash == refreshToken && rt.RevokedAt == null && rt.ExpiresAt > DateTime.UtcNow);
 
             var token = await query.FirstOrDefaultAsync();
 
             if (token == null)
-                return false;
+                return ActionResponse.Failure;
 
             token.RevokedAt = DateTime.UtcNow;
             Context.Update(token);
             await Context.SaveChangesAsync();
 
-            return true;
+            return ActionResponse.Success;
         }
 
         public async Task<bool> StoreRefreshTokenAsync(string refreshToken, Guid userId)

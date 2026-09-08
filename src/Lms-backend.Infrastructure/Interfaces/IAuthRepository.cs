@@ -1,4 +1,5 @@
 ﻿using Lms_backend.Domain.Entities;
+using Lms_backend.Domain.Enums;
 
 namespace Lms_backend.Infrastructure.Interfaces
 {
@@ -6,6 +7,6 @@ namespace Lms_backend.Infrastructure.Interfaces
     {
         Task<bool> StoreRefreshTokenAsync(string refreshToken, Guid userId);
         Task<bool> IsRefreshTokenValidAsync(string refreshToken);
-        Task<bool> RevokeRefreshTokenAsync(string refreshToken);
+        Task<ActionResponse> RevokeRefreshTokenAsync(string refreshToken);
     }
 }
