@@ -1,7 +1,4 @@
 ﻿using Lms_backend.Domain.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Lms_backend.Domain.Entities
 {

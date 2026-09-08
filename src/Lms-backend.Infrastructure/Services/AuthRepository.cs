@@ -2,9 +2,6 @@
 using Lms_backend.Domain.Interfaces;
 using Lms_backend.Infrastructure.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Lms_backend.Infrastructure.Services
 {

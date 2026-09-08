@@ -1,7 +1,6 @@
 ﻿using Lms_backend.Application.Interfaces;
 using Lms_backend.Domain.Entities;
 using Lms_backend.Infrastructure.Interfaces;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
