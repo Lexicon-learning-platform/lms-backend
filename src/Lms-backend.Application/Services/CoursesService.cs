@@ -8,6 +8,14 @@ namespace Lms_backend.Application.Services;
 
 public class CoursesService(ICourseRepository repository) : ICoursesService
 {
+    
+    public Task<CourseWithActivitiesDto> GetByUserId(Guid userId, CancellationToken token = default)
+    {
+        //todo
+        throw new NotImplementedException();
+    }
+    
+    
     public Task<ResourceDto> AddResource(Guid id, ResourceForChangeDto data, CancellationToken token = default)
     {
         throw new NotImplementedException();
