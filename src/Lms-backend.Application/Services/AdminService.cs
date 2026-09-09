@@ -11,55 +11,147 @@ using System.Text;
 
 namespace Lms_backend.Application.Services
 {
-    public class AdminService(IAdminRepository adminRepository, IConfiguration configuration, UserManager<ApplicationUser> userManager) : IAdminService
+    public class AdminService(IAdminRepository adminRepository, IConfiguration configuration, UserManager<ApplicationUser> userManager, ICourseRepository courseRepository) : IAdminService
     {
         private readonly IAdminRepository _repository = adminRepository;
         private readonly IConfiguration _configuration = configuration;
         private readonly UserManager<ApplicationUser> _userManager = userManager;
-
-        public ActionResponse AddCourseToUser(string userId, string courseId)
-        {
-            throw new NotImplementedException();
-        }
+        private readonly ICourseRepository _courseRepository = courseRepository;
 
         public ActionResponse DeleteUser(string userId)
         {
-            throw new NotImplementedException();
+            var user = _userManager.FindByIdAsync(userId).Result;
+            if (user == null)
+                return ActionResponse.UserNotFound;
+
+            _userManager.DeleteAsync(user);
+            return ActionResponse.Success;
         }
 
         public ActionResponse DisableUser(string userId)
         {
-            throw new NotImplementedException();
+            var user = _userManager.FindByIdAsync(userId).Result;
+            if (user == null)
+                return ActionResponse.UserNotFound;
+
+            _userManager.SetLockoutEndDateAsync(user, DateTimeOffset.MaxValue);
+            return ActionResponse.Success;
         }
 
         public List<ApplicationUser> GetAllUsers()
         {
-            throw new NotImplementedException();
+            var users = _userManager.Users.ToList();
+            return users;
         }
 
         public ActionResponse GetUserStatistics(string userId)
         {
-            throw new NotImplementedException();
+            var user = GetUserById(userId);
+            if (user == null) return ActionResponse.NotFound;
+
+            UserStatsDto userStatsDto = new UserStatsDto()
+            {
+                Id = user.Id,
+                CreatedAt = user.CreatedAt,
+                UpdatedAt = user.UpdatedAt,
+                UserName = user.UserName,
+                GivenName = user.GivenName,
+                LastName = user.LastName,
+                Courses = []
+                //TODO: Populate the Courses property with the user's courses.
+            }; 
+
+            return ActionResponse.Success;
         }
 
         public ActionResponse Register(RegisterDto model, string role)
         {
-            throw new NotImplementedException();
+            //Check if the user already exists
+            var existingUser = _userManager.FindByNameAsync(model.Username).Result;
+            if (existingUser != null)
+                return ActionResponse.UserAlreadyExists;
+
+            //Create a new user and store it in the database
+
+            ApplicationUser newUser = new ApplicationUser
+            {
+                Id = Guid.NewGuid(),
+                UserName = model.Username,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow,
+                Role = role
+            };
+
+            _userManager.CreateAsync(newUser);
+
+            _userManager.AddPasswordAsync(newUser, model.Password);
+
+            return ActionResponse.Success;
+        }
+        public ActionResponse AddCourseToUser(string userId, string courseId)
+        {
+            var user = GetUserById(userId);
+            if(user == null) return ActionResponse.NotFound;
+
+            //TODO: Make sure to error check for illegitimate courseId
+            //This assumes courseId is parsable to a Guid.
+
+            var course = _courseRepository.GetCourseReadOnlyAsync(Guid.Parse(courseId), CancellationToken.None).Result;
+            if (course == null) return ActionResponse.NotFound;
+
+            user.Course = course;
+            user.CourseId = course.Id;
+
+            _userManager.UpdateAsync(user);
+            return ActionResponse.Success;
+
         }
 
         public ActionResponse RemoveCourseFromUser(string userId, string courseId)
         {
-            throw new NotImplementedException();
+            var user = GetUserById(userId);
+            if (user == null) return ActionResponse.NotFound;
+
+            var course = _courseRepository.GetCourseReadOnlyAsync(Guid.Parse(courseId), CancellationToken.None).Result;
+            if (course == null) return ActionResponse.NotFound;
+
+            user.Course = null;
+            user.CourseId = null;
+
+            _userManager.UpdateAsync(user);
+            return ActionResponse.Success;
         }
 
         public ActionResponse ResetPassword(string userId, string newPassword)
         {
-            throw new NotImplementedException();
+            var user = GetUserById(userId);
+            if (user == null) return ActionResponse.NotFound;
+
+            _userManager.ChangePasswordAsync(user, user.PasswordHash, newPassword);
+
+            return ActionResponse.Success;
         }
 
         public ActionResponse UpdateUser(string userId, UpdateUserDto model)
         {
-            throw new NotImplementedException();
+            var user = GetUserById(userId);
+            if (user == null) return ActionResponse.NotFound;
+
+            user.UserName = model.Username ?? user.UserName;
+            user.GivenName = model.GivenName ?? user.GivenName;
+            user.LastName = model.LastName ?? user.LastName;
+            user.Email = model.Email ?? user.Email;
+            user.Role = model.Role ?? user.Role;
+
+            _userManager.UpdateAsync(user);
+            return ActionResponse.Success;
         }
+
+        private ApplicationUser? GetUserById(string userId)
+        {
+            var user = _userManager.FindByIdAsync(userId).Result;
+            return user;
+        }
+
     }
 }
