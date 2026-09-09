@@ -8,19 +8,19 @@ namespace Lms_backend.Api.Controllers
 {
     [Route("api/auth")]
     [ApiController]
-    public class AuthController(IAuthService service, IConfiguration configuration) : ControllerBase
+    public class AuthController(IAuthService service) : ControllerBase
     {
 
         private (ActionResponse, List<JwtSecurityToken>?, CookieOptions?) LoginInternal(LoginDto model)
         {
-            var result = service.Login(model);
+            var (tokens, response) = service.Login(model);
 
 
-            if (result.response != ActionResponse.Success)
+            if (response != ActionResponse.Success)
                 return (ActionResponse.Failure, null, null);
 
-            if (result.tokens == null || result.tokens.Count < 2)
-                return (ActionResponse.BadData, null, null);)
+            if (tokens == null || tokens.Count < 2)
+                return (ActionResponse.BadData, null, null);
 
             //Make cookie
             var cookieOptions = new CookieOptions
@@ -28,9 +28,9 @@ namespace Lms_backend.Api.Controllers
                 HttpOnly = true,
                 Secure = true,
                 SameSite = SameSiteMode.Strict,
-                Expires = result.tokens[1].ValidTo
+                Expires = tokens[1].ValidTo
             };
-            return (ActionResponse.Success, result.tokens, cookieOptions);
+            return (ActionResponse.Success, tokens, cookieOptions);
         }
 
         [HttpPost("login")]
@@ -76,11 +76,10 @@ namespace Lms_backend.Api.Controllers
         [HttpPost("logout")]
         public IActionResult Logout()
         {
-            ActionResponse result;
             var refreshToken = Request.Cookies["refreshToken"];
             if (!string.IsNullOrEmpty(refreshToken))
             {
-                result = service.Logout(refreshToken);
+                service.Logout(refreshToken);
                 Response.Cookies.Delete("refreshToken");
             }
             return Ok("Utloggad.");

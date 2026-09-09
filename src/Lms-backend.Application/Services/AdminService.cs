@@ -53,7 +53,7 @@ namespace Lms_backend.Application.Services
             var user = GetUserById(userId);
             if (user == null) return (ActionResponse.UserNotFound, null);
 
-            UserStatsDto userStatsDto = new UserStatsDto()
+            UserStatsDto userStatsDto = new()
             {
                 Id = user.Id,
                 CreatedAt = user.CreatedAt,
@@ -82,7 +82,7 @@ namespace Lms_backend.Application.Services
             if (!roleExists)
                 return ActionResponse.InvalidRole;
 
-            ApplicationUser newUser = new ApplicationUser
+            ApplicationUser newUser = new()
             {
                 Id = Guid.NewGuid(),
                 UserName = model.Username,
