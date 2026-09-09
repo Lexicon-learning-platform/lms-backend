@@ -48,10 +48,10 @@ namespace Lms_backend.Application.Services
             return users;
         }
 
-        public (ActionResponse response, UserStatsDto statistics) GetUserStatistics(string userId)
+        public (ActionResponse response, UserStatsDto? statistics) GetUserStatistics(string userId)
         {
             var user = GetUserById(userId);
-            if (user == null) return (ActionResponse.NotFound, new UserStatsDto());
+            if (user == null) return (ActionResponse.UserNotFound, null);
 
             UserStatsDto userStatsDto = new UserStatsDto()
             {
@@ -100,7 +100,7 @@ namespace Lms_backend.Application.Services
         public ActionResponse AddCourseToUser(string userId, string courseId)
         {
             var user = GetUserById(userId);
-            if(user == null) return ActionResponse.NotFound;
+            if(user == null) return ActionResponse.UserNotFound;
 
             var success = Guid.TryParse(courseId, out var parsedCourseId);
             if (!success) return ActionResponse.BadData;
@@ -119,7 +119,7 @@ namespace Lms_backend.Application.Services
         public ActionResponse RemoveCourseFromUser(string userId, string courseId)
         {
             var user = GetUserById(userId);
-            if (user == null) return ActionResponse.NotFound;
+            if (user == null) return ActionResponse.UserNotFound;
 
             var course = _courseRepository.GetCourseReadOnlyAsync(Guid.Parse(courseId), CancellationToken.None).Result;
             if (course == null) return ActionResponse.NotFound;
@@ -134,7 +134,7 @@ namespace Lms_backend.Application.Services
         public ActionResponse ResetPassword(string userId, string newPassword)
         {
             var user = GetUserById(userId);
-            if (user == null) return ActionResponse.NotFound;
+            if (user == null) return ActionResponse.UserNotFound;
 
             var currentPassword = user.PasswordHash;
 
@@ -154,7 +154,7 @@ namespace Lms_backend.Application.Services
                 return ActionResponse.InvalidRole;
 
             var user = GetUserById(userId);
-            if (user == null) return ActionResponse.NotFound;
+            if (user == null) return ActionResponse.UserNotFound;
 
             user.UserName = model.Username ?? user.UserName;
             user.GivenName = model.GivenName ?? user.GivenName;
