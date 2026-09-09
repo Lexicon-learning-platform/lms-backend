@@ -11,9 +11,10 @@ using System.Text;
 
 namespace Lms_backend.Application.Services
 {
-    public class AdminService(UserManager<ApplicationUser> userManager, ICourseRepository courseRepository) : IAdminService
+    public class AdminService(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, ICourseRepository courseRepository) : IAdminService
     {
         private readonly UserManager<ApplicationUser> _userManager = userManager;
+        private readonly RoleManager<IdentityRole> _roleManager = roleManager;
         private readonly ICourseRepository _courseRepository = courseRepository;
 
         public ActionResponse DeleteUser(string userId)
@@ -71,6 +72,11 @@ namespace Lms_backend.Application.Services
 
             //Create a new user and store it in the database
 
+            //Check if the role exists
+            var roleExists = _roleManager.RoleExistsAsync(role).Result;
+            if (!roleExists)
+                return ActionResponse.InvalidRole;
+
             ApplicationUser newUser = new ApplicationUser
             {
                 Id = Guid.NewGuid(),
@@ -91,10 +97,10 @@ namespace Lms_backend.Application.Services
             var user = GetUserById(userId);
             if(user == null) return ActionResponse.NotFound;
 
-            //TODO: Make sure to error check for illegitimate courseId
-            //This assumes courseId is parsable to a Guid.
+            var success = Guid.TryParse(courseId, out var parsedCourseId);
+            if (!success) return ActionResponse.BadData;
 
-            var course = _courseRepository.GetCourseReadOnlyAsync(Guid.Parse(courseId), CancellationToken.None).Result;
+            var course = _courseRepository.GetCourseReadOnlyAsync(parsedCourseId, CancellationToken.None).Result;
             if (course == null) return ActionResponse.NotFound;
 
             user.Course = course;
