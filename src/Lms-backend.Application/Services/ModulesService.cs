@@ -1,5 +1,8 @@
+using Lms_backend.Application.Exceptions;
 using Lms_backend.Application.Interfaces;
+using Lms_backend.Application.Mappers;
 using Lms_backend.Application.Models;
+using Lms_backend.Domain.Constants;
 using Lms_backend.Infrastructure.Interfaces;
 using Lms_backend.Infrastructure.Models;
 using Microsoft.AspNetCore.JsonPatch.SystemTextJson;
@@ -23,14 +26,19 @@ public class ModulesService(IModuleRepository repository) : IModulesService
         throw new NotImplementedException();
     }
 
-    public Task<(IEnumerable<ModuleDto>, PaginationMetadata?)> GetMany(ModuleSearchParams searchParams, int? page = 1, int? pageSize = 10, CancellationToken token = default)
+    public async Task<(IEnumerable<ModuleDto>, PaginationMetadata?)> GetMany(ModuleSearchParams searchParams, int? page = 1, int? pageSize = 10, CancellationToken token = default)
     {
-        throw new NotImplementedException();
+        if (page == null || page < DefaultValues.page) page = DefaultValues.page;
+        if (pageSize == null || pageSize <= 0) pageSize = DefaultValues.pageSize;
+
+        var (entities, pagination) = await repository.GetModulesReadOnlyAsync(searchParams, (int)page, (int)pageSize, token);
+        return (ModuleMapper.ToStandardDto(entities), pagination);
     }
 
-    public Task<ModuleExtendedDto> GetOne(Guid id, CancellationToken token = default)
+    public async Task<ModuleExtendedDto> GetOne(Guid id, CancellationToken token = default)
     {
-        throw new NotImplementedException();
+        var entity = await repository.GetModuleReadOnlyAsync(id, token) ?? throw new NotFoundException($"Module '{id}' not found");
+        return ModuleMapper.ToExtendedDto(entity, null);
     }
 
     public Task Remove(Guid id, CancellationToken token = default)
