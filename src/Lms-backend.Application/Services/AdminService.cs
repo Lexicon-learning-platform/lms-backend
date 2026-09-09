@@ -11,10 +11,8 @@ using System.Text;
 
 namespace Lms_backend.Application.Services
 {
-    public class AdminService(IAdminRepository adminRepository, IConfiguration configuration, UserManager<ApplicationUser> userManager, ICourseRepository courseRepository) : IAdminService
+    public class AdminService(UserManager<ApplicationUser> userManager, ICourseRepository courseRepository) : IAdminService
     {
-        private readonly IAdminRepository _repository = adminRepository;
-        private readonly IConfiguration _configuration = configuration;
         private readonly UserManager<ApplicationUser> _userManager = userManager;
         private readonly ICourseRepository _courseRepository = courseRepository;
 
