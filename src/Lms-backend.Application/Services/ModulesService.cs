@@ -11,16 +11,30 @@ using Microsoft.AspNetCore.JsonPatch.SystemTextJson;
 
 namespace Lms_backend.Application.Services;
 
-public class ModulesService(IModuleRepository repository) : IModulesService
+public class ModulesService(IModuleRepository repository, IResourceRepository resourceRepository) : IModulesService
 {
-    public Task<ResourceDto> AddResource(Guid id, ResourceForChangeDto data, CancellationToken token = default)
+    public async Task<ResourceDto> AddResource(Guid id, Guid userId, ResourceForChangeDto data, CancellationToken token = default)
     {
-        throw new NotImplementedException();
+        var entity = await repository.GetModuleAsync(id, token) ?? throw new NotFoundException($"Module '{id}' not found");
+        ResourceValidator.ValidateChangeDto(data);
+
+        var resource = ResourceMapper.ToEntity(data, userId);
+        await resourceRepository.AddAsync(resource, token);
+        await repository.AttachResourceAsync(entity.Id, resource.Id, token);
+        await repository.SaveChangesAsync(token);
+
+        var createdResource = await resourceRepository.GetResourceReadOnlyAsync(resource.Id, token);
+        return ResourceMapper.ToStandardDto(createdResource!);
     }
 
-    public Task<bool> AttachResource(Guid id, Guid resourceId, CancellationToken token = default)
+    public async Task<bool> AttachResource(Guid id, Guid resourceId, CancellationToken token = default)
     {
-        throw new NotImplementedException();
+        var entity = await repository.GetModuleAsync(id, token) ?? throw new NotFoundException($"Module '{id}' not found");
+
+        var attached = await repository.AttachResourceAsync(entity.Id, resourceId, token);
+        if (attached) await repository.SaveChangesAsync(token);
+
+        return attached;
     }
 
     public async Task<ModuleDto> Create(ModuleForChangeDto data, CancellationToken token = default)
@@ -58,9 +72,12 @@ public class ModulesService(IModuleRepository repository) : IModulesService
         await repository.SaveChangesAsync(token);
     }
 
-    public Task DetachResource(Guid id, Guid resourceId, CancellationToken token = default)
+    public async Task DetachResource(Guid id, Guid resourceId, CancellationToken token = default)
     {
-        throw new NotImplementedException();
+        var entity = await repository.GetModuleAsync(id, token) ?? throw new NotFoundException($"Module '{id}' not found");
+
+        await repository.DetachResourceAsync(entity.Id, resourceId, token);
+        await repository.SaveChangesAsync(token);
     }
 
     public async Task Update(Guid id, ModuleForChangeDto data, CancellationToken token = default)
@@ -90,13 +107,40 @@ public class ModulesService(IModuleRepository repository) : IModulesService
         await repository.SaveChangesAsync(token);
     }
 
-    public Task UpdateResource(Guid id, Guid resourceId, ResourceForChangeDto data, CancellationToken token = default)
+    public async Task UpdateResource(Guid id, Guid resourceId, ResourceForChangeDto data, CancellationToken token = default)
     {
-        throw new NotImplementedException();
+        var resource = await GetAttachedResourceAsync(id, resourceId, token);
+        await ApplyResourceUpdateAsync(resource, data, token);
     }
 
-    public Task UpdateResource(Guid id, Guid resourceId, JsonPatchDocument<ResourceForChangeDto> data, CancellationToken token = default)
+    public async Task UpdateResource(Guid id, Guid resourceId, JsonPatchDocument<ResourceForChangeDto> data, CancellationToken token = default)
     {
-        throw new NotImplementedException();
+        var resource = await GetAttachedResourceAsync(id, resourceId, token);
+
+        var dto = ResourceMapper.ToChangeDto(resource);
+        data.ApplyTo(dto);
+        await ApplyResourceUpdateAsync(resource, dto, token);
+    }
+
+    private async Task<Resource> GetAttachedResourceAsync(Guid id, Guid resourceId, CancellationToken token)
+    {
+        var entity = await repository.GetModuleAsync(id, token) ?? throw new NotFoundException($"Module '{id}' not found");
+
+        var resources = await repository.GetResourcesAsync(entity.Id, token);
+        if (!resources.Any(r => r.Id == resourceId)) throw new NotFoundException($"Resource '{resourceId}' not found on module '{id}'");
+
+        return await resourceRepository.GetResourceAsync(resourceId, token) ?? throw new NotFoundException($"Resource '{resourceId}' not found");
+    }
+
+    private async Task ApplyResourceUpdateAsync(Resource entity, ResourceForChangeDto update, CancellationToken token)
+    {
+        ResourceValidator.ValidateChangeDto(update);
+
+        entity.Name = update.Name;
+        entity.Description = update.Description;
+        entity.ResourceType = update.Type;
+        entity.Data = update.Data;
+
+        await resourceRepository.SaveChangesAsync(token);
     }
 }

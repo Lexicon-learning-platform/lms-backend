@@ -11,6 +11,8 @@ namespace Lms_backend.Api.Controllers;
 [Route("api/modules")]
 public class ModulesController(IModulesService service) : ControllerBase
 {
+    // TODO: replace usage of this var with User.GetUserId() once auth is implemented
+    private readonly Guid testingUserId = Guid.Parse("44444444-0000-0000-0000-000000000002");
     // Base modules endpoints
     [HttpGet]
     public async Task<IActionResult> GetModules(string? name, string? search, Guid? course, int? page, int? pageSize, CancellationToken token = default)
@@ -71,7 +73,7 @@ public class ModulesController(IModulesService service) : ControllerBase
     [HttpPost("{id}/resources")]
     public async Task<IActionResult> CreateModuleResource(Guid id, ResourceForChangeDto data, CancellationToken token = default)
     {
-        var result = await service.AddResource(id, data, token);
+        var result = await service.AddResource(id, testingUserId, data, token);
         return CreatedAtRoute("GetModuleResource", new { id, result.Id }, result);
     }
 
