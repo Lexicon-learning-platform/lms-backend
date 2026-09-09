@@ -13,6 +13,8 @@ namespace Lms_backend.Domain.Enums
         BadRequest,
         UserAlreadyExists,
         UserNotFound,
-        PasswordMismatch
+        PasswordMismatch,
+        InvalidRole,
+        BadData
     }
 }

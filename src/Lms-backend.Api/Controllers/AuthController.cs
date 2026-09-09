@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
 using Lms_backend.Application.Interfaces;
-using Lms_backend.Domain.Entities;
+using Lms_backend.Application.Models;
 using Lms_backend.Domain.Enums;
 
 namespace Lms_backend.Api.Controllers
@@ -11,18 +11,16 @@ namespace Lms_backend.Api.Controllers
     public class AuthController(IAuthService service, IConfiguration configuration) : ControllerBase
     {
 
-        [HttpPost("login")]
-        public IActionResult Login([FromBody] LoginModel model)
+        private (ActionResponse, List<JwtSecurityToken>?, CookieOptions?) LoginInternal(LoginDto model)
         {
-
             var result = service.Login(model);
 
 
             if (result.response != ActionResponse.Success)
-                return Unauthorized("Ogiltiga användaruppgifter.");
+                return (ActionResponse.Failure, null, null);
 
-            var accessToken = result.tokens[0];
-            var refreshToken = result.tokens[1];
+            if (result.tokens == null || result.tokens.Count < 2)
+                return (ActionResponse.BadData, null, null);)
 
             //Make cookie
             var cookieOptions = new CookieOptions
@@ -30,8 +28,26 @@ namespace Lms_backend.Api.Controllers
                 HttpOnly = true,
                 Secure = true,
                 SameSite = SameSiteMode.Strict,
-                Expires = refreshToken.ValidTo
+                Expires = result.tokens[1].ValidTo
             };
+            return (ActionResponse.Success, result.tokens, cookieOptions);
+        }
+
+        [HttpPost("login")]
+        public IActionResult Login([FromBody] LoginDto model)
+        {
+
+            var (response, tokens, cookieOptions) = LoginInternal(model);
+
+            if (response != ActionResponse.Success)
+                return Unauthorized("Ogiltiga användaruppgifter.");
+
+            if (tokens == null || tokens.Count < 2 || cookieOptions == null)
+                return Unauthorized("Token generering misslyckades.");
+
+            var accessToken = tokens[0];
+            var refreshToken = tokens[1];
+
             Response.Cookies.Append("refreshToken", new JwtSecurityTokenHandler().WriteToken(refreshToken), cookieOptions);
             return Ok(new
             {
@@ -71,18 +87,35 @@ namespace Lms_backend.Api.Controllers
         }
 
         [HttpPost("register")]
-        public IActionResult RegisterStudent([FromBody] RegisterModel model)
+        public IActionResult RegisterStudent([FromBody] RegisterDto model)
         {
-            var success = service.RegisterStudent(model);
+            var result = service.RegisterStudent(model);
 
-            if(!success)
-                return BadRequest("Registrering misslyckades.");
-            
+            if (result == ActionResponse.Success)
+            {
+                var (response, tokens, cookieOptions) = LoginInternal(new LoginDto { Username = model.Username, Password = model.Password });
+
+                if (response != ActionResponse.Success)
+                    return Unauthorized("Ogiltiga användaruppgifter.");
+
+                if (tokens == null || tokens.Count < 2 || cookieOptions == null)
+                    return Unauthorized("Token generering misslyckades.");
+
+                var accessToken = tokens[0];
+                var refreshToken = tokens[1];
+
+                Response.Cookies.Append("refreshToken", new JwtSecurityTokenHandler().WriteToken(refreshToken), cookieOptions);
+                return Ok(new
+                {
+                    accessToken = new JwtSecurityTokenHandler().WriteToken(accessToken)
+                });
+            }
+
             else
-                return Ok("Student registered successfully.");
+                return BadRequest("Registrering misslyckades.");
         }
 
 
-        
+
     }
 }
