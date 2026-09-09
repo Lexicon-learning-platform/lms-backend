@@ -49,9 +49,13 @@ public class ModulesService(IModuleRepository repository) : IModulesService
         return ModuleMapper.ToExtendedDto(entity, null);
     }
 
-    public Task Remove(Guid id, CancellationToken token = default)
+    public async Task Remove(Guid id, CancellationToken token = default)
     {
-        throw new NotImplementedException();
+        var entity = await repository.GetModuleAsync(id, token);
+        if (entity == null) return;
+
+        repository.Delete(entity);
+        await repository.SaveChangesAsync(token);
     }
 
     public Task DetachResource(Guid id, Guid resourceId, CancellationToken token = default)
