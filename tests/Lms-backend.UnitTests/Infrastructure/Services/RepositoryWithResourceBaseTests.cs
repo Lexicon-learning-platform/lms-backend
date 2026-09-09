@@ -1,6 +1,7 @@
 using Lms_backend.Domain.Entities;
 using Lms_backend.Domain.Entities.Joins;
 using Lms_backend.Domain.Enums;
+using Lms_backend.Infrastructure;
 using Lms_backend.Infrastructure.Services;
 using Lms_backend.UnitTests.TestHelpers;
 
@@ -21,21 +22,33 @@ public class RepositoryWithResourceBaseTests
         DurationMinutes = 30,
     };
 
-    private static Resource CreateResource() => new()
+    private static Resource CreateResource(AppDbContext context)
     {
-        Id = Guid.NewGuid(),
-        OwnerId = Guid.NewGuid(),
-        Name = "Test resource",
-        Description = "Test description",
-        ResourceType = ResourceType.Text,
-    };
+        var owner = new ApplicationUser
+        {
+            Id = Guid.NewGuid(),
+            UserName = $"test.user.{Guid.NewGuid()}",
+            GivenName = "Test",
+            LastName = "User",
+        };
+        context.Users.Add(owner);
+
+        return new Resource
+        {
+            Id = Guid.NewGuid(),
+            OwnerId = owner.Id,
+            Name = "Test resource",
+            Description = "Test description",
+            ResourceType = ResourceType.Text,
+        };
+    }
 
     [Fact]
     public async Task GetResourcesAsync_ReturnsAttachedResources()
     {
         await using var context = TestDbContextFactory.Create();
         var activity = CreateActivity();
-        var resource = CreateResource();
+        var resource = CreateResource(context);
         context.Activities.Add(activity);
         context.Resources.Add(resource);
         context.ActivityResources.Add(new ActivityResource { ActivityId = activity.Id, ResourceId = resource.Id });
@@ -67,7 +80,7 @@ public class RepositoryWithResourceBaseTests
     {
         await using var context = TestDbContextFactory.Create();
         var activity = CreateActivity();
-        var resource = CreateResource();
+        var resource = CreateResource(context);
         context.Activities.Add(activity);
         context.Resources.Add(resource);
         await context.SaveChangesAsync();
@@ -85,7 +98,7 @@ public class RepositoryWithResourceBaseTests
     {
         await using var context = TestDbContextFactory.Create();
         var activity = CreateActivity();
-        var resource = CreateResource();
+        var resource = CreateResource(context);
         context.Activities.Add(activity);
         context.Resources.Add(resource);
         context.ActivityResources.Add(new ActivityResource { ActivityId = activity.Id, ResourceId = resource.Id });
@@ -103,7 +116,7 @@ public class RepositoryWithResourceBaseTests
     {
         await using var context = TestDbContextFactory.Create();
         var activity = CreateActivity();
-        var resource = CreateResource();
+        var resource = CreateResource(context);
         context.Activities.Add(activity);
         context.Resources.Add(resource);
         context.ActivityResources.Add(new ActivityResource { ActivityId = activity.Id, ResourceId = resource.Id });
@@ -121,7 +134,7 @@ public class RepositoryWithResourceBaseTests
     {
         await using var context = TestDbContextFactory.Create();
         var activity = CreateActivity();
-        var resource = CreateResource();
+        var resource = CreateResource(context);
         context.Activities.Add(activity);
         context.Resources.Add(resource);
         await context.SaveChangesAsync();
