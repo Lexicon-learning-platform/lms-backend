@@ -1,4 +1,5 @@
-﻿using Lms_backend.Domain.Entities;
+﻿using Lms_backend.Application.Interfaces;
+using Lms_backend.Domain.Entities;
 using Lms_backend.Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
