@@ -143,6 +143,11 @@ namespace Lms_backend.Application.Services
 
         public ActionResponse UpdateUser(string userId, UpdateUserDto model)
         {
+            if(model == null) return ActionResponse.BadData;
+
+            if(model.Role != null && _roleManager.FindByNameAsync(model.Role).Result == null)
+                return ActionResponse.InvalidRole;
+
             var user = GetUserById(userId);
             if (user == null) return ActionResponse.NotFound;
 
