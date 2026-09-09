@@ -67,7 +67,7 @@ public static class ActivityMapper
         };
     }
 
-    public static ActivitySimpleDto ToDto(Activity entity)
+    public static ActivitySimpleDto ToSimpleDto(Activity entity)
     {
         return new ActivitySimpleDto
         {
