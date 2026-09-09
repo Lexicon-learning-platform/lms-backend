@@ -73,13 +73,13 @@ namespace Lms_backend.Api.Controllers
         [HttpPost("register")]
         public IActionResult RegisterStudent([FromBody] RegisterModel model)
         {
-            var success = service.RegisterStudent(model);
+            var result = service.RegisterStudent(model);
 
-            if(!success)
-                return BadRequest("Registrering misslyckades.");
+            if(result==ActionResponse.Success)
+                return Ok("Student registered successfully.");
             
             else
-                return Ok("Student registered successfully.");
+                return BadRequest("Registrering misslyckades.");
         }
 
 
