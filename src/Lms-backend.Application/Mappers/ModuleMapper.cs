@@ -61,4 +61,14 @@ public static class ModuleMapper
             ActivityIds = [.. entity.Activities.Select(a => a.Id)],
         };
     }
+
+    public static Module ToEntity(ModuleForChangeDto dto)
+    {
+        return new Module()
+        {
+            Name = dto.Name,
+            Description = dto.Description,
+            Duration = dto.Duration,
+        };
+    }
 }

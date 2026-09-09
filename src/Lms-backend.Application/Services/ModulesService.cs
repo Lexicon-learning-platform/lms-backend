@@ -2,6 +2,7 @@ using Lms_backend.Application.Exceptions;
 using Lms_backend.Application.Interfaces;
 using Lms_backend.Application.Mappers;
 using Lms_backend.Application.Models;
+using Lms_backend.Application.Validators;
 using Lms_backend.Domain.Constants;
 using Lms_backend.Infrastructure.Interfaces;
 using Lms_backend.Infrastructure.Models;
@@ -21,9 +22,15 @@ public class ModulesService(IModuleRepository repository) : IModulesService
         throw new NotImplementedException();
     }
 
-    public Task<ModuleDto> Create(ModuleForChangeDto data, CancellationToken token = default)
+    public async Task<ModuleDto> Create(ModuleForChangeDto data, CancellationToken token = default)
     {
-        throw new NotImplementedException();
+        ModuleValidator.ValidateChangeDto(data);
+
+        var entity = ModuleMapper.ToEntity(data);
+        await repository.AddAsync(entity, token);
+        await repository.SaveChangesAsync(token);
+
+        return ModuleMapper.ToStandardDto(entity);
     }
 
     public async Task<(IEnumerable<ModuleDto>, PaginationMetadata?)> GetMany(ModuleSearchParams searchParams, int? page = 1, int? pageSize = 10, CancellationToken token = default)
