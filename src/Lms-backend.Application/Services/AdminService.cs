@@ -4,10 +4,6 @@ using Lms_backend.Domain.Entities;
 using Lms_backend.Domain.Enums;
 using Lms_backend.Infrastructure.Interfaces;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Lms_backend.Application.Services
 {
@@ -34,6 +30,15 @@ namespace Lms_backend.Application.Services
                 return ActionResponse.UserNotFound;
 
             _userManager.SetLockoutEndDateAsync(user, DateTimeOffset.MaxValue);
+            return ActionResponse.Success;
+        }
+
+        public ActionResponse EnableUser(string userId)
+        {
+            var user = _userManager.FindByIdAsync(userId).Result;
+            if (user == null)
+                return ActionResponse.UserNotFound;
+            _userManager.SetLockoutEndDateAsync(user, null);
             return ActionResponse.Success;
         }
 

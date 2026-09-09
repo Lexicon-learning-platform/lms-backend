@@ -12,6 +12,7 @@ namespace Lms_backend.Application.Interfaces
         ActionResponse Register(RegisterDto model, string role);
 
         ActionResponse DisableUser(string userId);
+        ActionResponse EnableUser(string userId);
 
         ActionResponse DeleteUser(string userId);
 
