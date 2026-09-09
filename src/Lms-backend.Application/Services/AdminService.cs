@@ -52,9 +52,9 @@ namespace Lms_backend.Application.Services
                 Id = user.Id,
                 CreatedAt = user.CreatedAt,
                 UpdatedAt = user.UpdatedAt,
-                UserName = user.UserName,
-                GivenName = user.GivenName,
-                LastName = user.LastName,
+                UserName = user.UserName ?? string.Empty,
+                GivenName = user.GivenName ?? string.Empty,
+                LastName = user.LastName ?? string.Empty,
                 Courses = []
                 //TODO: Populate the Courses property with the user's courses.
             }; 
@@ -125,7 +125,12 @@ namespace Lms_backend.Application.Services
             var user = GetUserById(userId);
             if (user == null) return ActionResponse.NotFound;
 
-            _userManager.ChangePasswordAsync(user, user.PasswordHash, newPassword);
+            var currentPassword = user.PasswordHash;
+
+            if(currentPassword != null)
+                _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
+            else
+                _userManager.AddPasswordAsync(user, newPassword);
 
             return ActionResponse.Success;
         }
