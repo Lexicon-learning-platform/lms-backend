@@ -1,13 +1,16 @@
+using Lms_backend.Application.Exceptions;
 using Lms_backend.Application.Interfaces;
 using Lms_backend.Application.Mappers;
 using Lms_backend.Application.Models;
+using Lms_backend.Application.Validators;
+using Lms_backend.Domain.Entities;
 using Lms_backend.Infrastructure.Interfaces;
 using Lms_backend.Infrastructure.Models;
 using Microsoft.AspNetCore.JsonPatch.SystemTextJson;
 
 namespace Lms_backend.Application.Services;
 
-public class CoursesService(ICourseRepository repository) : ICoursesService
+public class CoursesService(ICourseRepository repository, IResourceRepository resourceRepository) : ICoursesService
 {
     
     public async Task<CourseWithActivitiesDto?> GetByUserId(Guid userId, CancellationToken token = default)
@@ -17,14 +20,28 @@ public class CoursesService(ICourseRepository repository) : ICoursesService
     }
     
     
-    public Task<ResourceDto> AddResource(Guid id, ResourceForChangeDto data, CancellationToken token = default)
+    public async Task<ResourceDto> AddResource(Guid id, Guid userId, ResourceForChangeDto data, CancellationToken token = default)
     {
-        throw new NotImplementedException();
+        var entity = await repository.GetCourseAsync(id, token) ?? throw new NotFoundException($"Course '{id}' not found");
+        ResourceValidator.ValidateChangeDto(data);
+
+        var resource = ResourceMapper.ToEntity(data, userId);
+        await resourceRepository.AddAsync(resource, token);
+        await repository.AttachResourceAsync(entity.Id, resource.Id, token);
+        await repository.SaveChangesAsync(token);
+
+        var createdResource = await resourceRepository.GetResourceReadOnlyAsync(resource.Id, token);
+        return ResourceMapper.ToStandardDto(createdResource!);
     }
 
-    public Task<bool> AttachResource(Guid id, Guid resourceId, CancellationToken token = default)
+    public async Task<bool> AttachResource(Guid id, Guid resourceId, CancellationToken token = default)
     {
-        throw new NotImplementedException();
+        var entity = await repository.GetCourseAsync(id, token) ?? throw new NotFoundException($"Course '{id}' not found");
+
+        var attached = await repository.AttachResourceAsync(entity.Id, resourceId, token);
+        if (attached) await repository.SaveChangesAsync(token);
+
+        return attached;
     }
 
     public Task<CourseDto> Create(CourseForChangeDto data, CancellationToken token = default)
@@ -47,9 +64,12 @@ public class CoursesService(ICourseRepository repository) : ICoursesService
         throw new NotImplementedException();
     }
 
-    public Task DetachResource(Guid id, Guid resourceId, CancellationToken token = default)
+    public async Task DetachResource(Guid id, Guid resourceId, CancellationToken token = default)
     {
-        throw new NotImplementedException();
+        var entity = await repository.GetCourseAsync(id, token) ?? throw new NotFoundException($"Course '{id}' not found");
+
+        await repository.DetachResourceAsync(entity.Id, resourceId, token);
+        await repository.SaveChangesAsync(token);
     }
 
     public Task Update(Guid id, CourseForChangeDto data, CancellationToken token = default)
@@ -62,13 +82,40 @@ public class CoursesService(ICourseRepository repository) : ICoursesService
         throw new NotImplementedException();
     }
 
-    public Task UpdateResource(Guid id, Guid resourceId, ResourceForChangeDto data, CancellationToken token = default)
+    public async Task UpdateResource(Guid id, Guid resourceId, ResourceForChangeDto data, CancellationToken token = default)
     {
-        throw new NotImplementedException();
+        var resource = await GetAttachedResourceAsync(id, resourceId, token);
+        await ApplyResourceUpdateAsync(resource, data, token);
     }
 
-    public Task UpdateResource(Guid id, Guid resourceId, JsonPatchDocument<ResourceForChangeDto> data, CancellationToken token = default)
+    public async Task UpdateResource(Guid id, Guid resourceId, JsonPatchDocument<ResourceForChangeDto> data, CancellationToken token = default)
     {
-        throw new NotImplementedException();
+        var resource = await GetAttachedResourceAsync(id, resourceId, token);
+
+        var dto = ResourceMapper.ToChangeDto(resource);
+        data.ApplyTo(dto);
+        await ApplyResourceUpdateAsync(resource, dto, token);
+    }
+
+    private async Task<Resource> GetAttachedResourceAsync(Guid id, Guid resourceId, CancellationToken token)
+    {
+        var entity = await repository.GetCourseAsync(id, token) ?? throw new NotFoundException($"Course '{id}' not found");
+
+        var resources = await repository.GetResourcesAsync(entity.Id, token);
+        if (!resources.Any(r => r.Id == resourceId)) throw new NotFoundException($"Resource '{resourceId}' not found on course '{id}'");
+
+        return await resourceRepository.GetResourceAsync(resourceId, token) ?? throw new NotFoundException($"Resource '{resourceId}' not found");
+    }
+
+    private async Task ApplyResourceUpdateAsync(Resource entity, ResourceForChangeDto update, CancellationToken token)
+    {
+        ResourceValidator.ValidateChangeDto(update);
+
+        entity.Name = update.Name;
+        entity.Description = update.Description;
+        entity.ResourceType = update.Type;
+        entity.Data = update.Data;
+
+        await resourceRepository.SaveChangesAsync(token);
     }
 }

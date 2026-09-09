@@ -13,7 +13,7 @@ public interface ICoursesService
     Task Update(Guid id, CourseForChangeDto data, CancellationToken token = default);
     Task Update(Guid id, JsonPatchDocument<CourseForChangeDto> data, CancellationToken token = default);
     Task Remove(Guid id, CancellationToken token = default);
-    Task<ResourceDto> AddResource(Guid id, ResourceForChangeDto data, CancellationToken token = default);
+    Task<ResourceDto> AddResource(Guid id, Guid userId, ResourceForChangeDto data, CancellationToken token = default);
     Task<bool> AttachResource(Guid id, Guid resourceId, CancellationToken token = default);
     Task UpdateResource(Guid id, Guid resourceId, ResourceForChangeDto data, CancellationToken token = default);
     Task UpdateResource(Guid id, Guid resourceId, JsonPatchDocument<ResourceForChangeDto> data, CancellationToken token = default);

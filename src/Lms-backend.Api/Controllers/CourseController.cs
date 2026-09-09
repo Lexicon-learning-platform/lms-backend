@@ -11,6 +11,9 @@ namespace Lms_backend.Api.Controllers;
 [Route("api/courses")]
 public class CourseController(ICoursesService service) : ControllerBase
 {
+    // TODO: replace usage of this var with User.GetUserId() once auth is implemented
+    private readonly Guid testingUserId = Guid.Parse("44444444-0000-0000-0000-000000000002");
+
     // Base course endpoints
     [HttpGet("my-course")]
     public async Task<IActionResult> GetCurrentUserCourse(CancellationToken token = default)
@@ -82,7 +85,7 @@ public class CourseController(ICoursesService service) : ControllerBase
     [HttpPost("{id}/resources")]
     public async Task<IActionResult> CreateCourseResource(Guid id, ResourceForChangeDto data, CancellationToken token = default)
     {
-        var result = await service.AddResource(id, data, token);
+        var result = await service.AddResource(id, testingUserId, data, token);
         return CreatedAtRoute("GetCourseResource", new { id, result.Id }, result);
     }
 
