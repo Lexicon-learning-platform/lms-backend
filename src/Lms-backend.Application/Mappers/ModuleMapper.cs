@@ -13,7 +13,7 @@ public static class ModuleMapper
             Description = entity.Description,
             Duration = entity.Duration,
             Activities = entity.Activities
-                .Select(ActivityMapper.ToDto)
+                .Select(ActivityMapper.ToSimpleDto)
                 .ToArray()
         };
     }

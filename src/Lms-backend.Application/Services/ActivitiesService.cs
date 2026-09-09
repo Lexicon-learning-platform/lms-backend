@@ -1,65 +1,157 @@
+using Lms_backend.Application.Exceptions;
 using Lms_backend.Application.Interfaces;
+using Lms_backend.Application.Mappers;
 using Lms_backend.Application.Models;
+using Lms_backend.Application.Validators;
+using Lms_backend.Domain.Constants;
+using Lms_backend.Domain.Entities;
 using Lms_backend.Infrastructure.Interfaces;
 using Lms_backend.Infrastructure.Models;
 using Microsoft.AspNetCore.JsonPatch.SystemTextJson;
 
 namespace Lms_backend.Application.Services;
 
-public class ActivitiesService(IActivityRepository repository) : IActivitiesService
+public class ActivitiesService(IActivityRepository repository, IResourceRepository resourceRepository) : IActivitiesService
 {
-    public Task<ResourceDto> AddResource(Guid id, ResourceForChangeDto data, CancellationToken token = default)
+    public async Task<ResourceDto> AddResource(Guid moduleId, Guid id, Guid userId, ResourceForChangeDto data, CancellationToken token = default)
     {
-        throw new NotImplementedException();
+        var entity = await repository.GetActivityAsync(moduleId, id, token) ?? throw new NotFoundException($"Activity '{id}' not found");
+        ResourceValidator.ValidateChangeDto(data);
+
+        var resource = ResourceMapper.ToEntity(data, userId);
+        await resourceRepository.AddAsync(resource, token);
+        await repository.AttachResourceAsync(entity.Id, resource.Id, token);
+        await repository.SaveChangesAsync(token);
+
+        var createdResource = await resourceRepository.GetResourceReadOnlyAsync(resource.Id, token);
+        return ResourceMapper.ToStandardDto(createdResource!);
     }
 
-    public Task<bool> AttachResource(Guid id, Guid resourceId, CancellationToken token = default)
+    public async Task<bool> AttachResource(Guid moduleId, Guid id, Guid resourceId, CancellationToken token = default)
     {
-        throw new NotImplementedException();
+        var entity = await repository.GetActivityAsync(moduleId, id, token) ?? throw new NotFoundException($"Activity '{id}' not found");
+
+        var attached = await repository.AttachResourceAsync(entity.Id, resourceId, token);
+        if (attached) await repository.SaveChangesAsync(token);
+
+        return attached;
     }
 
-    public Task<ActivityDto> Create(ActivityForChangeDto data, CancellationToken token = default)
+    public async Task<ActivityDto> Create(Guid moduleId, Guid userId, ActivityForChangeDto data, CancellationToken token = default)
     {
-        throw new NotImplementedException();
+        ActivityValidator.ValidateChangeDto(data);
+        await EnsureNoOverlapAsync(moduleId, data, null, token);
+
+        var entity = ActivityMapper.ToEntity(data, moduleId);
+        await repository.AddAsync(entity, token);
+        await repository.SaveChangesAsync(token);
+
+        Console.WriteLine($"Created: {entity}");
+        return ActivityMapper.ToStandardDto(entity);
     }
 
-    public Task<(IEnumerable<ActivityDto>, PaginationMetadata?)> GetMany(ActivitySearchParams searchParams, int? page = 1, int? pageSize = 10, CancellationToken token = default)
+    public async Task<(IEnumerable<ActivityDto>, PaginationMetadata?)> GetMany(Guid moduleId, ActivitySearchParams searchParams, int? page = 1, int? pageSize = 10, CancellationToken token = default)
     {
-        throw new NotImplementedException();
+        if (page == null || page < DefaultValues.page) page = DefaultValues.page;
+        if (pageSize == null || pageSize <= 0) pageSize = DefaultValues.pageSize;
+
+        var (entities, pagination) = await repository.GetActivitiesReadOnlyAsync(moduleId, searchParams, (int)page, (int)pageSize, token);
+        return (ActivityMapper.ToStandardDto(entities), pagination);
     }
 
-    public Task<ActivityExtendedDto> GetOne(Guid id, CancellationToken token = default)
+    public async Task<ActivityExtendedDto> GetOne(Guid moduleId, Guid id, CancellationToken token = default)
     {
-        throw new NotImplementedException();
+        var entity = await repository.GetActivityReadOnlyAsync(moduleId, id, token) ?? throw new NotFoundException($"Activity '{id}' not found");
+
+        return ActivityMapper.ToExtendedDto(entity);
     }
 
-    public Task Remove(Guid id, CancellationToken token = default)
+    public async Task Remove(Guid moduleId, Guid id, CancellationToken token = default)
     {
-        throw new NotImplementedException();
+        var entity = await repository.GetActivityAsync(moduleId, id, token);
+        if (entity == null) return;
+
+        repository.Delete(entity);
+        await repository.SaveChangesAsync(token);
     }
 
-    public Task DetachResource(Guid id, Guid resourceId, CancellationToken token = default)
+    public async Task DetachResource(Guid moduleId, Guid id, Guid resourceId, CancellationToken token = default)
     {
-        throw new NotImplementedException();
+        var entity = await repository.GetActivityAsync(moduleId, id, token) ?? throw new NotFoundException($"Activity '{id}' not found");
+
+        await repository.DetachResourceAsync(entity.Id, resourceId, token);
+        await repository.SaveChangesAsync(token);
     }
 
-    public Task Update(Guid id, ActivityForChangeDto data, CancellationToken token = default)
+    public async Task Update(Guid moduleId, Guid id, ActivityForChangeDto data, CancellationToken token = default)
     {
-        throw new NotImplementedException();
+        var entity = await repository.GetActivityReadOnlyAsync(moduleId, id, token) ?? throw new NotFoundException($"Activity '{id}' not found");
+        await ApplyUpdateAsync(entity, data, token);
     }
 
-    public Task Update(Guid id, JsonPatchDocument<ActivityForChangeDto> data, CancellationToken token = default)
+    public async Task Update(Guid moduleId, Guid id, JsonPatchDocument<ActivityForChangeDto> data, CancellationToken token = default)
     {
-        throw new NotImplementedException();
+        var entity = await repository.GetActivityReadOnlyAsync(moduleId, id, token) ?? throw new NotFoundException($"Activity '{id}' not found");
+
+        var dto = ActivityMapper.ToChangeDto(entity);
+        data.ApplyTo(dto);
+        await ApplyUpdateAsync(entity, dto, token);
     }
 
-    public Task UpdateResource(Guid id, Guid resourceId, ResourceForChangeDto data, CancellationToken token = default)
+    public async Task UpdateResource(Guid moduleId, Guid id, Guid resourceId, ResourceForChangeDto data, CancellationToken token = default)
     {
-        throw new NotImplementedException();
+        var resource = await GetAttachedResourceAsync(moduleId, id, resourceId, token);
+        await ApplyResourceUpdateAsync(resource, data, token);
     }
 
-    public Task UpdateResource(Guid id, Guid resourceId, JsonPatchDocument<ResourceForChangeDto> data, CancellationToken token = default)
+    public async Task UpdateResource(Guid moduleId, Guid id, Guid resourceId, JsonPatchDocument<ResourceForChangeDto> data, CancellationToken token = default)
     {
-        throw new NotImplementedException();
+        var resource = await GetAttachedResourceAsync(moduleId, id, resourceId, token);
+
+        var dto = ResourceMapper.ToChangeDto(resource);
+        data.ApplyTo(dto);
+        await ApplyResourceUpdateAsync(resource, dto, token);
+    }
+
+    private async Task<Resource> GetAttachedResourceAsync(Guid moduleId, Guid id, Guid resourceId, CancellationToken token)
+    {
+        var entity = await repository.GetActivityAsync(moduleId, id, token) ?? throw new NotFoundException($"Activity '{id}' not found");
+
+        var resources = await repository.GetResourcesAsync(entity.Id, token);
+        if (!resources.Any(r => r.Id == resourceId)) throw new NotFoundException($"Resource '{resourceId}' not found on activity '{id}'");
+
+        return await resourceRepository.GetResourceAsync(resourceId, token) ?? throw new NotFoundException($"Resource '{resourceId}' not found");
+    }
+
+    private async Task ApplyResourceUpdateAsync(Resource entity, ResourceForChangeDto update, CancellationToken token)
+    {
+        ResourceValidator.ValidateChangeDto(update);
+
+        entity.Name = update.Name;
+        entity.Description = update.Description;
+        entity.ResourceType = update.Type;
+        entity.Data = update.Data;
+
+        await resourceRepository.SaveChangesAsync(token);
+    }
+
+    public async Task ApplyUpdateAsync(Activity entity, ActivityForChangeDto dto, CancellationToken token)
+    {
+        ActivityValidator.ValidateChangeDto(dto);
+        await EnsureNoOverlapAsync(entity.ModuleId, dto, entity.Id, token);
+
+        entity.Name = dto.Name;
+        entity.Description = dto.Description;
+        entity.StartTimeOffset = dto.StartOffset;
+        entity.DurationMinutes = dto.Duration;
+        entity.ActivityType = dto.Type;
+
+        await repository.SaveChangesAsync(token);
+    }
+
+    private async Task EnsureNoOverlapAsync(Guid moduleId, ActivityForChangeDto dto, Guid? excludeId, CancellationToken token)
+    {
+        var overlaps = await repository.HasOverlappingActivityAsync(moduleId, dto.Type, dto.StartOffset, dto.Duration, excludeId, token);
+        if (overlaps) throw new ValidationException($"Activity overlaps with an existing '{dto.Type}' activity");
     }
 }
