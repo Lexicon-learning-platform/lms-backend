@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
 using Lms_backend.Application.Interfaces;
-using Lms_backend.Domain.Entities;
+using Lms_backend.Application.Models;
 using Lms_backend.Domain.Enums;
 
 namespace Lms_backend.Api.Controllers
@@ -12,7 +12,7 @@ namespace Lms_backend.Api.Controllers
     {
 
         [HttpPost("login")]
-        public IActionResult Login([FromBody] LoginModel model)
+        public IActionResult Login([FromBody] LoginDto model)
         {
 
             var result = service.Login(model);
@@ -71,7 +71,7 @@ namespace Lms_backend.Api.Controllers
         }
 
         [HttpPost("register")]
-        public IActionResult RegisterStudent([FromBody] RegisterModel model)
+        public IActionResult RegisterStudent([FromBody] RegisterDto model)
         {
             var result = service.RegisterStudent(model);
 

@@ -1,4 +1,5 @@
 ﻿using Lms_backend.Domain.Entities;
+using Lms_backend.Application.Models;
 using Lms_backend.Domain.Enums;
 using System;
 using System.Collections.Generic;
@@ -8,13 +9,13 @@ namespace Lms_backend.Application.Interfaces
 {
     public interface IAdminService
     {
-        ActionResponse Register(RegisterModel model, ApplicationRole role);
+        ActionResponse Register(RegisterDto model, string role);
 
         ActionResponse DisableUser(string userId);
 
         ActionResponse DeleteUser(string userId);
 
-        ActionResponse UpdateUser(string userId, UpdateUserModel model);
+        ActionResponse UpdateUser(string userId, UpdateUserDto model);
         ActionResponse ResetPassword(string userId, string newPassword);
 
         ActionResponse AddCourseToUser(string userId, string courseId);

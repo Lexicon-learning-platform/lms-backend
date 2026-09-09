@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Lms_backend.Domain.Entities
-{
-    public class UpdateUserModel
+namespace Lms_backend.Application.Models;
+
+    public class UpdateUserDto
     {
         public string? Username { get; set; }
         public string? FirstName { get; set; }
@@ -13,4 +13,4 @@ namespace Lms_backend.Domain.Entities
         public string? Role { get; set; }
         public string? Password { get; set; }
     }
-}
+

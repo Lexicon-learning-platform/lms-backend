@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Lms_backend.Domain.Entities
-{
-    public record UserStats
+namespace Lms_backend.Application.Models;
+
+    public record UserStatsDto
     {
 
     }
-}
+
