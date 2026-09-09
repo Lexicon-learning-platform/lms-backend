@@ -59,6 +59,24 @@ public class CourseRepository(AppDbContext context) : RepositoryWithResourceBase
         return GetCourseInternalAsync(id, true, token);
     }
 
+    public Task<Course?> GetCourseByUserIdReadOnlyAsync(Guid userId, CancellationToken token)
+    {
+        return GetCourseByUserIdAsync(userId, true, token);
+    }
+
+    private async Task<Course?> GetCourseByUserIdAsync(Guid userId, bool readOnly, CancellationToken token)
+    {
+        var query = Set.Where(course => course.Users.Any(user => user.Id == userId))
+                .Include(c => c.Modules)
+                    .ThenInclude(cm => cm.Module)
+                        .ThenInclude(cm => cm.Activities)
+                .AsQueryable();
+        
+        if (readOnly) query = query.AsNoTracking();
+        
+        return await query.FirstOrDefaultAsync(token);
+    }
+
     private async Task<Course?> GetCourseInternalAsync(Guid id, bool readOnly, CancellationToken token)
     {
         var query = Set
