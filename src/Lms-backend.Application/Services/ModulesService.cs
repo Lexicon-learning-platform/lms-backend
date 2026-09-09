@@ -4,6 +4,7 @@ using Lms_backend.Application.Mappers;
 using Lms_backend.Application.Models;
 using Lms_backend.Application.Validators;
 using Lms_backend.Domain.Constants;
+using Lms_backend.Domain.Entities;
 using Lms_backend.Infrastructure.Interfaces;
 using Lms_backend.Infrastructure.Models;
 using Microsoft.AspNetCore.JsonPatch.SystemTextJson;
@@ -58,14 +59,31 @@ public class ModulesService(IModuleRepository repository) : IModulesService
         throw new NotImplementedException();
     }
 
-    public Task Update(Guid id, ModuleForChangeDto data, CancellationToken token = default)
+    public async Task Update(Guid id, ModuleForChangeDto data, CancellationToken token = default)
     {
-        throw new NotImplementedException();
+        var entity = await repository.GetModuleAsync(id, token) ?? throw new NotFoundException($"Module '{id}' not found");
+        await ApplyUpdateAsync(entity, data, token);
     }
 
-    public Task Update(Guid id, JsonPatchDocument<ModuleForChangeDto> data, CancellationToken token = default)
+    public async Task Update(Guid id, JsonPatchDocument<ModuleForChangeDto> data, CancellationToken token = default)
     {
-        throw new NotImplementedException();
+        var entity = await repository.GetModuleAsync(id, token) ?? throw new NotFoundException($"Module '{id}' not found");
+
+        var dto = ModuleMapper.ToChangeDto(entity);
+        data.ApplyTo(dto);
+
+        await ApplyUpdateAsync(entity, dto, token);
+    }
+
+    private async Task ApplyUpdateAsync(Module entity, ModuleForChangeDto update, CancellationToken token)
+    {
+        ModuleValidator.ValidateChangeDto(update);
+
+        entity.Name = update.Name;
+        entity.Description = update.Description;
+        entity.Duration = update.Duration;
+
+        await repository.SaveChangesAsync(token);
     }
 
     public Task UpdateResource(Guid id, Guid resourceId, ResourceForChangeDto data, CancellationToken token = default)

@@ -58,7 +58,6 @@ public static class ModuleMapper
             Name = entity.Name,
             Description = entity.Description,
             Duration = entity.Duration,
-            ActivityIds = [.. entity.Activities.Select(a => a.Id)],
         };
     }
 
