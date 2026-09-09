@@ -5,7 +5,6 @@ using Lms_backend.Domain.Entities;
 using Lms_backend.Infrastructure;
 using Lms_backend.Infrastructure.Interfaces;
 using Lms_backend.Infrastructure.Services;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -65,6 +64,7 @@ builder.Services.AddScoped<IModulesService, ModulesService>();
 builder.Services.AddScoped<IActivitiesService, ActivitiesService>();
 builder.Services.AddScoped<IResourcesService, ResourcesService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IAdminService, AdminService>();
 
 var app = builder.Build();
 

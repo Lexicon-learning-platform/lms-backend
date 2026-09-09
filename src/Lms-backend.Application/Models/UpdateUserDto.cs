@@ -1,0 +1,15 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace Lms_backend.Application.Models;
+
+    public class UpdateUserDto
+    {
+        public string? Username { get; set; }
+        public string? GivenName { get; set; }
+        public string? LastName { get; set; }
+        public string? Email { get; set; }
+        public string? Role { get; set; }
+    }
+

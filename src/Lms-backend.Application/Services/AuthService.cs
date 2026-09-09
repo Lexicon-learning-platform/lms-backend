@@ -1,5 +1,6 @@
 ﻿using Lms_backend.Application.Interfaces;
 using Lms_backend.Domain.Entities;
+using Lms_backend.Application.Models;
 using Lms_backend.Domain.Enums;
 using Lms_backend.Infrastructure.Interfaces;
 using Microsoft.AspNetCore.Identity;
@@ -18,7 +19,7 @@ namespace Lms_backend.Application.Services
         private readonly UserManager<ApplicationUser> _userManager = userManager;
 
 
-        public (List<JwtSecurityToken>? tokens, ActionResponse response) Login(LoginModel model)
+        public (List<JwtSecurityToken>? tokens, ActionResponse response) Login(LoginDto model)
         {
             //Check if the user exists and the password is correct
             var user = _userManager.FindByNameAsync(model.Username).Result;
@@ -93,7 +94,7 @@ namespace Lms_backend.Application.Services
             return _repository.RevokeRefreshTokenAsync(refreshToken).Result;
         }
 
-        public ActionResponse RegisterStudent(RegisterModel model)
+        public ActionResponse RegisterStudent(RegisterDto model)
         {
             //Check if the user already exists
             var existingUser = _userManager.FindByNameAsync(model.Username).Result;
@@ -111,10 +112,9 @@ namespace Lms_backend.Application.Services
                 Role = "Student"
             };
 
-            //Behöver skapa användaren innan man kan hasha lösenordet
-            newUser.PasswordHash = _userManager.PasswordHasher.HashPassword(newUser, model.Password);
-
             _userManager.CreateAsync(newUser);
+
+            _userManager.AddPasswordAsync(newUser, model.Password);
 
             return ActionResponse.Success;
         }
