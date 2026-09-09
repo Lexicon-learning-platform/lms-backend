@@ -22,7 +22,7 @@ namespace Lms_backend.Application.Interfaces
 
         ActionResponse RemoveCourseFromUser(string userId, string courseId);
 
-        ActionResponse GetUserStatistics(string userId);
+        (ActionResponse response, UserStatsDto statistics) GetUserStatistics(string userId);
 
         List<ApplicationUser> GetAllUsers();
 
