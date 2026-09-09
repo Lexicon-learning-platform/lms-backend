@@ -112,10 +112,9 @@ namespace Lms_backend.Application.Services
                 Role = "Student"
             };
 
-            //Behöver skapa användaren innan man kan hasha lösenordet
-            newUser.PasswordHash = _userManager.PasswordHasher.HashPassword(newUser, model.Password);
-
             _userManager.CreateAsync(newUser);
+
+            _userManager.AddPasswordAsync(newUser, model.Password);
 
             return ActionResponse.Success;
         }
