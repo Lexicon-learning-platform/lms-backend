@@ -12,6 +12,17 @@ namespace Lms_backend.Api.Controllers;
 public class CourseController(ICoursesService service) : ControllerBase
 {
     // Base course endpoints
+    [HttpGet("my-course")]
+    public async Task<IActionResult> GetCurrentUserCourse(CancellationToken token = default)
+    {
+        // TODO: Get user ID from claims when auth is finished
+        // var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        // var userId = Guid.Parse(userIdClaim!);
+        var userId = Guid.Parse("44444444-0000-0000-0000-000000000002"); 
+        var result = await service.GetByUserId(userId, token);
+        return Ok(result);
+    }
+    
     [HttpGet]
     public async Task<IActionResult> GetCourses(string? name, string? search, int? page, int? pageSize, CancellationToken token = default)
     {

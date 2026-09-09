@@ -66,4 +66,14 @@ public static class ActivityMapper
             Type = entity.ActivityType,
         };
     }
+
+    public static ActivitySimpleDto ToDto(Activity entity)
+    {
+        return new ActivitySimpleDto
+        {
+            Id = entity.Id,
+            Name = entity.Name,
+            Duration = entity.DurationMinutes
+        };
+    }
 }
