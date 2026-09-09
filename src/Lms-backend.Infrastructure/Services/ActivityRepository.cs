@@ -1,5 +1,6 @@
 using Lms_backend.Domain.Entities;
 using Lms_backend.Domain.Entities.Joins;
+using Lms_backend.Domain.Enums;
 using Lms_backend.Infrastructure.Interfaces;
 using Lms_backend.Infrastructure.Models;
 using Microsoft.EntityFrameworkCore;
@@ -70,5 +71,19 @@ public class ActivityRepository(AppDbContext context) : RepositoryWithResourceBa
         if (readOnly) query = query.AsNoTracking();
 
         return await query.FirstOrDefaultAsync(a => a.Id == id, token);
+    }
+
+    public Task<bool> HasOverlappingActivityAsync(Guid moduleId, ActivityType type, int startOffset, int durationMinutes, Guid? excludeId, CancellationToken token)
+    {
+        var endOffset = startOffset + durationMinutes;
+
+        var query = Set.Where(a => a.ModuleId == moduleId
+            && a.ActivityType == type
+            && a.StartTimeOffset < endOffset
+            && startOffset < a.StartTimeOffset + a.DurationMinutes);
+
+        if (excludeId.HasValue) query = query.Where(a => a.Id != excludeId.Value);
+
+        return query.AnyAsync(token);
     }
 }

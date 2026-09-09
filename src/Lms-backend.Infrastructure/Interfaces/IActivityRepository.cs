@@ -1,5 +1,6 @@
 using Lms_backend.Domain.Entities;
 using Lms_backend.Domain.Entities.Joins;
+using Lms_backend.Domain.Enums;
 using Lms_backend.Infrastructure.Models;
 
 namespace Lms_backend.Infrastructure.Interfaces;
@@ -10,4 +11,5 @@ public interface IActivityRepository : IRepositoryWithResourceBase<Activity, Act
     Task<(IEnumerable<Activity>, PaginationMetadata?)> GetActivitiesReadOnlyAsync(Guid moduleId, ActivitySearchParams searchParams, int page, int pageSize, CancellationToken token);
     Task<Activity?> GetActivityAsync(Guid moduleId, Guid id, CancellationToken token);
     Task<Activity?> GetActivityReadOnlyAsync(Guid moduleId, Guid id, CancellationToken token);
+    Task<bool> HasOverlappingActivityAsync(Guid moduleId, ActivityType type, int startOffset, int durationMinutes, Guid? excludeId, CancellationToken token);
 }

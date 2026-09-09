@@ -40,6 +40,7 @@ public class ActivitiesService(IActivityRepository repository, IResourceReposito
     public async Task<ActivityDto> Create(Guid moduleId, Guid userId, ActivityForChangeDto data, CancellationToken token = default)
     {
         ActivityValidator.ValidateChangeDto(data);
+        await EnsureNoOverlapAsync(moduleId, data, null, token);
 
         var entity = ActivityMapper.ToEntity(data, moduleId);
         await repository.AddAsync(entity, token);
@@ -137,6 +138,7 @@ public class ActivitiesService(IActivityRepository repository, IResourceReposito
     public async Task ApplyUpdateAsync(Activity entity, ActivityForChangeDto dto, CancellationToken token)
     {
         ActivityValidator.ValidateChangeDto(dto);
+        await EnsureNoOverlapAsync(entity.ModuleId, dto, entity.Id, token);
 
         entity.Name = dto.Name;
         entity.Description = dto.Description;
@@ -145,5 +147,11 @@ public class ActivitiesService(IActivityRepository repository, IResourceReposito
         entity.ActivityType = dto.Type;
 
         await repository.SaveChangesAsync(token);
+    }
+
+    private async Task EnsureNoOverlapAsync(Guid moduleId, ActivityForChangeDto dto, Guid? excludeId, CancellationToken token)
+    {
+        var overlaps = await repository.HasOverlappingActivityAsync(moduleId, dto.Type, dto.StartOffset, dto.Duration, excludeId, token);
+        if (overlaps) throw new ValidationException($"Activity overlaps with an existing '{dto.Type}' activity");
     }
 }
