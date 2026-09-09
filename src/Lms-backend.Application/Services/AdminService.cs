@@ -43,10 +43,10 @@ namespace Lms_backend.Application.Services
             return users;
         }
 
-        public ActionResponse GetUserStatistics(string userId)
+        public (ActionResponse response, UserStatsDto statistics) GetUserStatistics(string userId)
         {
             var user = GetUserById(userId);
-            if (user == null) return ActionResponse.NotFound;
+            if (user == null) return (ActionResponse.NotFound, new UserStatsDto());
 
             UserStatsDto userStatsDto = new UserStatsDto()
             {
@@ -60,7 +60,7 @@ namespace Lms_backend.Application.Services
                 //TODO: Populate the Courses property with the user's courses.
             }; 
 
-            return ActionResponse.Success;
+            return (ActionResponse.Success, userStatsDto);
         }
 
         public ActionResponse Register(RegisterDto model, string role)
