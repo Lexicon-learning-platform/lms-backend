@@ -1,5 +1,6 @@
 using Lms_backend.Domain.Entities;
 using Lms_backend.Domain.Entities.Joins;
+using Lms_backend.Domain.Enums;
 using Lms_backend.Infrastructure.Interfaces;
 using Lms_backend.Infrastructure.Models;
 using Microsoft.EntityFrameworkCore;
@@ -17,19 +18,19 @@ public class ActivityRepository(AppDbContext context) : RepositoryWithResourceBa
     protected override ActivityResource CreateJoin(Guid entityId, Guid resourceId) =>
         new() { ActivityId = entityId, ResourceId = resourceId };
 
-    public Task<(IEnumerable<Activity>, PaginationMetadata?)> GetActivitiesAsync(ActivitySearchParams searchParams, int page, int pageSize, CancellationToken token)
+    public Task<(IEnumerable<Activity>, PaginationMetadata?)> GetActivitiesAsync(Guid moduleId, ActivitySearchParams searchParams, int page, int pageSize, CancellationToken token)
     {
-        return GetActivitiesInternalAsync(searchParams, page, pageSize, false, token);
+        return GetActivitiesInternalAsync(moduleId, searchParams, page, pageSize, false, token);
     }
 
-    public Task<(IEnumerable<Activity>, PaginationMetadata?)> GetActivitiesReadOnlyAsync(ActivitySearchParams searchParams, int page, int pageSize, CancellationToken token)
+    public Task<(IEnumerable<Activity>, PaginationMetadata?)> GetActivitiesReadOnlyAsync(Guid moduleId, ActivitySearchParams searchParams, int page, int pageSize, CancellationToken token)
     {
-        return GetActivitiesInternalAsync(searchParams, page, pageSize, true, token);
+        return GetActivitiesInternalAsync(moduleId, searchParams, page, pageSize, true, token);
     }
 
-    private async Task<(IEnumerable<Activity>, PaginationMetadata?)> GetActivitiesInternalAsync(ActivitySearchParams searchParams, int page, int pageSize, bool readOnly, CancellationToken token)
+    private async Task<(IEnumerable<Activity>, PaginationMetadata?)> GetActivitiesInternalAsync(Guid moduleId, ActivitySearchParams searchParams, int page, int pageSize, bool readOnly, CancellationToken token)
     {
-        var query = Set.AsSplitQuery().AsQueryable();
+        var query = Set.Where(a => a.ModuleId == moduleId).AsSplitQuery().AsQueryable();
 
         if (readOnly) query = query.AsNoTracking();
 
@@ -49,25 +50,40 @@ public class ActivityRepository(AppDbContext context) : RepositoryWithResourceBa
         return (activities, pagination);
     }
 
-    public Task<Activity?> GetActivityAsync(Guid id, CancellationToken token)
+    public Task<Activity?> GetActivityAsync(Guid moduleId, Guid id, CancellationToken token)
     {
-        return GetActivityInternalAsync(id, false, token);
+        return GetActivityInternalAsync(moduleId, id, false, token);
     }
 
-    public Task<Activity?> GetActivityReadOnlyAsync(Guid id, CancellationToken token)
+    public Task<Activity?> GetActivityReadOnlyAsync(Guid moduleId, Guid id, CancellationToken token)
     {
-        return GetActivityInternalAsync(id, true, token);
+        return GetActivityInternalAsync(moduleId, id, true, token);
     }
 
-    private async Task<Activity?> GetActivityInternalAsync(Guid id, bool readOnly, CancellationToken token)
+    private async Task<Activity?> GetActivityInternalAsync(Guid moduleId, Guid id, bool readOnly, CancellationToken token)
     {
         var query = Set
-            .Include(a => a.Resources).ThenInclude(ar => ar.Resource)
+            .Where(a => a.ModuleId == moduleId)
+            .Include(a => a.Resources).ThenInclude(ar => ar.Resource).ThenInclude(arr => arr.Owner)
             .AsSplitQuery()
             .AsQueryable();
 
         if (readOnly) query = query.AsNoTracking();
 
         return await query.FirstOrDefaultAsync(a => a.Id == id, token);
+    }
+
+    public Task<bool> HasOverlappingActivityAsync(Guid moduleId, ActivityType type, int startOffset, int durationMinutes, Guid? excludeId, CancellationToken token)
+    {
+        var endOffset = startOffset + durationMinutes;
+
+        var query = Set.Where(a => a.ModuleId == moduleId
+            && a.ActivityType == type
+            && a.StartTimeOffset < endOffset
+            && startOffset < a.StartTimeOffset + a.DurationMinutes);
+
+        if (excludeId.HasValue) query = query.Where(a => a.Id != excludeId.Value);
+
+        return query.AnyAsync(token);
     }
 }

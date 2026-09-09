@@ -16,6 +16,7 @@ public abstract class RepositoryWithResourceBase<TEntity, TJoin>(AppDbContext co
     public async Task<IList<Resource>> GetResourcesAsync(Guid id, CancellationToken token)
     {
         return await JoinsForEntity(id)
+            .Include(j => j.Resource!.Owner)
             .Select(j => j.Resource!)
             .ToListAsync(token);
     }
