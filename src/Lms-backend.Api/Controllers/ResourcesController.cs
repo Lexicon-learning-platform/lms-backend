@@ -1,16 +1,18 @@
-using System.Text.Json;
 using Lms_backend.Application.Interfaces;
 using Lms_backend.Application.Models;
 using Lms_backend.Domain.Constants;
 using Lms_backend.Domain.Enums;
 using Lms_backend.Infrastructure.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch.SystemTextJson;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 
 namespace Lms_backend.Api.Controllers;
 
 [ApiController]
 [Route("api/resources")]
+[Authorize]
 public class ResourceController : ControllerBase
 {
     private readonly Guid testingUserId;
