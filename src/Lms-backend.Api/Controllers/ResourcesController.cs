@@ -12,13 +12,13 @@ namespace Lms_backend.Api.Controllers;
 
 [ApiController]
 [Route("api/resources")]
+[Authorize]
 public class ResourceController(IResourcesService service) : ControllerBase
 {
     // TODO: replace usage of this var with User.GetUserId() once auth is implemented
     private readonly Guid testingUserId = Guid.Parse("44444444-0000-0000-0000-000000000002");
     // Base resource endpoints
     [HttpGet]
-    [Authorize(Roles = "Admin, Teacher, Student")]
     public async Task<IActionResult> GetResources(string? name, string? search, ResourceType type, int? page, int? pageSize, CancellationToken token = default)
     {
         var (result, pagination) = await service.GetMany(new ResourceSearchParams(name, search, type), page, pageSize, token);
@@ -27,7 +27,6 @@ public class ResourceController(IResourcesService service) : ControllerBase
     }
 
     [HttpGet("{id}", Name = "GetResource")]
-    [Authorize(Roles = "Admin, Teacher, Student")]
     public async Task<IActionResult> GetResource(Guid id, CancellationToken token = default)
     {
         var result = await service.GetOne(id, token);
@@ -35,7 +34,6 @@ public class ResourceController(IResourcesService service) : ControllerBase
     }
 
     [HttpPost]
-    [Authorize(Roles = "Admin, Teacher")]
     public async Task<IActionResult> CreateResource(ResourceForChangeDto data, CancellationToken token = default)
     {
         var result = await service.Create(data, testingUserId, CanModerate, token);
@@ -43,7 +41,6 @@ public class ResourceController(IResourcesService service) : ControllerBase
     }
 
     [HttpPut("{id}")]
-    [Authorize(Roles = "Admin, Teacher")]
     public async Task<IActionResult> UpdateResource(Guid id, ResourceForChangeDto data, CancellationToken token = default)
     {
         await service.Update(id, data, testingUserId, CanModerate, token);
@@ -51,7 +48,6 @@ public class ResourceController(IResourcesService service) : ControllerBase
     }
 
     [HttpPatch("{id}")]
-    [Authorize(Roles = "Admin, Teacher")]
     public async Task<IActionResult> PatchResource(Guid id, JsonPatchDocument<ResourceForChangeDto> data, CancellationToken token = default)
     {
         await service.Update(id, data, testingUserId, CanModerate, token);
@@ -59,7 +55,6 @@ public class ResourceController(IResourcesService service) : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    [Authorize(Roles = "Admin, Teacher")]
     public async Task<IActionResult> RemoveResource(Guid id, CancellationToken token = default)
     {
         await service.Remove(id, testingUserId, CanModerate, token);
