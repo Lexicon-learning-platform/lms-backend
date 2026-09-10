@@ -7,10 +7,10 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Lms_backend.Application.Services
 {
-    public class AdminService(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, ICourseRepository courseRepository) : IAdminService
+    public class AdminService(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, ICourseRepository courseRepository) : IAdminService
     {
         private readonly UserManager<ApplicationUser> _userManager = userManager;
-        private readonly RoleManager<IdentityRole> _roleManager = roleManager;
+        private readonly RoleManager<ApplicationRole> _roleManager = roleManager;
         private readonly ICourseRepository _courseRepository = courseRepository;
 
         public ActionResponse DeleteUser(string userId)
