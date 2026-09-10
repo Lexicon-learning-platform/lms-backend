@@ -31,6 +31,7 @@ namespace Lms_backend.Application.Services
             //Build access and refresh tokens
             var claims = new List<Claim>
                 {
+                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                     new Claim(ClaimTypes.Name, model.Username),
                     new Claim(ClaimTypes.Role, model.Role)
                 };
@@ -67,7 +68,7 @@ namespace Lms_backend.Application.Services
         }
 
 
-        public JwtSecurityToken GetNewToken(string refreshToken)
+        public JwtSecurityToken? GetNewToken(string refreshToken)
         {
             var handler = new JwtSecurityTokenHandler();
             var token = handler.ReadJwtToken(refreshToken);

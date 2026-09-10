@@ -13,6 +13,19 @@ namespace Lms_backend.Application.Services;
 
 public class ModulesService(IModuleRepository repository, IResourceRepository resourceRepository) : IModulesService
 {
+    public async Task<IEnumerable<ResourceDto>> GetResources(Guid id, CancellationToken token = default)
+    {
+        var entity = await repository.GetModuleReadOnlyAsync(id, token) ?? throw new NotFoundException($"Module '{id}' not found");
+        return ResourceMapper.ToStandardDto(entity.Resources.Select(r => r.Resource));
+    }
+
+    public async Task<ResourceDto> GetResource(Guid id, Guid resourceId, CancellationToken token = default)
+    {
+        var entity = await repository.GetModuleReadOnlyAsync(id, token) ?? throw new NotFoundException($"Module '{id}' not found");
+        var resource = entity.Resources.FirstOrDefault(r => r.ResourceId == resourceId)?.Resource ?? throw new NotFoundException($"Resource '{resourceId}' not found on module '{id}'");
+        return ResourceMapper.ToStandardDto(resource);
+    }
+
     public async Task<ResourceDto> AddResource(Guid id, Guid userId, ResourceForChangeDto data, CancellationToken token = default)
     {
         var entity = await repository.GetModuleAsync(id, token) ?? throw new NotFoundException($"Module '{id}' not found");
