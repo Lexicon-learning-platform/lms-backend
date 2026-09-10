@@ -1,5 +1,6 @@
 using Lms_backend.Application.Interfaces;
 using Lms_backend.Application.Models;
+using Lms_backend.Domain.Constants;
 using Lms_backend.Infrastructure.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch.SystemTextJson;
@@ -40,6 +41,7 @@ public class ModulesController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = Roles.TeacherAndAbove)]
     public async Task<IActionResult> CreateModule(ModuleForChangeDto data, CancellationToken token = default)
     {
         var result = await _service.Create(data, token);
@@ -47,6 +49,7 @@ public class ModulesController : ControllerBase
     }
 
     [HttpPut("{id}")]
+    [Authorize(Roles = Roles.TeacherAndAbove)]
     public async Task<IActionResult> UpdateModule(Guid id, ModuleForChangeDto data, CancellationToken token = default)
     {
         await _service.Update(id, data, token);
@@ -54,6 +57,7 @@ public class ModulesController : ControllerBase
     }
 
     [HttpPatch("{id}")]
+    [Authorize(Roles = Roles.TeacherAndAbove)]
     public async Task<IActionResult> PatchModule(Guid id, JsonPatchDocument<ModuleForChangeDto> data, CancellationToken token = default)
     {
         await _service.Update(id, data, token);
@@ -61,6 +65,7 @@ public class ModulesController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [Authorize(Roles = Roles.TeacherAndAbove)]
     public async Task<IActionResult> RemoveModule(Guid id, CancellationToken token = default)
     {
         await _service.Remove(id, token);
@@ -83,6 +88,7 @@ public class ModulesController : ControllerBase
     }
 
     [HttpPost("{id}/resources")]
+    [Authorize(Roles = Roles.TeacherAndAbove)]
     public async Task<IActionResult> CreateModuleResource(Guid id, ResourceForChangeDto data, CancellationToken token = default)
     {
         var result = await _service.AddResource(id, testingUserId, data, token);
@@ -90,6 +96,7 @@ public class ModulesController : ControllerBase
     }
 
     [HttpPost("{id}/resources/{resourceId}")]
+    [Authorize(Roles = Roles.TeacherAndAbove)]
     public async Task<IActionResult> AttachModuleResource(Guid id, Guid resourceId, CancellationToken token = default)
     {
         var attached = await _service.AttachResource(id, resourceId, token);
@@ -97,6 +104,7 @@ public class ModulesController : ControllerBase
     }
 
     [HttpPut("{id}/resources/{resourceId}")]
+    [Authorize(Roles = Roles.TeacherAndAbove)]
     public async Task<IActionResult> UpdateModuleResource(Guid id, Guid resourceId, ResourceForChangeDto data, CancellationToken token = default)
     {
         await _service.UpdateResource(id, resourceId, data, token);
@@ -104,6 +112,7 @@ public class ModulesController : ControllerBase
     }
 
     [HttpPatch("{id}/resources/{resourceId}")]
+    [Authorize(Roles = Roles.TeacherAndAbove)]
     public async Task<IActionResult> PatchModuleResource(Guid id, Guid resourceId, JsonPatchDocument<ResourceForChangeDto> data, CancellationToken token = default)
     {
         await _service.UpdateResource(id, resourceId, data, token);
@@ -111,6 +120,7 @@ public class ModulesController : ControllerBase
     }
 
     [HttpDelete("{id}/resources/{resourceId}")]
+    [Authorize(Roles = Roles.TeacherAndAbove)]
     public async Task<IActionResult> RemoveModuleResource(Guid id, Guid resourceId, CancellationToken token = default)
     {
         await _service.DetachResource(id, resourceId, token);

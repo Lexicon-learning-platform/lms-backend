@@ -1,6 +1,7 @@
 using System.Text.Json;
 using Lms_backend.Application.Interfaces;
 using Lms_backend.Application.Models;
+using Lms_backend.Domain.Constants;
 using Lms_backend.Domain.Enums;
 using Lms_backend.Infrastructure.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -41,6 +42,7 @@ public class ActivitiesController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = Roles.TeacherAndAbove)]
     public async Task<IActionResult> CreateActivity([FromRoute] Guid moduleId, [FromBody] ActivityForChangeDto data, CancellationToken token = default)
     {
         var result = await _service.Create(moduleId, testingUserId, data, token);
@@ -48,6 +50,7 @@ public class ActivitiesController : ControllerBase
     }
 
     [HttpPut("{id}")]
+    [Authorize(Roles = Roles.TeacherAndAbove)]
     public async Task<IActionResult> UpdateActivity([FromRoute] Guid moduleId, [FromRoute] Guid id, [FromBody] ActivityForChangeDto data, CancellationToken token = default)
     {
         await _service.Update(moduleId, id, data, token);
@@ -55,6 +58,7 @@ public class ActivitiesController : ControllerBase
     }
 
     [HttpPatch("{id}")]
+    [Authorize(Roles = Roles.TeacherAndAbove)]
     public async Task<IActionResult> PatchActivity([FromRoute] Guid moduleId, [FromRoute] Guid id, [FromBody] JsonPatchDocument<ActivityForChangeDto> data, CancellationToken token = default)
     {
         await _service.Update(moduleId, id, data, token);
@@ -62,6 +66,7 @@ public class ActivitiesController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [Authorize(Roles = Roles.TeacherAndAbove)]
     public async Task<IActionResult> RemoveActivity([FromRoute] Guid moduleId, [FromRoute] Guid id, CancellationToken token = default)
     {
         await _service.Remove(moduleId, id, token);
@@ -84,6 +89,7 @@ public class ActivitiesController : ControllerBase
     }
 
     [HttpPost("{id}/resources")]
+    [Authorize(Roles = Roles.TeacherAndAbove)]
     public async Task<IActionResult> CreateActivityResource([FromRoute] Guid moduleId, [FromRoute] Guid id, [FromBody] ResourceForChangeDto data, CancellationToken token = default)
     {
         var result = await _service.AddResource(moduleId, id, testingUserId, data, token);
@@ -91,6 +97,7 @@ public class ActivitiesController : ControllerBase
     }
 
     [HttpPost("{id}/resources/{resourceId}")]
+    [Authorize(Roles = Roles.TeacherAndAbove)]
     public async Task<IActionResult> AttachActivityResource([FromRoute] Guid moduleId, [FromRoute] Guid id, [FromRoute] Guid resourceId, CancellationToken token = default)
     {
         var attached = await _service.AttachResource(moduleId, id, resourceId, token);
@@ -98,6 +105,7 @@ public class ActivitiesController : ControllerBase
     }
 
     [HttpPut("{id}/resources/{resourceId}")]
+    [Authorize(Roles = Roles.TeacherAndAbove)]
     public async Task<IActionResult> UpdateActivityResource([FromRoute] Guid moduleId, [FromRoute] Guid id, [FromRoute] Guid resourceId, [FromBody] ResourceForChangeDto data, CancellationToken token = default)
     {
         await _service.UpdateResource(moduleId, id, resourceId, data, token);
@@ -105,6 +113,7 @@ public class ActivitiesController : ControllerBase
     }
 
     [HttpPatch("{id}/resources/{resourceId}")]
+    [Authorize(Roles = Roles.TeacherAndAbove)]
     public async Task<IActionResult> PatchActivityResource([FromRoute] Guid moduleId, [FromRoute] Guid id, [FromRoute] Guid resourceId, [FromBody] JsonPatchDocument<ResourceForChangeDto> data, CancellationToken token = default)
     {
         await _service.UpdateResource(moduleId, id, resourceId, data, token);
@@ -112,6 +121,7 @@ public class ActivitiesController : ControllerBase
     }
 
     [HttpDelete("{id}/resources/{resourceId}")]
+    [Authorize(Roles = Roles.TeacherAndAbove)]
     public async Task<IActionResult> RemoveActivityResource([FromRoute] Guid moduleId, [FromRoute] Guid id, [FromRoute] Guid resourceId, CancellationToken token = default)
     {
         await _service.DetachResource(moduleId, id, resourceId, token);

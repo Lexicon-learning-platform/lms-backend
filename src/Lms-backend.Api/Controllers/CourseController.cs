@@ -1,17 +1,17 @@
+using System.Text.Json;
 using Lms_backend.Application.Interfaces;
 using Lms_backend.Application.Models;
+using Lms_backend.Domain.Constants;
 using Lms_backend.Domain.Entities;
 using Lms_backend.Infrastructure.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch.SystemTextJson;
 using Microsoft.AspNetCore.Mvc;
-using System.Text.Json;
 
 namespace Lms_backend.Api.Controllers;
 
 [ApiController]
 [Route("api/courses")]
-[Authorize]
 public class CourseController : ControllerBase
 {
 
@@ -26,6 +26,7 @@ public class CourseController : ControllerBase
 
     // Base course endpoints
     [HttpGet("my-course")]
+    [Authorize]
     public async Task<IActionResult> GetCurrentUserCourse(CancellationToken token = default)
     {
         var result = await _service.GetByUserId(testingUserId, token);
@@ -48,6 +49,7 @@ public class CourseController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = Roles.TeacherAndAbove)]
     public async Task<IActionResult> CreateCourse(CourseForChangeDto data, CancellationToken token = default)
     {
         var result = await _service.Create(data, token);
@@ -55,6 +57,7 @@ public class CourseController : ControllerBase
     }
 
     [HttpPut("{id}")]
+    [Authorize(Roles = Roles.TeacherAndAbove)]
     public async Task<IActionResult> UpdateCourse(Guid id, CourseForChangeDto data, CancellationToken token = default)
     {
         await _service.Update(id, data, token);
@@ -62,6 +65,7 @@ public class CourseController : ControllerBase
     }
 
     [HttpPatch("{id}")]
+    [Authorize(Roles = Roles.TeacherAndAbove)]
     public async Task<IActionResult> PatchCourse(Guid id, JsonPatchDocument<CourseForChangeDto> data, CancellationToken token = default)
     {
         await _service.Update(id, data, token);
@@ -69,6 +73,7 @@ public class CourseController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [Authorize(Roles = Roles.TeacherAndAbove)]
     public async Task<IActionResult> RemoveCourse(Guid id, CancellationToken token = default)
     {
         await _service.Remove(id, token);
@@ -77,6 +82,7 @@ public class CourseController : ControllerBase
 
     // Resource endpoints for courses
     [HttpGet("{id}/resources")]
+    [Authorize]
     public async Task<IActionResult> GetCourseResources(Guid id, CancellationToken token = default)
     {
         var result = await _service.GetResources(id, token);
@@ -84,6 +90,7 @@ public class CourseController : ControllerBase
     }
 
     [HttpGet("{id}/resources/{resourceId}", Name = "GetCourseResource")]
+    [Authorize]
     public async Task<IActionResult> GetCourseResource(Guid id, Guid resourceId, CancellationToken token = default)
     {
         var result = await _service.GetResource(id, resourceId, token);
@@ -91,6 +98,7 @@ public class CourseController : ControllerBase
     }
 
     [HttpPost("{id}/resources")]
+    [Authorize(Roles = Roles.TeacherAndAbove)]
     public async Task<IActionResult> CreateCourseResource(Guid id, ResourceForChangeDto data, CancellationToken token = default)
     {
         var result = await _service.AddResource(id, testingUserId, data, token);
@@ -98,6 +106,7 @@ public class CourseController : ControllerBase
     }
 
     [HttpPost("{id}/resources/{resourceId}")]
+    [Authorize(Roles = Roles.TeacherAndAbove)]
     public async Task<IActionResult> AttachCourseResource(Guid id, Guid resourceId, CancellationToken token = default)
     {
         var attached = await _service.AttachResource(id, resourceId, token);
@@ -105,6 +114,7 @@ public class CourseController : ControllerBase
     }
 
     [HttpPut("{id}/resources/{resourceId}")]
+    [Authorize(Roles = Roles.TeacherAndAbove)]
     public async Task<IActionResult> UpdateCourseResource(Guid id, Guid resourceId, ResourceForChangeDto data, CancellationToken token = default)
     {
         await _service.UpdateResource(id, resourceId, data, token);
@@ -112,6 +122,7 @@ public class CourseController : ControllerBase
     }
 
     [HttpPatch("{id}/resources/{resourceId}")]
+    [Authorize(Roles = Roles.TeacherAndAbove)]
     public async Task<IActionResult> PatchCourseResource(Guid id, Guid resourceId, JsonPatchDocument<ResourceForChangeDto> data, CancellationToken token = default)
     {
         await _service.UpdateResource(id, resourceId, data, token);
@@ -119,6 +130,7 @@ public class CourseController : ControllerBase
     }
 
     [HttpDelete("{id}/resources/{resourceId}")]
+    [Authorize(Roles = Roles.TeacherAndAbove)]
     public async Task<IActionResult> RemoveCourseResource(Guid id, Guid resourceId, CancellationToken token = default)
     {
         await _service.DetachResource(id, resourceId, token);
