@@ -13,7 +13,7 @@ namespace Lms_backend.Api.Controllers
 
         private (ActionResponse, List<JwtSecurityToken>?, CookieOptions?) LoginInternal(LoginDto model)
         {
-            var (tokens, response) = service.Login(model);
+            var (tokens, response) = service.Login(model).Result;
 
 
             if (response != ActionResponse.Success)
@@ -88,7 +88,7 @@ namespace Lms_backend.Api.Controllers
         [HttpPost("register")]
         public IActionResult RegisterStudent([FromBody] RegisterDto model)
         {
-            var result = service.RegisterStudent(model);
+            var result = service.RegisterStudent(model).Result;
 
             if (result == ActionResponse.Success)
             {
