@@ -25,6 +25,16 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     ?? throw new InvalidProgramException()
 ));
 
+// Add CORS policy
+builder.Services.AddCors(options => {
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy.AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader();
+    });
+});
+
 // Identity config
 builder.Services.AddAuthorization();
 builder.Services.AddAuthentication().AddCookie(options =>
