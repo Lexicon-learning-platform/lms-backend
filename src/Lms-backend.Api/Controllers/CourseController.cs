@@ -92,7 +92,7 @@ public class CourseController : ControllerBase
     [HttpPost("{id}/resources")]
     public async Task<IActionResult> CreateCourseResource(Guid id, ResourceForChangeDto data, CancellationToken token = default)
     {
-        var result = await _service.AddResource(id, data, token);
+        var result = await _service.AddResource(id, testingUserId, data, token);
         return CreatedAtRoute("GetCourseResource", new { id, result.Id }, result);
     }
 
