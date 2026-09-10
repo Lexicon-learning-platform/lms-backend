@@ -4,7 +4,7 @@ using Lms_backend.Domain.Interfaces;
 
 namespace Lms_backend.Domain.Entities
 {
-    public record Activity : IEntity
+    public record Activity : IEntity, ITrackable
     {
         public Guid Id { get; set; }
 

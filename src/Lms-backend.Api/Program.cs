@@ -22,8 +22,9 @@ builder.Services.AddOpenApi();
 // Postgres config
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("postgres")
-    ?? throw new InvalidProgramException()
-));
+    ?? throw new InvalidProgramException())
+    .AddInterceptors(new UpdatedAtInterceptor())
+);
 
 // Add CORS policy
 builder.Services.AddCors(options =>
