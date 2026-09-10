@@ -71,9 +71,9 @@ public class CourseRepository(AppDbContext context) : RepositoryWithResourceBase
                     .ThenInclude(cm => cm.Module)
                         .ThenInclude(cm => cm.Activities)
                 .AsQueryable();
-        
+
         if (readOnly) query = query.AsNoTracking();
-        
+
         return await query.FirstOrDefaultAsync(token);
     }
 
@@ -81,7 +81,7 @@ public class CourseRepository(AppDbContext context) : RepositoryWithResourceBase
     {
         var query = Set
             .Include(c => c.Modules).ThenInclude(cm => cm.Module)
-            .Include(c => c.Resources).ThenInclude(cr => cr.Resource)
+            .Include(c => c.Resources).ThenInclude(cr => cr.Resource).ThenInclude(crr => crr.Owner)
             .AsSplitQuery()
             .AsQueryable();
 

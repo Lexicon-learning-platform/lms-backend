@@ -69,13 +69,15 @@ public class ModulesController : ControllerBase
     [HttpGet("{id}/resources")]
     public async Task<IActionResult> GetModuleResources(Guid id, CancellationToken token = default)
     {
-        return Ok();
+        var result = await _service.GetResources(id, token);
+        return Ok(result);
     }
 
     [HttpGet("{id}/resources/{resourceId}", Name = "GetModuleResource")]
     public async Task<IActionResult> GetModuleResource(Guid id, Guid resourceId, CancellationToken token = default)
     {
-        return Ok();
+        var result = await _service.GetResource(id, resourceId, token);
+        return Ok(result);
     }
 
     [HttpPost("{id}/resources")]

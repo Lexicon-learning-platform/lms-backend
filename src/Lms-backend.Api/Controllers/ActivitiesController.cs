@@ -70,13 +70,15 @@ public class ActivitiesController : ControllerBase
     [HttpGet("{id}/resources")]
     public async Task<IActionResult> GetActivityResources([FromRoute] Guid moduleId, [FromRoute] Guid id, CancellationToken token = default)
     {
-        return Ok();
+        var result = await _service.GetResources(moduleId, id, token);
+        return Ok(result);
     }
 
     [HttpGet("{id}/resources/{resourceId}", Name = "GetActivityResource")]
     public async Task<IActionResult> GetActivityResource([FromRoute] Guid moduleId, [FromRoute] Guid id, [FromRoute] Guid resourceId, CancellationToken token = default)
     {
-        return Ok();
+        var result = await _service.GetResource(moduleId, id, resourceId, token);
+        return Ok(result);
     }
 
     [HttpPost("{id}/resources")]

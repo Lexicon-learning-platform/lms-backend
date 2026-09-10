@@ -30,7 +30,7 @@ public class CourseController : ControllerBase
         var result = await _service.GetByUserId(testingUserId, token);
         return Ok(result);
     }
-    
+
     [HttpGet]
     public async Task<IActionResult> GetCourses(string? name, string? search, int? page, int? pageSize, CancellationToken token = default)
     {
@@ -78,19 +78,21 @@ public class CourseController : ControllerBase
     [HttpGet("{id}/resources")]
     public async Task<IActionResult> GetCourseResources(Guid id, CancellationToken token = default)
     {
-        return Ok();
+        var result = await _service.GetResources(id, token);
+        return Ok(result);
     }
 
     [HttpGet("{id}/resources/{resourceId}", Name = "GetCourseResource")]
     public async Task<IActionResult> GetCourseResource(Guid id, Guid resourceId, CancellationToken token = default)
     {
-        return Ok();
+        var result = await _service.GetResource(id, resourceId, token);
+        return Ok(result);
     }
 
     [HttpPost("{id}/resources")]
     public async Task<IActionResult> CreateCourseResource(Guid id, ResourceForChangeDto data, CancellationToken token = default)
     {
-        var result = await _service.AddResource(id, data, token);
+        var result = await _service.AddResource(id, testingUserId, data, token);
         return CreatedAtRoute("GetCourseResource", new { id, result.Id }, result);
     }
 
