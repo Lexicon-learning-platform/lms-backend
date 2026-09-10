@@ -2,5 +2,5 @@ namespace Lms_backend.Domain.Interfaces;
 
 public interface ITrackable
 {
-    DateTime UpdatedAt { get; }
+    DateTime UpdatedAt { get; set; }
 }
