@@ -13,6 +13,8 @@ public interface IModulesService
     Task Update(Guid id, ModuleForChangeDto data, CancellationToken token = default);
     Task Update(Guid id, JsonPatchDocument<ModuleForChangeDto> data, CancellationToken token = default);
     Task Remove(Guid id, CancellationToken token = default);
+    Task<IEnumerable<ResourceDto>> GetResources(Guid id, CancellationToken token = default);
+    Task<ResourceDto> GetResource(Guid id, Guid resourceId, CancellationToken token = default);
     Task<ResourceDto> AddResource(Guid id, Guid userId, ResourceForChangeDto data, CancellationToken token = default);
     Task<bool> AttachResource(Guid id, Guid resourceId, CancellationToken token = default);
     Task UpdateResource(Guid id, Guid resourceId, ResourceForChangeDto data, CancellationToken token = default);
