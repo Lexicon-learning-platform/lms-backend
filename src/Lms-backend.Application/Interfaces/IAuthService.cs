@@ -8,7 +8,7 @@ namespace Lms_backend.Application.Interfaces
     {
         (List<JwtSecurityToken>? tokens, ActionResponse response) Login(LoginDto model);
 
-        JwtSecurityToken GetNewToken(string refreshToken);
+        JwtSecurityToken? GetNewToken(string refreshToken);
         ActionResponse Logout(string refreshToken);
         ActionResponse RegisterStudent(RegisterDto model);
     }

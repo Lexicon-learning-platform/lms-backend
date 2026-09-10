@@ -11,15 +11,22 @@ namespace Lms_backend.Api.Controllers;
 
 [ApiController]
 [Route("api/resources")]
-public class ResourceController(IResourcesService service) : ControllerBase
+public class ResourceController : ControllerBase
 {
-    // TODO: replace usage of this var with User.GetUserId() once auth is implemented
-    private readonly Guid testingUserId = Guid.Parse("44444444-0000-0000-0000-000000000002");
+    private readonly Guid testingUserId;
+    private readonly IResourcesService _service;
+
+    public ResourceController(IResourcesService service)
+    {
+        _service = service;
+        testingUserId = Guid.Parse(User.Claims.FirstOrDefault(c => c.Type == "NameIdentifier")?.Value!);
+    }
+
     // Base resource endpoints
     [HttpGet]
     public async Task<IActionResult> GetResources(string? name, string? search, ResourceType type, int? page, int? pageSize, CancellationToken token = default)
     {
-        var (result, pagination) = await service.GetMany(new ResourceSearchParams(name, search, type), page, pageSize, token);
+        var (result, pagination) = await _service.GetMany(new ResourceSearchParams(name, search, type), page, pageSize, token);
         if (pagination != null) Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(pagination));
         return Ok(result);
     }
@@ -27,35 +34,35 @@ public class ResourceController(IResourcesService service) : ControllerBase
     [HttpGet("{id}", Name = "GetResource")]
     public async Task<IActionResult> GetResource(Guid id, CancellationToken token = default)
     {
-        var result = await service.GetOne(id, token);
+        var result = await _service.GetOne(id, token);
         return Ok(result);
     }
 
     [HttpPost]
     public async Task<IActionResult> CreateResource(ResourceForChangeDto data, CancellationToken token = default)
     {
-        var result = await service.Create(data, testingUserId, CanModerate, token);
+        var result = await _service.Create(data, testingUserId, CanModerate, token);
         return CreatedAtRoute("GetResource", new { result.Id }, result);
     }
 
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateResource(Guid id, ResourceForChangeDto data, CancellationToken token = default)
     {
-        await service.Update(id, data, testingUserId, CanModerate, token);
+        await _service.Update(id, data, testingUserId, CanModerate, token);
         return NoContent();
     }
 
     [HttpPatch("{id}")]
     public async Task<IActionResult> PatchResource(Guid id, JsonPatchDocument<ResourceForChangeDto> data, CancellationToken token = default)
     {
-        await service.Update(id, data, testingUserId, CanModerate, token);
+        await _service.Update(id, data, testingUserId, CanModerate, token);
         return NoContent();
     }
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> RemoveResource(Guid id, CancellationToken token = default)
     {
-        await service.Remove(id, testingUserId, CanModerate, token);
+        await _service.Remove(id, testingUserId, CanModerate, token);
         return NoContent();
     }
 
