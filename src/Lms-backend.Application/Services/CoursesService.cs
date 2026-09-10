@@ -69,9 +69,13 @@ public class CoursesService(ICourseRepository repository, IResourceRepository re
         return CourseMapper.ToExtendedDto(entity);
     }
 
-    public Task Remove(Guid id, CancellationToken token = default)
+    public async Task Remove(Guid id, CancellationToken token = default)
     {
-        throw new NotImplementedException();
+        var entity = await repository.GetCourseReadOnlyAsync(id, token);
+        if (entity == null) return;
+
+        repository.Delete(entity);
+        await repository.SaveChangesAsync(token);
     }
 
     public async Task DetachResource(Guid id, Guid resourceId, CancellationToken token = default)
