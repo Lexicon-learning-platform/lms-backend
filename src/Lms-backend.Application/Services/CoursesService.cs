@@ -43,9 +43,15 @@ public class CoursesService(ICourseRepository repository, IResourceRepository re
         return attached;
     }
 
-    public Task<CourseDto> Create(CourseForChangeDto data, CancellationToken token = default)
+    public async Task<CourseDto> Create(CourseForChangeDto data, CancellationToken token = default)
     {
-        throw new NotImplementedException();
+        CourseValidator.ValidateChangeDto(data, isNew: true);
+
+        var entity = CourseMapper.ToEntity(data);
+        await repository.AddAsync(entity, token);
+        await repository.SaveChangesAsync(token);
+
+        return CourseMapper.ToStandardDto(entity);
     }
 
     public async Task<(IEnumerable<CourseDto>, PaginationMetadata?)> GetMany(SearchParams searchParams, int? page = 1, int? pageSize = 10, CancellationToken token = default)
