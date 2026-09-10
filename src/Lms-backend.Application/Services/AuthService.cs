@@ -67,7 +67,7 @@ namespace Lms_backend.Application.Services
         }
 
 
-        public JwtSecurityToken GetNewToken(string refreshToken)
+        public JwtSecurityToken? GetNewToken(string refreshToken)
         {
             var handler = new JwtSecurityTokenHandler();
             var token = handler.ReadJwtToken(refreshToken);
