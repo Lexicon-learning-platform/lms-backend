@@ -1,4 +1,8 @@
 @Lms_backend.Api_HostAddress = http://localhost:5217
+@moduleId = 1
+@id = 1
+@resourceId = 1
+@userid = 1
 
 //ActivitiesController
 GET {{Lms_backend.Api_HostAddress}}/api/modules/{moduleId}/activities/ //GetActivities
