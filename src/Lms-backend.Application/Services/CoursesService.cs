@@ -20,6 +20,19 @@ public class CoursesService(ICourseRepository repository, IResourceRepository re
         return entity is null ? null : CourseMapper.ToWithActivitiesDto(entity);
     }
 
+    public async Task<IEnumerable<ResourceDto>> GetResources(Guid id, CancellationToken token = default)
+    {
+        var entity = await repository.GetCourseReadOnlyAsync(id, token) ?? throw new NotFoundException($"Course '{id}' not found");
+        return ResourceMapper.ToStandardDto(entity.Resources.Select(r => r.Resource));
+    }
+
+    public async Task<ResourceDto> GetResource(Guid id, Guid resourceId, CancellationToken token = default)
+    {
+        var entity = await repository.GetCourseReadOnlyAsync(id, token) ?? throw new NotFoundException($"Course '{id}' not found");
+        var resource = entity.Resources.FirstOrDefault(r => r.ResourceId == resourceId)?.Resource ?? throw new NotFoundException($"Resource '{resourceId}' not found on course '{id}'");
+        return ResourceMapper.ToStandardDto(resource);
+    }
+
     public async Task<ResourceDto> AddResource(Guid id, Guid userId, ResourceForChangeDto data, CancellationToken token = default)
     {
         var entity = await repository.GetCourseAsync(id, token) ?? throw new NotFoundException($"Course '{id}' not found");

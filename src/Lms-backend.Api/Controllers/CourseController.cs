@@ -73,13 +73,15 @@ public class CourseController(ICoursesService service) : ControllerBase
     [HttpGet("{id}/resources")]
     public async Task<IActionResult> GetCourseResources(Guid id, CancellationToken token = default)
     {
-        return Ok();
+        var result = await service.GetResources(id, token);
+        return Ok(result);
     }
 
     [HttpGet("{id}/resources/{resourceId}", Name = "GetCourseResource")]
     public async Task<IActionResult> GetCourseResource(Guid id, Guid resourceId, CancellationToken token = default)
     {
-        return Ok();
+        var result = await service.GetResource(id, resourceId, token);
+        return Ok(result);
     }
 
     [HttpPost("{id}/resources")]
