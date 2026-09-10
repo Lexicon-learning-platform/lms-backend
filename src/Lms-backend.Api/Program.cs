@@ -26,12 +26,15 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 ));
 
 // Add CORS policy
-builder.Services.AddCors(options => {
+builder.Services.AddCors(options =>
+{
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.AllowAnyOrigin()
-                .AllowAnyMethod()
-                .AllowAnyHeader();
+        policy
+            .WithOrigins("http://localhost:5173")
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .AllowCredentials();
     });
 });
 
@@ -89,6 +92,8 @@ if (app.Environment.IsDevelopment())
 await RoleSeeder.SeedAsync(app.Services);
 
 app.UseHttpsRedirection();
+
+app.UseCors("AllowFrontend");
 
 app.UseAuthorization();
 
