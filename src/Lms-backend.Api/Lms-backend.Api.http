@@ -1,6 +1,253 @@
 @Lms_backend.Api_HostAddress = http://localhost:5217
 
-GET {{Lms_backend.Api_HostAddress}}/weatherforecast/
+//ActivitiesController
+GET {{Lms_backend.Api_HostAddress}}/api/modules/{moduleId}/activities/ //GetActivities
+Accept: application/json
+
+###
+GET {{Lms_backend.Api_HostAddress}}/api/modules/{moduleId}/activities/{id}/ //GetActivity
+Accept: application/json
+
+###
+POST {{Lms_backend.Api_HostAddress}}/api/modules/{moduleId}/activities/ //CreateActivity
+Accept: application/json
+
+###
+PUT {{Lms_backend.Api_HostAddress}}/api/modules/{moduleId}/activities/{id}/ //UpdateActivity
+Accept: application/json
+
+###
+PATCH {{Lms_backend.Api_HostAddress}}/api/modules/{moduleId}/activities/{id}/ //PatchActivity
+Accept: application/json
+
+###
+DELETE {{Lms_backend.Api_HostAddress}}/api/modules/{moduleId}/activities/{id}/ //RemoveActivity
+Accept: application/json
+
+###
+GET {{Lms_backend.Api_HostAddress}}/api/modules/{moduleId}/activities/{id}/resources/ //GetActivityResources
+Accept: application/json
+
+###
+GET {{Lms_backend.Api_HostAddress}}/api/modules/{moduleId}/activities/{id}/resources/{resourceId}/ //GetActivityResource
+Accept: application/json
+
+###
+POST {{Lms_backend.Api_HostAddress}}/api/modules/{moduleId}/activities/{id}/resources/ //CreateActivityResources
+Accept: application/json
+
+###
+POST {{Lms_backend.Api_HostAddress}}/api/modules/{moduleId}/activities/{id}/resources/{resourceId}/ //AttachActivityResource
+Accept: application/json
+
+###
+PUT {{Lms_backend.Api_HostAddress}}/api/modules/{moduleId}/activities/{id}/resources/{resourceId}/ //UpdateActivityResource
+Accept: application/json
+
+###
+PATCH {{Lms_backend.Api_HostAddress}}/api/modules/{moduleId}/activities/{id}/resources/{resourceId}/ //PatchActivityResource
+Accept: application/json
+
+###
+DELETE {{Lms_backend.Api_HostAddress}}/api/modules/{moduleId}/activities/{id}/resources/{resourceId}/ //RemoveActivityResource
+Accept: application/json
+
+###
+
+//ModulesController
+GET {{Lms_backend.Api_HostAddress}}/api/modules/ //GetModules
+Accept: application/json
+
+###
+GET {{Lms_backend.Api_HostAddress}}/api/modules/{id}/ //GetModule
+Accept: application/json
+
+###
+POST {{Lms_backend.Api_HostAddress}}/api/modules/ //CreateModule
+Accept: application/json
+
+###
+PUT {{Lms_backend.Api_HostAddress}}/api/modules/{id}/ //UpdateModule
+Accept: application/json
+
+###
+PATCH {{Lms_backend.Api_HostAddress}}/api/modules/{id}/ //PatchModule
+Accept: application/json
+
+###
+DELETE {{Lms_backend.Api_HostAddress}}/api/modules/{id}/ //RemoveModule
+Accept: application/json
+
+###
+GET {{Lms_backend.Api_HostAddress}}/api/modules/{id}/resources/ //GetModuleResources
+Accept: application/json
+
+###
+GET {{Lms_backend.Api_HostAddress}}/api/modules/{id}/resources/{resourceId}/ //GetModuleResource
+Accept: application/json
+
+###
+POST {{Lms_backend.Api_HostAddress}}/api/modules/{id}/resources/ //CreateModuleResources
+Accept: application/json
+
+###
+POST {{Lms_backend.Api_HostAddress}}/api/modules/{id}/resources/{resourceId}/ //AttachModuleResource
+Accept: application/json
+
+###
+PUT {{Lms_backend.Api_HostAddress}}/api/modules/{id}/resources/{resourceId}/ //UpdateModuleResource
+Accept: application/json
+
+###
+PATCH {{Lms_backend.Api_HostAddress}}/api/modules/{id}/resources/{resourceId}/ //PatchModuleResource
+Accept: application/json
+
+###
+DELETE {{Lms_backend.Api_HostAddress}}/api/modules/{id}/resources/{resourceId}/ //RemoveModuleResource
+Accept: application/json
+
+###
+
+//ResourcesController
+GET {{Lms_backend.Api_HostAddress}}/api/resources/ //GetResources
+Accept: application/json
+
+###
+GET {{Lms_backend.Api_HostAddress}}/api/resources/{id}/ //GetResource
+Accept: application/json
+
+###
+POST {{Lms_backend.Api_HostAddress}}/api/resources/ //CreateResource
+Accept: application/json
+
+###
+PUT {{Lms_backend.Api_HostAddress}}/api/resources/{id}/ //UpdateResource
+Accept: application/json
+
+###
+PATCH {{Lms_backend.Api_HostAddress}}/api/resources/{id}/ //PatchResource
+Accept: application/json
+
+###
+DELETE {{Lms_backend.Api_HostAddress}}/api/resources/{id}/ //RemoveResource
+Accept: application/json
+
+###
+
+//CoursesController
+GET {{Lms_backend.Api_HostAddress}}/api/courses/my-courses/ //GetCurrentUserCourse
+Accept: application/json
+
+###
+GET {{Lms_backend.Api_HostAddress}}/api/courses/ //GetCourses
+Accept: application/json
+
+###
+GET {{Lms_backend.Api_HostAddress}}/api/courses/{id}/ //GetCourse
+Accept: application/json
+
+###
+POST {{Lms_backend.Api_HostAddress}}/api/courses/ //CreateCourse
+Accept: application/json
+
+###
+PUT {{Lms_backend.Api_HostAddress}}/api/courses/{id}/ //UpdateCourse
+Accept: application/json
+
+###
+PATCH {{Lms_backend.Api_HostAddress}}/api/courses/{id}/ //PatchCourse
+Accept: application/json
+
+###
+DELETE {{Lms_backend.Api_HostAddress}}/api/courses/{id}/ //RemoveCourse
+Accept: application/json
+
+###
+GET {{Lms_backend.Api_HostAddress}}/api/courses/{id}/resources/ //GetCourseResources
+Accept: application/json
+
+###
+GET {{Lms_backend.Api_HostAddress}}/api/courses/{id}/resources/{resourceId}/ //GetCourseResource
+Accept: application/json
+
+###
+POST {{Lms_backend.Api_HostAddress}}/api/courses/{id}/resources/ //CreateCourseResources
+Accept: application/json
+
+###
+POST {{Lms_backend.Api_HostAddress}}/api/courses/{id}/resources/{resourceId}/ //AttachCourseResource
+Accept: application/json
+
+###
+PUT {{Lms_backend.Api_HostAddress}}/api/courses/{id}/resources/{resourceId}/ //UpdateCourseResource
+Accept: application/json
+
+###
+PATCH {{Lms_backend.Api_HostAddress}}/api/courses/{id}/resources/{resourceId}/ //PatchCourseResource
+Accept: application/json
+
+###
+DELETE {{Lms_backend.Api_HostAddress}}/api/courses/{id}/resources/{resourceId}/ //RemoveCourseResource
+Accept: application/json
+
+###
+
+//AdminController
+POST {{Lms_backend.Api_HostAddress}}/api/admin/Register/ //Register
+Accept: application/json
+
+###
+GET {{Lms_backend.Api_HostAddress}}/api/admin/getusers/ //GetUsers
+Accept: application/json
+
+###
+DELETE {{Lms_backend.Api_HostAddress}}/api/admin/deleteuser/{userid}/ //DeleteUser
+Accept: application/json
+
+###
+PUT {{Lms_backend.Api_HostAddress}}/api/admin/disableuser/{userid}/ //DisableUser
+Accept: application/json
+
+###
+PUT {{Lms_backend.Api_HostAddress}}/api/admin/enableuser/{userid}/ //EnableUser
+Accept: application/json
+
+###
+GET {{Lms_backend.Api_HostAddress}}/api/admin/getuserstats/{userid}/ //GetUserStatistics
+Accept: application/json
+
+###
+PUT {{Lms_backend.Api_HostAddress}}/api/admin/updateuser/{userid}/ //UpdateUser
+Accept: application/json
+
+###
+PUT {{Lms_backend.Api_HostAddress}}/api/admin/resetpassword/{userid}/ //ResetUserPassword
+Accept: application/json
+
+###
+PUT {{Lms_backend.Api_HostAddress}}/api/admin/addcoursetouser/{userid}/{courseid}/ //AddCourseToUser
+Accept: application/json
+
+###
+PUT {{Lms_backend.Api_HostAddress}}/api/admin/removecoursefromuser/{userid}/{courseid}/ //RemoveCourseFromUser
+Accept: application/json
+
+###
+
+//AuthController
+POST {{Lms_backend.Api_HostAddress}}/api/auth/login/ //Login
+Accept: application/json
+
+###
+POST {{Lms_backend.Api_HostAddress}}/api/auth/token/ //Token
+Accept: application/json
+
+###
+POST {{Lms_backend.Api_HostAddress}}/api/auth/logout/ //Logout
+Accept: application/json
+
+###
+POST {{Lms_backend.Api_HostAddress}}/api/auth/register/ //Register
 Accept: application/json
 
 ###
