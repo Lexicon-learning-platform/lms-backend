@@ -3,6 +3,7 @@ using Lms_backend.Application.Interfaces;
 using Lms_backend.Application.Mappers;
 using Lms_backend.Application.Models;
 using Lms_backend.Application.Validators;
+using Lms_backend.Domain.Constants;
 using Lms_backend.Domain.Entities;
 using Lms_backend.Infrastructure.Interfaces;
 using Lms_backend.Infrastructure.Models;
@@ -12,14 +13,12 @@ namespace Lms_backend.Application.Services;
 
 public class CoursesService(ICourseRepository repository, IResourceRepository resourceRepository) : ICoursesService
 {
-    
     public async Task<CourseWithActivitiesDto?> GetByUserId(Guid userId, CancellationToken token = default)
     {
         var entity = await repository.GetCourseByUserIdReadOnlyAsync(userId, token);
         return entity is null ? null : CourseMapper.ToWithActivitiesDto(entity);
     }
-    
-    
+
     public async Task<ResourceDto> AddResource(Guid id, Guid userId, ResourceForChangeDto data, CancellationToken token = default)
     {
         var entity = await repository.GetCourseAsync(id, token) ?? throw new NotFoundException($"Course '{id}' not found");
@@ -49,14 +48,19 @@ public class CoursesService(ICourseRepository repository, IResourceRepository re
         throw new NotImplementedException();
     }
 
-    public Task<(IEnumerable<CourseDto>, PaginationMetadata?)> GetMany(SearchParams searchParams, int? page = 1, int? pageSize = 10, CancellationToken token = default)
+    public async Task<(IEnumerable<CourseDto>, PaginationMetadata?)> GetMany(SearchParams searchParams, int? page = 1, int? pageSize = 10, CancellationToken token = default)
     {
-        throw new NotImplementedException();
+        if (page == null || page < DefaultValues.page) page = DefaultValues.page;
+        if (pageSize == null || pageSize <= 0) pageSize = DefaultValues.pageSize;
+
+        var (entities, pagination) = await repository.GetCoursesReadOnlyAsync(searchParams, (int)page, (int)pageSize, token);
+        return (CourseMapper.ToStandardDto(entities), pagination);
     }
 
-    public Task<CourseExtendedDto> GetOne(Guid id, CancellationToken token = default)
+    public async Task<CourseExtendedDto> GetOne(Guid id, CancellationToken token = default)
     {
-        throw new NotImplementedException();
+        var entity = await repository.GetCourseReadOnlyAsync(id, token) ?? throw new NotFoundException($"Course '{id}' not found");
+        return CourseMapper.ToExtendedDto(entity);
     }
 
     public Task Remove(Guid id, CancellationToken token = default)
