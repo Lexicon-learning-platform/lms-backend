@@ -96,6 +96,10 @@ Accept: application/json
 POST {{baseUrl}}/api/auth/logout
 Accept: application/json
 
+### GetUser
+# Returns the active user object so it can be used for data
+GET {{baseUrl}}/api/auth/getuser
+Accept: application/json
 
 # =====================================================================
 # ADMIN  (AdminController - api/admin) - all actions require role: Admin
