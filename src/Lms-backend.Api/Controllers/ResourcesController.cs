@@ -6,6 +6,7 @@ using Lms_backend.Infrastructure.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch.SystemTextJson;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using System.Text.Json;
 
 namespace Lms_backend.Api.Controllers;
@@ -15,14 +16,14 @@ namespace Lms_backend.Api.Controllers;
 [Authorize]
 public class ResourceController : ControllerBase
 {
-    private readonly Guid testingUserId;
     private readonly IResourcesService _service;
 
     public ResourceController(IResourcesService service)
     {
         _service = service;
-        testingUserId = Guid.Parse(User.Claims.FirstOrDefault(c => c.Type == "NameIdentifier")?.Value!);
     }
+
+    private Guid CurrentUserId => Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
     // Base resource endpoints
     [HttpGet]
@@ -43,28 +44,28 @@ public class ResourceController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CreateResource(ResourceForChangeDto data, CancellationToken token = default)
     {
-        var result = await _service.Create(data, testingUserId, CanModerate, token);
+        var result = await _service.Create(data, CurrentUserId, CanModerate, token);
         return CreatedAtRoute("GetResource", new { result.Id }, result);
     }
 
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateResource(Guid id, ResourceForChangeDto data, CancellationToken token = default)
     {
-        await _service.Update(id, data, testingUserId, CanModerate, token);
+        await _service.Update(id, data, CurrentUserId, CanModerate, token);
         return NoContent();
     }
 
     [HttpPatch("{id}")]
     public async Task<IActionResult> PatchResource(Guid id, JsonPatchDocument<ResourceForChangeDto> data, CancellationToken token = default)
     {
-        await _service.Update(id, data, testingUserId, CanModerate, token);
+        await _service.Update(id, data, CurrentUserId, CanModerate, token);
         return NoContent();
     }
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> RemoveResource(Guid id, CancellationToken token = default)
     {
-        await _service.Remove(id, testingUserId, CanModerate, token);
+        await _service.Remove(id, CurrentUserId, CanModerate, token);
         return NoContent();
     }
 

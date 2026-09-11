@@ -1,23 +1,29 @@
 @Lms_backend_Api_HostAddress = http://localhost:5217
 @baseUrl = {{Lms_backend_Api_HostAddress}}
 
-# ---- Ids used throughout this file - replace with real values from your database ----
+# ---- Ids used throughout this file - these match the example seed data ----
 @userId = 44444444-0000-0000-0000-000000000001
 @courseId = 11111111-0000-0000-0000-000000000001
 @moduleId = 22222222-0000-0000-0000-000000000001
 @activityId = 66666666-0000-0000-0000-000000000001
 @resourceId = 55555555-0000-0000-0000-000000000001
 
-# ---- Example credentials - replace with accounts that exist in your environment ----
-# Only Admins can create other Admins/Teachers (via Admin - Register User below), and
-# /api/auth/register only ever creates Students, so at least one Admin must already
-# exist (e.g. seeded directly in the database) before the Admin/Teacher flows work.
-@studentUsername = student1
-@studentPassword = Password123!
-@teacherUsername = teacher1
+# ---- Seeded example accounts (created/refreshed at app startup by UserSeeder) ----
+# alex.nilsson = Teacher, maria.svensson/johan.berg/sara.lindqvist = Student, admin = Admin.
+# All share the same password below. See Lms-backend.Infrastructure/UserSeeder.cs.
+@teacherUsername = alex.nilsson
 @teacherPassword = Password123!
-@adminUsername = admin1
+@studentUsername = maria.svensson
+@studentPassword = Password123!
+@adminUsername = admin
 @adminPassword = Password123!
+
+# ---- Only used by the public/admin registration demo requests below, so they  ----
+# ---- don't collide with the already-seeded accounts above on repeated runs.   ----
+@newStudentUsername = newstudent1
+@newStudentPassword = Password123!
+@newTeacherUsername = newteacher1
+@newTeacherPassword = Password123!
 
 # =====================================================================
 # AUTH  (AuthController - api/auth)
@@ -29,8 +35,8 @@ POST {{baseUrl}}/api/auth/register
 Content-Type: application/json
 
 {
-  "username": "{{studentUsername}}",
-  "password": "{{studentPassword}}"
+  "username": "{{newStudentUsername}}",
+  "password": "{{newStudentPassword}}"
 }
 
 ### Login - Student
@@ -96,8 +102,8 @@ Authorization: Bearer {{adminToken}}
 Content-Type: application/json
 
 {
-  "username": "{{teacherUsername}}",
-  "password": "{{teacherPassword}}"
+  "username": "{{newTeacherUsername}}",
+  "password": "{{newTeacherPassword}}"
 }
 
 ### Admin - Get All Users
@@ -184,7 +190,7 @@ Content-Type: application/json
 {
   "name": "Full-Stack C#",
   "description": "An introduction to full-stack development with C# and .NET.",
-  "startDate": "2026-01-12",
+  "startDate": "2026-12-01",
   "duration": 10,
   "moduleIds": []
 }
@@ -197,7 +203,7 @@ Content-Type: application/json
 {
   "name": "Full-Stack C#",
   "description": "An introduction to full-stack development with C# and .NET.",
-  "startDate": "2026-01-12",
+  "startDate": "2026-12-01",
   "duration": 12,
   "moduleIds": []
 }

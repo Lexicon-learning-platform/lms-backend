@@ -5,7 +5,10 @@ using Lms_backend.Domain.Entities;
 using Lms_backend.Infrastructure;
 using Lms_backend.Infrastructure.Interfaces;
 using Lms_backend.Infrastructure.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,7 +44,26 @@ builder.Services.AddCors(options =>
 
 // Identity config
 builder.Services.AddAuthorization();
-builder.Services.AddAuthentication().AddCookie(options =>
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidIssuer = builder.Configuration["JwtSettings:Issuer"],
+        ValidateAudience = true,
+        ValidAudience = builder.Configuration["JwtSettings:Audience"],
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:AccessSecret"]!)),
+        ValidateLifetime = true,
+        ClockSkew = TimeSpan.FromSeconds(30)
+    };
+})
+.AddCookie(options =>
 {
     options.LoginPath = "/api/account/login";
     options.LogoutPath = "/api/account/logout";
@@ -53,8 +75,6 @@ builder.Services.AddAuthentication().AddCookie(options =>
     options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
     options.SlidingExpiration = true;
 });
-
-//builder.Services.AddAuthentication().AddCookie(IdentityConstants.ApplicationScheme);
 
 builder.Services.AddIdentityCore<ApplicationUser>(options =>
 {
@@ -91,11 +111,13 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 await RoleSeeder.SeedAsync(app.Services);
+await UserSeeder.SeedAsync(app.Services);
 
 app.UseHttpsRedirection();
 
 app.UseCors("AllowFrontend");
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
