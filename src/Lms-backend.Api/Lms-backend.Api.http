@@ -2,11 +2,11 @@
 @baseUrl = {{Lms_backend_Api_HostAddress}}
 
 # ---- Ids used throughout this file - replace with real values from your database ----
-@userId = 00000000-0000-0000-0000-000000000000
-@courseId = 00000000-0000-0000-0000-000000000000
-@moduleId = 00000000-0000-0000-0000-000000000000
-@activityId = 00000000-0000-0000-0000-000000000000
-@resourceId = 00000000-0000-0000-0000-000000000000
+@userId = 44444444-0000-0000-0000-000000000001
+@courseId = 11111111-0000-0000-0000-000000000001
+@moduleId = 22222222-0000-0000-0000-000000000001
+@activityId = 66666666-0000-0000-0000-000000000001
+@resourceId = 55555555-0000-0000-0000-000000000001
 
 # ---- Example credentials - replace with accounts that exist in your environment ----
 # Only Admins can create other Admins/Teachers (via Admin - Register User below), and
