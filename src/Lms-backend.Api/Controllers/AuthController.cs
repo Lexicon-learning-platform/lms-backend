@@ -1,14 +1,16 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.IdentityModel.Tokens.Jwt;
-using Lms_backend.Application.Interfaces;
+﻿using Lms_backend.Application.Interfaces;
 using Lms_backend.Application.Models;
+using Lms_backend.Domain.Entities;
 using Lms_backend.Domain.Enums;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace Lms_backend.Api.Controllers
 {
     [Route("api/auth")]
     [ApiController]
-    public class AuthController(IAuthService service) : ControllerBase
+    public class AuthController(IAuthService service, UserManager<ApplicationUser> userManager) : ControllerBase
     {
 
         private (ActionResponse, List<JwtSecurityToken>?, CookieOptions?) LoginInternal(LoginDto model)
@@ -114,7 +116,13 @@ namespace Lms_backend.Api.Controllers
                 return BadRequest("Registrering misslyckades.");
         }
 
+        [HttpGet("getuser")]
+        public IActionResult GetUser()
+        {
+            ApplicationUser? user = userManager.GetUserAsync(User).Result;
 
+            return user==null ? NotFound() : Ok(user);
+        }
 
     }
 }
