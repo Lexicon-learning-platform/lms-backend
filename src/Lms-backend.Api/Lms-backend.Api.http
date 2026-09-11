@@ -50,6 +50,8 @@ Content-Type: application/json
   "password": "{{studentPassword}}"
 }
 
+###
+
 @studentToken = {{loginStudent.response.body.$.accessToken}}
 
 ### Login - Teacher
@@ -63,6 +65,8 @@ Content-Type: application/json
   "password": "{{teacherPassword}}"
 }
 
+###
+
 @teacherToken = {{loginTeacher.response.body.$.accessToken}}
 
 ### Login - Admin
@@ -75,6 +79,8 @@ Content-Type: application/json
   "role": "Admin",
   "password": "{{adminPassword}}"
 }
+
+###
 
 @adminToken = {{loginAdmin.response.body.$.accessToken}}
 
