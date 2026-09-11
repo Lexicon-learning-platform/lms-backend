@@ -35,8 +35,8 @@ namespace Lms_backend.Api.Controllers
             return Ok(users);
         }
 
-        // POST: api/admin/deleteuser/{userId}
-        [HttpPost("deleteuser/{userId}")]
+        // DELETE: api/admin/deleteuser/{userId}
+        [HttpDelete("deleteuser/{userId}")]
         public IActionResult DeleteUser(string userId)
         {
             var result = service.DeleteUser(userId);
@@ -49,8 +49,8 @@ namespace Lms_backend.Api.Controllers
                 return BadRequest("Deletion failed.");
         }
 
-        // POST: api/admin/disableuser/{userId}
-        [HttpPost("disableuser/{userId}")]
+        // PUT: api/admin/disableuser/{userId}
+        [HttpPut("disableuser/{userId}")]
         public IActionResult DisableUser(string userId)
         {
             var result = service.DisableUser(userId);
@@ -77,8 +77,8 @@ namespace Lms_backend.Api.Controllers
                 return BadRequest("Failed to retrieve user statistics.");
         }
 
-        // POST: api/admin/updateuser/{userId}
-        [HttpPost("updateuser/{userId}")]
+        // PUT: api/admin/updateuser/{userId}
+        [HttpPut("updateuser/{userId}")]
         public IActionResult UpdateUser(string userId, [FromBody] UpdateUserDto model)
         {
             var result = service.UpdateUser(userId, model);
@@ -95,8 +95,8 @@ namespace Lms_backend.Api.Controllers
                 return BadRequest("Update failed.");
         }
 
-        // POST: api/admin/resetpassword/{userId}
-        [HttpPost("resetpassword/{userId}")]
+        // PUT: api/admin/resetpassword/{userId}
+        [HttpPut("resetpassword/{userId}")]
         public IActionResult ResetPassword(string userId, [FromBody] string newPassword)
         {
             var result = service.ResetPassword(userId, newPassword);
@@ -109,8 +109,8 @@ namespace Lms_backend.Api.Controllers
                 return BadRequest("Password reset failed.");
         }
 
-        // POST: api/admin/addcoursetouser/{userId}/{courseId}
-        [HttpPost("addcoursetouser/{userId}/{courseId}")]
+        // PUT: api/admin/addcoursetouser/{userId}/{courseId}
+        [HttpPut("addcoursetouser/{userId}/{courseId}")]
         public IActionResult AddCourseToUser(string userId, string courseId)
         {
             var result = service.AddCourseToUser(userId, courseId);
@@ -127,8 +127,8 @@ namespace Lms_backend.Api.Controllers
                 return BadRequest("Failed to add course to user.");
         }
 
-        // POST: api/admin/removecoursefromuser/{userId}/{courseId}
-        [HttpPost("removecoursefromuser/{userId}/{courseId}")]
+        // PUT: api/admin/removecoursefromuser/{userId}/{courseId}
+        [HttpPut("removecoursefromuser/{userId}/{courseId}")]
         public IActionResult RemoveCourseFromUser(string userId, string courseId)
         {
             var result = service.RemoveCourseFromUser(userId, courseId);
@@ -144,8 +144,8 @@ namespace Lms_backend.Api.Controllers
         }
 
 
-        // POST: api/admin/enableuser/{userId}
-        [HttpPost("enableuser/{userId}")]
+        // PUT: api/admin/enableuser/{userId}
+        [HttpPut("enableuser/{userId}")]
         public IActionResult EnableUser(string userId)
         {
             var result = service.EnableUser(userId);

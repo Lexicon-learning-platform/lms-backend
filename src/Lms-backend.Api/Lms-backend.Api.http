@@ -1,6 +1,547 @@
-@Lms_backend.Api_HostAddress = http://localhost:5217
+@Lms_backend_Api_HostAddress = http://localhost:5217
+@baseUrl = {{Lms_backend_Api_HostAddress}}
 
-GET {{Lms_backend.Api_HostAddress}}/weatherforecast/
+# ---- Ids used throughout this file - these match the example seed data ----
+@userId = 44444444-0000-0000-0000-000000000001
+@courseId = 11111111-0000-0000-0000-000000000001
+@moduleId = 22222222-0000-0000-0000-000000000001
+@activityId = 66666666-0000-0000-0000-000000000001
+@resourceId = 55555555-0000-0000-0000-000000000001
+
+# ---- Seeded example accounts (created/refreshed at app startup by UserSeeder) ----
+# alex.nilsson = Teacher, maria.svensson/johan.berg/sara.lindqvist = Student, admin = Admin.
+# All share the same password below. See Lms-backend.Infrastructure/UserSeeder.cs.
+@teacherUsername = alex.nilsson
+@teacherPassword = Password123!
+@studentUsername = maria.svensson
+@studentPassword = Password123!
+@adminUsername = admin
+@adminPassword = Password123!
+
+# ---- Only used by the public/admin registration demo requests below, so they  ----
+# ---- don't collide with the already-seeded accounts above on repeated runs.   ----
+@newStudentUsername = newstudent1
+@newStudentPassword = Password123!
+@newTeacherUsername = newteacher1
+@newTeacherPassword = Password123!
+
+# =====================================================================
+# AUTH  (AuthController - api/auth)
+# =====================================================================
+
+### Register - New Student (public self-registration)
+# @name registerStudent
+POST {{baseUrl}}/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "{{newStudentUsername}}",
+  "password": "{{newStudentPassword}}"
+}
+
+### Login - Student
+# @name loginStudent
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "{{studentUsername}}",
+  "role": "Student",
+  "password": "{{studentPassword}}"
+}
+
+@studentToken = {{loginStudent.response.body.$.accessToken}}
+
+### Login - Teacher
+# @name loginTeacher
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "{{teacherUsername}}",
+  "role": "Teacher",
+  "password": "{{teacherPassword}}"
+}
+
+@teacherToken = {{loginTeacher.response.body.$.accessToken}}
+
+### Login - Admin
+# @name loginAdmin
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "{{adminUsername}}",
+  "role": "Admin",
+  "password": "{{adminPassword}}"
+}
+
+@adminToken = {{loginAdmin.response.body.$.accessToken}}
+
+### Refresh Access Token
+# Reads the "refreshToken" HttpOnly cookie set by Login/Register - the REST Client
+# cookie jar carries it automatically from whichever login request ran last.
+# @name refreshToken
+POST {{baseUrl}}/api/auth/token
 Accept: application/json
 
-###
+### Logout
+# Clears the "refreshToken" cookie for whichever account is currently logged in.
+POST {{baseUrl}}/api/auth/logout
+Accept: application/json
+
+
+# =====================================================================
+# ADMIN  (AdminController - api/admin) - all actions require role: Admin
+# =====================================================================
+
+### Admin - Register User (Teacher)
+# @name adminRegisterTeacher
+POST {{baseUrl}}/api/admin/register?role=Teacher
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "username": "{{newTeacherUsername}}",
+  "password": "{{newTeacherPassword}}"
+}
+
+### Admin - Get All Users
+GET {{baseUrl}}/api/admin/getusers
+Authorization: Bearer {{adminToken}}
+Accept: application/json
+
+### Admin - Get User Statistics
+GET {{baseUrl}}/api/admin/getuserstats/{{userId}}
+Authorization: Bearer {{adminToken}}
+Accept: application/json
+
+### Admin - Update User
+PUT {{baseUrl}}/api/admin/updateuser/{{userId}}
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "username": "{{teacherUsername}}",
+  "givenName": "Jane",
+  "lastName": "Doe",
+  "email": "jane.doe@example.com",
+  "role": "Teacher"
+}
+
+### Admin - Reset User Password
+# Note: the body is a raw JSON string, not an object.
+PUT {{baseUrl}}/api/admin/resetpassword/{{userId}}
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+"NewPassword123!"
+
+### Admin - Disable User
+PUT {{baseUrl}}/api/admin/disableuser/{{userId}}
+Authorization: Bearer {{adminToken}}
+Accept: application/json
+
+### Admin - Enable User
+PUT {{baseUrl}}/api/admin/enableuser/{{userId}}
+Authorization: Bearer {{adminToken}}
+Accept: application/json
+
+### Admin - Add Course To User
+PUT {{baseUrl}}/api/admin/addcoursetouser/{{userId}}/{{courseId}}
+Authorization: Bearer {{adminToken}}
+Accept: application/json
+
+### Admin - Remove Course From User
+PUT {{baseUrl}}/api/admin/removecoursefromuser/{{userId}}/{{courseId}}
+Authorization: Bearer {{adminToken}}
+Accept: application/json
+
+### Admin - Delete User
+DELETE {{baseUrl}}/api/admin/deleteuser/{{userId}}
+Authorization: Bearer {{adminToken}}
+Accept: application/json
+
+
+# =====================================================================
+# COURSES  (CourseController - api/courses)
+# Reads are public except "my-course"; writes require role: Teacher or Admin
+# =====================================================================
+
+### Courses - Get My Course (current user)
+GET {{baseUrl}}/api/courses/my-course
+Authorization: Bearer {{studentToken}}
+Accept: application/json
+
+### Courses - Get All
+GET {{baseUrl}}/api/courses?page=1&pageSize=20
+Accept: application/json
+
+### Courses - Get One
+GET {{baseUrl}}/api/courses/{{courseId}}
+Accept: application/json
+
+### Courses - Create
+# @name createCourse
+POST {{baseUrl}}/api/courses
+Authorization: Bearer {{teacherToken}}
+Content-Type: application/json
+
+{
+  "name": "Full-Stack C#",
+  "description": "An introduction to full-stack development with C# and .NET.",
+  "startDate": "2026-12-01",
+  "duration": 10,
+  "moduleIds": []
+}
+
+### Courses - Update
+PUT {{baseUrl}}/api/courses/{{courseId}}
+Authorization: Bearer {{teacherToken}}
+Content-Type: application/json
+
+{
+  "name": "Full-Stack C#",
+  "description": "An introduction to full-stack development with C# and .NET.",
+  "startDate": "2026-12-01",
+  "duration": 12,
+  "moduleIds": []
+}
+
+### Courses - Patch
+PATCH {{baseUrl}}/api/courses/{{courseId}}
+Authorization: Bearer {{teacherToken}}
+Content-Type: application/json-patch+json
+
+[
+  { "op": "replace", "path": "/description", "value": "Updated course description." }
+]
+
+### Courses - Delete
+DELETE {{baseUrl}}/api/courses/{{courseId}}
+Authorization: Bearer {{teacherToken}}
+Accept: application/json
+
+### Courses - Get Resources
+GET {{baseUrl}}/api/courses/{{courseId}}/resources
+Authorization: Bearer {{studentToken}}
+Accept: application/json
+
+### Courses - Get Resource
+GET {{baseUrl}}/api/courses/{{courseId}}/resources/{{resourceId}}
+Authorization: Bearer {{studentToken}}
+Accept: application/json
+
+### Courses - Create Resource
+POST {{baseUrl}}/api/courses/{{courseId}}/resources
+Authorization: Bearer {{teacherToken}}
+Content-Type: application/json
+
+{
+  "name": "Syllabus",
+  "description": "Course syllabus document.",
+  "type": 1,
+  "data": "https://example.com/syllabus.pdf"
+}
+
+### Courses - Attach Existing Resource
+POST {{baseUrl}}/api/courses/{{courseId}}/resources/{{resourceId}}
+Authorization: Bearer {{teacherToken}}
+Accept: application/json
+
+### Courses - Update Resource
+PUT {{baseUrl}}/api/courses/{{courseId}}/resources/{{resourceId}}
+Authorization: Bearer {{teacherToken}}
+Content-Type: application/json
+
+{
+  "name": "Syllabus",
+  "description": "Updated course syllabus document.",
+  "type": 1,
+  "data": "https://example.com/syllabus-v2.pdf"
+}
+
+### Courses - Patch Resource
+PATCH {{baseUrl}}/api/courses/{{courseId}}/resources/{{resourceId}}
+Authorization: Bearer {{teacherToken}}
+Content-Type: application/json-patch+json
+
+[
+  { "op": "replace", "path": "/description", "value": "Patched resource description." }
+]
+
+### Courses - Remove Resource
+DELETE {{baseUrl}}/api/courses/{{courseId}}/resources/{{resourceId}}
+Authorization: Bearer {{teacherToken}}
+Accept: application/json
+
+
+# =====================================================================
+# MODULES  (ModulesController - api/modules)
+# Reads require any authenticated user; writes require role: Teacher or Admin
+# =====================================================================
+
+### Modules - Get All
+GET {{baseUrl}}/api/modules?page=1&pageSize=20
+Authorization: Bearer {{studentToken}}
+Accept: application/json
+
+### Modules - Get One
+GET {{baseUrl}}/api/modules/{{moduleId}}
+Authorization: Bearer {{studentToken}}
+Accept: application/json
+
+### Modules - Create
+POST {{baseUrl}}/api/modules
+Authorization: Bearer {{teacherToken}}
+Content-Type: application/json
+
+{
+  "name": "Introduction to REST APIs",
+  "description": "Covers HTTP, REST principles, and ASP.NET Core Web API basics.",
+  "duration": 5
+}
+
+### Modules - Update
+PUT {{baseUrl}}/api/modules/{{moduleId}}
+Authorization: Bearer {{teacherToken}}
+Content-Type: application/json
+
+{
+  "name": "Introduction to REST APIs",
+  "description": "Covers HTTP, REST principles, and ASP.NET Core Web API basics.",
+  "duration": 6
+}
+
+### Modules - Patch
+PATCH {{baseUrl}}/api/modules/{{moduleId}}
+Authorization: Bearer {{teacherToken}}
+Content-Type: application/json-patch+json
+
+[
+  { "op": "replace", "path": "/duration", "value": 7 }
+]
+
+### Modules - Delete
+DELETE {{baseUrl}}/api/modules/{{moduleId}}
+Authorization: Bearer {{teacherToken}}
+Accept: application/json
+
+### Modules - Get Resources
+GET {{baseUrl}}/api/modules/{{moduleId}}/resources
+Authorization: Bearer {{studentToken}}
+Accept: application/json
+
+### Modules - Get Resource
+GET {{baseUrl}}/api/modules/{{moduleId}}/resources/{{resourceId}}
+Authorization: Bearer {{studentToken}}
+Accept: application/json
+
+### Modules - Create Resource
+POST {{baseUrl}}/api/modules/{{moduleId}}/resources
+Authorization: Bearer {{teacherToken}}
+Content-Type: application/json
+
+{
+  "name": "Lecture Slides",
+  "description": "Slides for this module.",
+  "type": 1,
+  "data": "https://example.com/slides.pdf"
+}
+
+### Modules - Attach Existing Resource
+POST {{baseUrl}}/api/modules/{{moduleId}}/resources/{{resourceId}}
+Authorization: Bearer {{teacherToken}}
+Accept: application/json
+
+### Modules - Update Resource
+PUT {{baseUrl}}/api/modules/{{moduleId}}/resources/{{resourceId}}
+Authorization: Bearer {{teacherToken}}
+Content-Type: application/json
+
+{
+  "name": "Lecture Slides",
+  "description": "Updated slides for this module.",
+  "type": 1,
+  "data": "https://example.com/slides-v2.pdf"
+}
+
+### Modules - Patch Resource
+PATCH {{baseUrl}}/api/modules/{{moduleId}}/resources/{{resourceId}}
+Authorization: Bearer {{teacherToken}}
+Content-Type: application/json-patch+json
+
+[
+  { "op": "replace", "path": "/description", "value": "Patched module resource description." }
+]
+
+### Modules - Remove Resource
+DELETE {{baseUrl}}/api/modules/{{moduleId}}/resources/{{resourceId}}
+Authorization: Bearer {{teacherToken}}
+Accept: application/json
+
+
+# =====================================================================
+# ACTIVITIES  (ActivitiesController - api/modules/{moduleId}/activities)
+# Reads require any authenticated user; writes require role: Teacher or Admin
+# ActivityType: 0=Lecture, 1=SelfStudy, 2=Exercise, 3=Assignment, 4=Review
+# =====================================================================
+
+### Activities - Get All
+GET {{baseUrl}}/api/modules/{{moduleId}}/activities?page=1&pageSize=20
+Authorization: Bearer {{studentToken}}
+Accept: application/json
+
+### Activities - Get One
+GET {{baseUrl}}/api/modules/{{moduleId}}/activities/{{activityId}}
+Authorization: Bearer {{studentToken}}
+Accept: application/json
+
+### Activities - Create
+POST {{baseUrl}}/api/modules/{{moduleId}}/activities
+Authorization: Bearer {{teacherToken}}
+Content-Type: application/json
+
+{
+  "name": "Kickoff Lecture",
+  "description": "Introductory lecture for the module.",
+  "startOffset": 0,
+  "duration": 60,
+  "type": 0
+}
+
+### Activities - Update
+PUT {{baseUrl}}/api/modules/{{moduleId}}/activities/{{activityId}}
+Authorization: Bearer {{teacherToken}}
+Content-Type: application/json
+
+{
+  "name": "Kickoff Lecture",
+  "description": "Introductory lecture for the module.",
+  "startOffset": 0,
+  "duration": 90,
+  "type": 0
+}
+
+### Activities - Patch
+PATCH {{baseUrl}}/api/modules/{{moduleId}}/activities/{{activityId}}
+Authorization: Bearer {{teacherToken}}
+Content-Type: application/json-patch+json
+
+[
+  { "op": "replace", "path": "/duration", "value": 45 }
+]
+
+### Activities - Delete
+DELETE {{baseUrl}}/api/modules/{{moduleId}}/activities/{{activityId}}
+Authorization: Bearer {{teacherToken}}
+Accept: application/json
+
+### Activities - Get Resources
+GET {{baseUrl}}/api/modules/{{moduleId}}/activities/{{activityId}}/resources
+Authorization: Bearer {{studentToken}}
+Accept: application/json
+
+### Activities - Get Resource
+GET {{baseUrl}}/api/modules/{{moduleId}}/activities/{{activityId}}/resources/{{resourceId}}
+Authorization: Bearer {{studentToken}}
+Accept: application/json
+
+### Activities - Create Resource
+POST {{baseUrl}}/api/modules/{{moduleId}}/activities/{{activityId}}/resources
+Authorization: Bearer {{teacherToken}}
+Content-Type: application/json
+
+{
+  "name": "Activity Handout",
+  "description": "Handout for this activity.",
+  "type": 1,
+  "data": "https://example.com/handout.pdf"
+}
+
+### Activities - Attach Existing Resource
+POST {{baseUrl}}/api/modules/{{moduleId}}/activities/{{activityId}}/resources/{{resourceId}}
+Authorization: Bearer {{teacherToken}}
+Accept: application/json
+
+### Activities - Update Resource
+PUT {{baseUrl}}/api/modules/{{moduleId}}/activities/{{activityId}}/resources/{{resourceId}}
+Authorization: Bearer {{teacherToken}}
+Content-Type: application/json
+
+{
+  "name": "Activity Handout",
+  "description": "Updated handout for this activity.",
+  "type": 1,
+  "data": "https://example.com/handout-v2.pdf"
+}
+
+### Activities - Patch Resource
+PATCH {{baseUrl}}/api/modules/{{moduleId}}/activities/{{activityId}}/resources/{{resourceId}}
+Authorization: Bearer {{teacherToken}}
+Content-Type: application/json-patch+json
+
+[
+  { "op": "replace", "path": "/description", "value": "Patched activity resource description." }
+]
+
+### Activities - Remove Resource
+DELETE {{baseUrl}}/api/modules/{{moduleId}}/activities/{{activityId}}/resources/{{resourceId}}
+Authorization: Bearer {{teacherToken}}
+Accept: application/json
+
+
+# =====================================================================
+# RESOURCES  (ResourcesController - api/resources)
+# All actions require an authenticated user; modifying another user's
+# resource additionally requires role: Admin
+# ResourceType: 0=Text, 1=URL, 2=AssignmentTurnin, 3=ExternalFile
+# =====================================================================
+
+### Resources - Get All
+GET {{baseUrl}}/api/resources?type=1
+Authorization: Bearer {{studentToken}}
+Accept: application/json
+
+### Resources - Get One
+GET {{baseUrl}}/api/resources/{{resourceId}}
+Authorization: Bearer {{studentToken}}
+Accept: application/json
+
+### Resources - Create
+POST {{baseUrl}}/api/resources
+Authorization: Bearer {{teacherToken}}
+Content-Type: application/json
+
+{
+  "name": "Reading List",
+  "description": "Recommended reading for the course.",
+  "type": 1,
+  "data": "https://example.com/reading-list"
+}
+
+### Resources - Update
+PUT {{baseUrl}}/api/resources/{{resourceId}}
+Authorization: Bearer {{teacherToken}}
+Content-Type: application/json
+
+{
+  "name": "Reading List",
+  "description": "Updated recommended reading for the course.",
+  "type": 1,
+  "data": "https://example.com/reading-list-v2"
+}
+
+### Resources - Patch
+PATCH {{baseUrl}}/api/resources/{{resourceId}}
+Authorization: Bearer {{teacherToken}}
+Content-Type: application/json-patch+json
+
+[
+  { "op": "replace", "path": "/description", "value": "Patched resource description." }
+]
+
+### Resources - Delete
+DELETE {{baseUrl}}/api/resources/{{resourceId}}
+Authorization: Bearer {{teacherToken}}
+Accept: application/json

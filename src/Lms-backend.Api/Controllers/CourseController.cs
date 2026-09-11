@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using System.Text.Json;
 using Lms_backend.Application.Interfaces;
 using Lms_backend.Application.Models;
@@ -15,21 +16,21 @@ namespace Lms_backend.Api.Controllers;
 public class CourseController : ControllerBase
 {
 
-    private readonly Guid testingUserId;
     private readonly ICoursesService _service;
 
     public CourseController(ICoursesService service)
     {
         _service = service;
-        testingUserId = Guid.Parse(User.Claims.FirstOrDefault(c => c.Type == "NameIdentifier")?.Value!);
     }
+
+    private Guid CurrentUserId => Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
     // Base course endpoints
     [HttpGet("my-course")]
     [Authorize]
     public async Task<IActionResult> GetCurrentUserCourse(CancellationToken token = default)
     {
-        var result = await _service.GetByUserId(testingUserId, token);
+        var result = await _service.GetByUserId(CurrentUserId, token);
         return Ok(result);
     }
 
@@ -101,8 +102,8 @@ public class CourseController : ControllerBase
     [Authorize(Roles = Roles.TeacherAndAbove)]
     public async Task<IActionResult> CreateCourseResource(Guid id, ResourceForChangeDto data, CancellationToken token = default)
     {
-        var result = await _service.AddResource(id, testingUserId, data, token);
-        return CreatedAtRoute("GetCourseResource", new { id, result.Id }, result);
+        var result = await _service.AddResource(id, CurrentUserId, data, token);
+        return CreatedAtRoute("GetCourseResource", new { id, resourceId = result.Id }, result);
     }
 
     [HttpPost("{id}/resources/{resourceId}")]

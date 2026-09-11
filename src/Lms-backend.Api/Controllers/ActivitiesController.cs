@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using System.Text.Json;
 using Lms_backend.Application.Interfaces;
 using Lms_backend.Application.Models;
@@ -16,14 +17,14 @@ namespace Lms_backend.Api.Controllers;
 public class ActivitiesController : ControllerBase
 {
 
-    private readonly Guid testingUserId;
     private readonly IActivitiesService _service;
 
     public ActivitiesController(IActivitiesService service)
     {
         _service = service;
-        testingUserId = Guid.Parse(User.Claims.FirstOrDefault(c => c.Type == "NameIdentifier")?.Value!);
     }
+
+    private Guid CurrentUserId => Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
     // Base course endpoints
     [HttpGet]
@@ -45,7 +46,7 @@ public class ActivitiesController : ControllerBase
     [Authorize(Roles = Roles.TeacherAndAbove)]
     public async Task<IActionResult> CreateActivity([FromRoute] Guid moduleId, [FromBody] ActivityForChangeDto data, CancellationToken token = default)
     {
-        var result = await _service.Create(moduleId, testingUserId, data, token);
+        var result = await _service.Create(moduleId, CurrentUserId, data, token);
         return CreatedAtRoute("GetActivity", new { moduleId, id = result.Id }, result);
     }
 
@@ -92,7 +93,7 @@ public class ActivitiesController : ControllerBase
     [Authorize(Roles = Roles.TeacherAndAbove)]
     public async Task<IActionResult> CreateActivityResource([FromRoute] Guid moduleId, [FromRoute] Guid id, [FromBody] ResourceForChangeDto data, CancellationToken token = default)
     {
-        var result = await _service.AddResource(moduleId, id, testingUserId, data, token);
+        var result = await _service.AddResource(moduleId, id, CurrentUserId, data, token);
         return CreatedAtRoute("GetActivityResource", new { moduleId, id, resourceId = result.Id }, result);
     }
 

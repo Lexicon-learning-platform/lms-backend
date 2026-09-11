@@ -6,10 +6,10 @@ namespace Lms_backend.Application.Interfaces
 {
     public interface IAuthService
     {
-        (List<JwtSecurityToken>? tokens, ActionResponse response) Login(LoginDto model);
+        Task<(List<JwtSecurityToken>? tokens, ActionResponse response)> Login(LoginDto model);
 
         JwtSecurityToken? GetNewToken(string refreshToken);
-        ActionResponse Logout(string refreshToken);
-        ActionResponse RegisterStudent(RegisterDto model);
+        Task<ActionResponse> Logout(string refreshToken);
+        Task<ActionResponse> RegisterStudent(RegisterDto model);
     }
 }

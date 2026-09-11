@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Lms_backend.Domain.Entities
 {
-    public class ApplicationUser : IdentityUser<Guid>, IEntity
+    public class ApplicationUser : IdentityUser<Guid>, IEntity, ITrackable
     {
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }

@@ -19,13 +19,13 @@ namespace Lms_backend.Application.Services
         private readonly UserManager<ApplicationUser> _userManager = userManager;
 
 
-        public (List<JwtSecurityToken>? tokens, ActionResponse response) Login(LoginDto model)
+        public async Task<(List<JwtSecurityToken>? tokens, ActionResponse response)> Login(LoginDto model)
         {
             //Check if the user exists and the password is correct
-            var user = _userManager.FindByNameAsync(model.Username).Result;
+            var user = await _userManager.FindByNameAsync(model.Username);
             if (user==null) return (null, ActionResponse.UserNotFound);
 
-            var legit = _userManager.CheckPasswordAsync(user, model.Password).Result;
+            var legit = await _userManager.CheckPasswordAsync(user, model.Password);
             if(!legit) return (null, ActionResponse.PasswordMismatch);
 
             //Build access and refresh tokens
@@ -62,7 +62,7 @@ namespace Lms_backend.Application.Services
 
             string tokenString = new JwtSecurityTokenHandler().WriteToken(refreshToken);
 
-            _repository.StoreRefreshTokenAsync(tokenString, user.Id);
+            await _repository.StoreRefreshTokenAsync(tokenString, user.Id);
 
             return (new List<JwtSecurityToken> { accessToken, refreshToken }, ActionResponse.Success);
         }
@@ -89,16 +89,16 @@ namespace Lms_backend.Application.Services
 
         }
 
-        public ActionResponse Logout(string refreshToken)
+        public async Task<ActionResponse> Logout(string refreshToken)
         {
             //Delete the refresh token from the database or in-memory list
-            return _repository.RevokeRefreshTokenAsync(refreshToken).Result;
+            return await _repository.RevokeRefreshTokenAsync(refreshToken);
         }
 
-        public ActionResponse RegisterStudent(RegisterDto model)
+        public async Task<ActionResponse> RegisterStudent(RegisterDto model)
         {
             //Check if the user already exists
-            var existingUser = _userManager.FindByNameAsync(model.Username).Result;
+            var existingUser = await _userManager.FindByNameAsync(model.Username);
             if (existingUser != null)
                 return ActionResponse.UserAlreadyExists;
 
@@ -113,9 +113,9 @@ namespace Lms_backend.Application.Services
                 Role = "Student"
             };
 
-            _userManager.CreateAsync(newUser);
+            await _userManager.CreateAsync(newUser);
 
-            _userManager.AddPasswordAsync(newUser, model.Password);
+            await _userManager.AddPasswordAsync(newUser, model.Password);
 
             return ActionResponse.Success;
         }
