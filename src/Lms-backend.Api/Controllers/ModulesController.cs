@@ -5,6 +5,7 @@ using Lms_backend.Infrastructure.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch.SystemTextJson;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using System.Text.Json;
 
 namespace Lms_backend.Api.Controllers;
@@ -15,14 +16,14 @@ namespace Lms_backend.Api.Controllers;
 public class ModulesController : ControllerBase
 {
 
-    private readonly Guid testingUserId;
     private readonly IModulesService _service;
 
     public ModulesController(IModulesService service)
     {
         _service = service;
-        testingUserId = Guid.Parse(User.Claims.FirstOrDefault(c => c.Type == "NameIdentifier")?.Value!);
     }
+
+    private Guid CurrentUserId => Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
     // Base modules endpoints
     [HttpGet]
@@ -91,8 +92,8 @@ public class ModulesController : ControllerBase
     [Authorize(Roles = Roles.TeacherAndAbove)]
     public async Task<IActionResult> CreateModuleResource(Guid id, ResourceForChangeDto data, CancellationToken token = default)
     {
-        var result = await _service.AddResource(id, testingUserId, data, token);
-        return CreatedAtRoute("GetModuleResource", new { id, result.Id }, result);
+        var result = await _service.AddResource(id, CurrentUserId, data, token);
+        return CreatedAtRoute("GetModuleResource", new { id, resourceId = result.Id }, result);
     }
 
     [HttpPost("{id}/resources/{resourceId}")]
