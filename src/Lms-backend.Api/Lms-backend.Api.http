@@ -46,7 +46,6 @@ Content-Type: application/json
 
 {
   "username": "{{studentUsername}}",
-  "role": "Student",
   "password": "{{studentPassword}}"
 }
 
@@ -61,7 +60,6 @@ Content-Type: application/json
 
 {
   "username": "{{teacherUsername}}",
-  "role": "Teacher",
   "password": "{{teacherPassword}}"
 }
 
@@ -76,7 +74,6 @@ Content-Type: application/json
 
 {
   "username": "{{adminUsername}}",
-  "role": "Admin",
   "password": "{{adminPassword}}"
 }
 

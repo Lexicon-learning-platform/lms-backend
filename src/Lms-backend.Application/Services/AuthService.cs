@@ -33,7 +33,7 @@ namespace Lms_backend.Application.Services
                 {
                     new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                     new Claim(ClaimTypes.Name, model.Username),
-                    new Claim(ClaimTypes.Role, model.Role)
+                    new Claim(ClaimTypes.Role, user.Role)
                 };
 
             var accessKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtSettings:AccessSecret"]!));

@@ -1,5 +1,7 @@
+using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Net.Http.Json;
+using System.Security.Claims;
 using Lms_backend.Domain.Constants;
 using Lms_backend.Infrastructure;
 using Lms_backend.IntegrationTests.Infrastructure;
@@ -21,8 +23,11 @@ public class AuthControllerTests(IntegrationTestWebAppFactory factory) : IAsyncL
 
     private record TokenResponse(string AccessToken);
 
-    private Task<HttpResponseMessage> LoginAsync(string username = SeededUsername, string password = SeededPassword, string role = SeededRole) =>
-        _client.PostAsJsonAsync("/api/auth/login", new { username, password, role });
+    private Task<HttpResponseMessage> LoginAsync(string username = SeededUsername, string password = SeededPassword) =>
+        _client.PostAsJsonAsync("/api/auth/login", new { username, password });
+
+    private static string GetRoleClaim(string accessToken) =>
+        new JwtSecurityTokenHandler().ReadJwtToken(accessToken).Claims.First(c => c.Type == ClaimTypes.Role || c.Type == "role").Value;
 
     private static bool HasRefreshTokenCookie(HttpResponseMessage response) =>
         response.Headers.TryGetValues("Set-Cookie", out var cookies) &&
@@ -62,6 +67,15 @@ public class AuthControllerTests(IntegrationTestWebAppFactory factory) : IAsyncL
 
         var body = await response.Content.ReadFromJsonAsync<TokenResponse>();
         Assert.False(string.IsNullOrWhiteSpace(body?.AccessToken));
+    }
+
+    [Fact]
+    public async Task Login_ReturnsAccessTokenWithTheUsersActualRole()
+    {
+        var response = await LoginAsync();
+        var body = await response.Content.ReadFromJsonAsync<TokenResponse>();
+
+        Assert.Equal(SeededRole, GetRoleClaim(body!.AccessToken));
     }
 
     [Fact]
