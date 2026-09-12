@@ -73,7 +73,9 @@ public static class ActivityMapper
         {
             Id = entity.Id,
             Name = entity.Name,
-            Duration = entity.DurationMinutes
+            StartOffset = entity.StartTimeOffset,
+            Duration = entity.DurationMinutes,
+            Type = entity.ActivityType
         };
     }
 }
