@@ -1,5 +1,4 @@
 using System.Net;
-using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
 using Lms_backend.Domain.Entities;
@@ -14,27 +13,15 @@ namespace Lms_backend.IntegrationTests.Controllers;
 [Collection(IntegrationTestCollection.Name)]
 public class AdminControllerTests(IntegrationTestWebAppFactory factory) : IAsyncLifetime
 {
-    private const string AdminUsername = "admin";
-
-    private readonly HttpClient _client = factory.CreateAuthClient();
+    private HttpClient _client = null!;
 
     public async Task InitializeAsync()
     {
         await factory.ResetDatabaseAsync();
-        var token = await LoginAsync(_client, AdminUsername, UserSeeder.DefaultPassword);
-        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        _client = await TestAuth.CreateAuthenticatedClientAsync(factory, "admin", UserSeeder.DefaultPassword);
     }
 
     public Task DisposeAsync() => Task.CompletedTask;
-
-    private record TokenResponse(string AccessToken);
-
-    private static async Task<string> LoginAsync(HttpClient client, string username, string password)
-    {
-        var response = await client.PostAsJsonAsync("/api/auth/login", new { username, password });
-        var body = await response.Content.ReadFromJsonAsync<TokenResponse>();
-        return body!.AccessToken;
-    }
 
     private static (Guid Id, string UserName) SeededUser(string userName) =>
         TestUsers.Seeded.Where(u => u.UserName == userName).Select(u => (u.Id, u.UserName)).Single();
@@ -78,9 +65,7 @@ public class AdminControllerTests(IntegrationTestWebAppFactory factory) : IAsync
     [Fact]
     public async Task GetAllUsers_WithNonAdminToken_ReturnsForbidden()
     {
-        using var studentClient = factory.CreateAuthClient();
-        var token = await LoginAsync(studentClient, "maria.svensson", UserSeeder.DefaultPassword);
-        studentClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        using var studentClient = await TestAuth.CreateAuthenticatedClientAsync(factory, "maria.svensson", UserSeeder.DefaultPassword);
 
         var response = await studentClient.GetAsync("/api/admin/getusers");
 
