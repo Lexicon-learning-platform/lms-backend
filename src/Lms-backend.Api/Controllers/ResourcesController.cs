@@ -27,7 +27,7 @@ public class ResourceController : ControllerBase
 
     // Base resource endpoints
     [HttpGet]
-    public async Task<IActionResult> GetResources(string? name, string? search, ResourceType type, int? page, int? pageSize, CancellationToken token = default)
+    public async Task<IActionResult> GetResources(string? name, string? search, ResourceType? type, int? page, int? pageSize, CancellationToken token = default)
     {
         var (result, pagination) = await _service.GetMany(new ResourceSearchParams(name, search, type), page, pageSize, token);
         if (pagination != null) Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(pagination));
