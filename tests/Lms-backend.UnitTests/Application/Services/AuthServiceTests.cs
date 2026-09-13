@@ -52,7 +52,7 @@ public class AuthServiceTests
     // --- Login ---
 
     [Fact]
-    public void Login_ReturnsTokensAndSuccess_WhenCredentialsAreValid()
+    public async Task Login_ReturnsTokensAndSuccess_WhenCredentialsAreValid()
     {
         var (userManager, authRepository, service) = CreateService();
         var user = NewUser(userName: "jane.doe");
@@ -60,7 +60,7 @@ public class AuthServiceTests
         userManager.CheckPasswordHandler = (u, p) => u == user && p == "correct-password";
         var model = new LoginDto { Username = "jane.doe", Password = "correct-password", Role = "Student" };
 
-        var (tokens, response) = service.Login(model);
+        var (tokens, response) = await service.Login(model);
 
         Assert.Equal(ActionResponse.Success, response);
         Assert.NotNull(tokens);
@@ -78,12 +78,12 @@ public class AuthServiceTests
     }
 
     [Fact]
-    public void Login_ReturnsUserNotFound_WhenUserDoesNotExist()
+    public async Task Login_ReturnsUserNotFound_WhenUserDoesNotExist()
     {
         var (_, authRepository, service) = CreateService();
         var model = new LoginDto { Username = "missing.user", Password = "any", Role = "Student" };
 
-        var (tokens, response) = service.Login(model);
+        var (tokens, response) = await service.Login(model);
 
         Assert.Equal(ActionResponse.UserNotFound, response);
         Assert.Null(tokens);
@@ -91,7 +91,7 @@ public class AuthServiceTests
     }
 
     [Fact]
-    public void Login_ReturnsPasswordMismatch_WhenPasswordIsIncorrect()
+    public async Task Login_ReturnsPasswordMismatch_WhenPasswordIsIncorrect()
     {
         var (userManager, authRepository, service) = CreateService();
         var user = NewUser(userName: "jane.doe");
@@ -99,7 +99,7 @@ public class AuthServiceTests
         userManager.CheckPasswordHandler = (_, _) => false;
         var model = new LoginDto { Username = "jane.doe", Password = "wrong-password", Role = "Student" };
 
-        var (tokens, response) = service.Login(model);
+        var (tokens, response) = await service.Login(model);
 
         Assert.Equal(ActionResponse.PasswordMismatch, response);
         Assert.Null(tokens);
@@ -141,24 +141,24 @@ public class AuthServiceTests
     // --- Logout ---
 
     [Fact]
-    public void Logout_ReturnsRepositoryResult_WhenTokenIsRevoked()
+    public async Task Logout_ReturnsRepositoryResult_WhenTokenIsRevoked()
     {
         var (_, authRepository, service) = CreateService();
         authRepository.RevokeRefreshTokenResult = ActionResponse.Success;
 
-        var result = service.Logout("some-refresh-token");
+        var result = await service.Logout("some-refresh-token");
 
         Assert.Equal(ActionResponse.Success, result);
         Assert.Equal(["some-refresh-token"], authRepository.RevokeRefreshTokenCalls);
     }
 
     [Fact]
-    public void Logout_ReturnsRepositoryResult_WhenTokenIsNotFound()
+    public async Task Logout_ReturnsRepositoryResult_WhenTokenIsNotFound()
     {
         var (_, authRepository, service) = CreateService();
         authRepository.RevokeRefreshTokenResult = ActionResponse.Failure;
 
-        var result = service.Logout("unknown-refresh-token");
+        var result = await service.Logout("unknown-refresh-token");
 
         Assert.Equal(ActionResponse.Failure, result);
     }
@@ -166,12 +166,12 @@ public class AuthServiceTests
     // --- RegisterStudent ---
 
     [Fact]
-    public void RegisterStudent_CreatesStudentAndReturnsSuccess_WhenUsernameIsAvailable()
+    public async Task RegisterStudent_CreatesStudentAndReturnsSuccess_WhenUsernameIsAvailable()
     {
         var (userManager, _, service) = CreateService();
         var data = new RegisterDto { Username = "new.student", Password = "P@ssw0rd!" };
 
-        var result = service.RegisterStudent(data);
+        var result = await service.RegisterStudent(data);
 
         Assert.Equal(ActionResponse.Success, result);
         var created = Assert.Single(userManager.CreatedUsers);
@@ -183,13 +183,13 @@ public class AuthServiceTests
     }
 
     [Fact]
-    public void RegisterStudent_ReturnsUserAlreadyExists_WhenUsernameIsTaken()
+    public async Task RegisterStudent_ReturnsUserAlreadyExists_WhenUsernameIsTaken()
     {
         var (userManager, _, service) = CreateService();
         var data = new RegisterDto { Username = "existing.student", Password = "P@ssw0rd!" };
         userManager.UsersList.Add(NewUser(userName: data.Username));
 
-        var result = service.RegisterStudent(data);
+        var result = await service.RegisterStudent(data);
 
         Assert.Equal(ActionResponse.UserAlreadyExists, result);
         Assert.Empty(userManager.CreatedUsers);
