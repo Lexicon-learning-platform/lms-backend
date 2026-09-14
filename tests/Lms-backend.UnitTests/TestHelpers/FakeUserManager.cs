@@ -21,6 +21,7 @@ public sealed class FakeUserManager : UserManager<ApplicationUser>
     public List<(ApplicationUser User, string Password)> AddPasswordCalls { get; } = [];
     public List<(ApplicationUser User, string CurrentPassword, string NewPassword)> ChangePasswordCalls { get; } = [];
     public List<(ApplicationUser User, DateTimeOffset? LockoutEnd)> SetLockoutEndDateCalls { get; } = [];
+    public List<ApplicationUser> RemovePasswordCalls { get; } = [];
 
     private FakeUserManager()
         : base(
@@ -72,6 +73,17 @@ public sealed class FakeUserManager : UserManager<ApplicationUser>
     public override Task<IdentityResult> AddPasswordAsync(ApplicationUser user, string password)
     {
         AddPasswordCalls.Add((user, password));
+        user.PasswordHash = password;
+        return Task.FromResult(IdentityResult.Success);
+    }
+
+    public override Task<bool> HasPasswordAsync(ApplicationUser user) =>
+        Task.FromResult(user.PasswordHash != null);
+
+    public override Task<IdentityResult> RemovePasswordAsync(ApplicationUser user)
+    {
+        RemovePasswordCalls.Add(user);
+        user.PasswordHash = null;
         return Task.FromResult(IdentityResult.Success);
     }
 

@@ -60,12 +60,14 @@ public class ActivitiesServiceTests
         Data = "https://example.com",
     };
 
-    private static (FakeActivityRepository, FakeResourceRepository, ActivitiesService) CreateService()
+    private static (FakeActivityRepository, FakeResourceRepository, FakeModuleRepository, ActivitiesService) CreateService()
     {
         var activityRepository = new FakeActivityRepository();
         var resourceRepository = new FakeResourceRepository();
-        var service = new ActivitiesService(activityRepository, resourceRepository);
-        return (activityRepository, resourceRepository, service);
+        var moduleRepository = new FakeModuleRepository();
+        moduleRepository.ReadOnlyModules.Add(new Module { Id = ModuleId, Name = "Existing module", Description = "Existing description", Duration = 10 });
+        var service = new ActivitiesService(activityRepository, resourceRepository, moduleRepository);
+        return (activityRepository, resourceRepository, moduleRepository, service);
     }
 
     // --- GetResources ---
@@ -73,7 +75,7 @@ public class ActivitiesServiceTests
     [Fact]
     public async Task GetResources_ReturnsMappedDtos_WhenActivityExists()
     {
-        var (activityRepository, _, service) = CreateService();
+        var (activityRepository, _, _, service) = CreateService();
         var resource = NewResource();
         var activity = NewActivity();
         activity.Resources.Add(new ActivityResource { ActivityId = activity.Id, ResourceId = resource.Id, Resource = resource });
@@ -88,7 +90,7 @@ public class ActivitiesServiceTests
     [Fact]
     public async Task GetResources_ThrowsNotFoundException_WhenActivityDoesNotExist()
     {
-        var (_, _, service) = CreateService();
+        var (_, _, _, service) = CreateService();
 
         await Assert.ThrowsAsync<NotFoundException>(() => service.GetResources(ModuleId, Guid.NewGuid()));
     }
@@ -98,7 +100,7 @@ public class ActivitiesServiceTests
     [Fact]
     public async Task GetResource_ReturnsMappedDto_WhenResourceIsAttached()
     {
-        var (activityRepository, _, service) = CreateService();
+        var (activityRepository, _, _, service) = CreateService();
         var resource = NewResource();
         var activity = NewActivity();
         activity.Resources.Add(new ActivityResource { ActivityId = activity.Id, ResourceId = resource.Id, Resource = resource });
@@ -112,7 +114,7 @@ public class ActivitiesServiceTests
     [Fact]
     public async Task GetResource_ThrowsNotFoundException_WhenActivityDoesNotExist()
     {
-        var (_, _, service) = CreateService();
+        var (_, _, _, service) = CreateService();
 
         await Assert.ThrowsAsync<NotFoundException>(() => service.GetResource(ModuleId, Guid.NewGuid(), Guid.NewGuid()));
     }
@@ -120,7 +122,7 @@ public class ActivitiesServiceTests
     [Fact]
     public async Task GetResource_ThrowsNotFoundException_WhenResourceIsNotAttached()
     {
-        var (activityRepository, _, service) = CreateService();
+        var (activityRepository, _, _, service) = CreateService();
         var activity = NewActivity();
         activityRepository.ReadOnlyActivities.Add(activity);
 
@@ -132,7 +134,7 @@ public class ActivitiesServiceTests
     [Fact]
     public async Task AddResource_AddsAttachesSavesOnActivityRepository_AndReturnsRefetchedDto()
     {
-        var (activityRepository, resourceRepository, service) = CreateService();
+        var (activityRepository, resourceRepository, _, service) = CreateService();
         var activity = NewActivity();
         activityRepository.TrackedActivities.Add(activity);
         var userId = Guid.NewGuid();
@@ -167,7 +169,7 @@ public class ActivitiesServiceTests
     [Fact]
     public async Task AddResource_ThrowsValidationException_AndDoesNotAddOrAttach_WhenDataIsInvalid()
     {
-        var (activityRepository, resourceRepository, service) = CreateService();
+        var (activityRepository, resourceRepository, _, service) = CreateService();
         var activity = NewActivity();
         activityRepository.TrackedActivities.Add(activity);
         var data = ValidResourceChangeDto();
@@ -182,7 +184,7 @@ public class ActivitiesServiceTests
     [Fact]
     public async Task AddResource_ThrowsNotFoundException_WhenActivityDoesNotExist()
     {
-        var (_, _, service) = CreateService();
+        var (_, _, _, service) = CreateService();
 
         await Assert.ThrowsAsync<NotFoundException>(() => service.AddResource(ModuleId, Guid.NewGuid(), Guid.NewGuid(), ValidResourceChangeDto()));
     }
@@ -192,7 +194,7 @@ public class ActivitiesServiceTests
     [Fact]
     public async Task AttachResource_AttachesAndSaves_WhenNotAlreadyAttached()
     {
-        var (activityRepository, _, service) = CreateService();
+        var (activityRepository, _, _, service) = CreateService();
         var activity = NewActivity();
         activityRepository.TrackedActivities.Add(activity);
         activityRepository.AttachResourceResult = true;
@@ -208,7 +210,7 @@ public class ActivitiesServiceTests
     [Fact]
     public async Task AttachResource_DoesNotSave_WhenAlreadyAttached()
     {
-        var (activityRepository, _, service) = CreateService();
+        var (activityRepository, _, _, service) = CreateService();
         var activity = NewActivity();
         activityRepository.TrackedActivities.Add(activity);
         activityRepository.AttachResourceResult = false;
@@ -222,7 +224,7 @@ public class ActivitiesServiceTests
     [Fact]
     public async Task AttachResource_ThrowsNotFoundException_WhenActivityDoesNotExist()
     {
-        var (_, _, service) = CreateService();
+        var (_, _, _, service) = CreateService();
 
         await Assert.ThrowsAsync<NotFoundException>(() => service.AttachResource(ModuleId, Guid.NewGuid(), Guid.NewGuid()));
     }
@@ -232,7 +234,7 @@ public class ActivitiesServiceTests
     [Fact]
     public async Task Create_AddsEntityAndReturnsMappedDto_WhenDataIsValidAndNoOverlap()
     {
-        var (activityRepository, _, service) = CreateService();
+        var (activityRepository, _, _, service) = CreateService();
         var data = ValidChangeDto();
 
         var result = await service.Create(ModuleId, Guid.NewGuid(), data);
@@ -248,7 +250,7 @@ public class ActivitiesServiceTests
     [Fact]
     public async Task Create_ThrowsValidationException_AndDoesNotCheckOverlap_WhenDataIsInvalid()
     {
-        var (activityRepository, _, service) = CreateService();
+        var (activityRepository, _, _, service) = CreateService();
         var data = ValidChangeDto();
         data.Name = "ab";
 
@@ -261,10 +263,21 @@ public class ActivitiesServiceTests
     [Fact]
     public async Task Create_ThrowsValidationException_AndDoesNotAdd_WhenActivityOverlaps()
     {
-        var (activityRepository, _, service) = CreateService();
+        var (activityRepository, _, _, service) = CreateService();
         activityRepository.HasOverlappingActivityResult = true;
 
         await Assert.ThrowsAsync<ValidationException>(() => service.Create(ModuleId, Guid.NewGuid(), ValidChangeDto()));
+
+        Assert.Empty(activityRepository.AddedEntities);
+        Assert.Equal(0, activityRepository.SaveChangesCallCount);
+    }
+
+    [Fact]
+    public async Task Create_ThrowsNotFoundException_AndDoesNotAdd_WhenModuleDoesNotExist()
+    {
+        var (activityRepository, _, _, service) = CreateService();
+
+        await Assert.ThrowsAsync<NotFoundException>(() => service.Create(Guid.NewGuid(), Guid.NewGuid(), ValidChangeDto()));
 
         Assert.Empty(activityRepository.AddedEntities);
         Assert.Equal(0, activityRepository.SaveChangesCallCount);
@@ -275,7 +288,7 @@ public class ActivitiesServiceTests
     [Fact]
     public async Task GetMany_UsesReadOnlyRepositoryAndReturnsMappedDtosWithPagination()
     {
-        var (activityRepository, _, service) = CreateService();
+        var (activityRepository, _, _, service) = CreateService();
         var activity = NewActivity();
         var pagination = new PaginationMetadata(totalItemCount: 1, pageSize: 10, currentPage: 1);
         activityRepository.GetActivitiesReadOnlyResult = ([activity], pagination);
@@ -294,7 +307,7 @@ public class ActivitiesServiceTests
     [InlineData(-5)]
     public async Task GetMany_DefaultsPageToOne_WhenPageIsNullOrLessThanOne(int? page)
     {
-        var (activityRepository, _, service) = CreateService();
+        var (activityRepository, _, _, service) = CreateService();
 
         await service.GetMany(ModuleId, new ActivitySearchParams(null, null, null), page: page, pageSize: 20);
 
@@ -304,7 +317,7 @@ public class ActivitiesServiceTests
     [Fact]
     public async Task GetMany_KeepsProvidedPage_WhenValid()
     {
-        var (activityRepository, _, service) = CreateService();
+        var (activityRepository, _, _, service) = CreateService();
 
         await service.GetMany(ModuleId, new ActivitySearchParams(null, null, null), page: 3, pageSize: 20);
 
@@ -317,7 +330,7 @@ public class ActivitiesServiceTests
     [InlineData(-3)]
     public async Task GetMany_DefaultsPageSizeToTen_WhenPageSizeIsNullOrNotPositive(int? pageSize)
     {
-        var (activityRepository, _, service) = CreateService();
+        var (activityRepository, _, _, service) = CreateService();
 
         await service.GetMany(ModuleId, new ActivitySearchParams(null, null, null), page: 1, pageSize: pageSize);
 
@@ -327,7 +340,7 @@ public class ActivitiesServiceTests
     [Fact]
     public async Task GetMany_KeepsProvidedPageSize_WhenPositive()
     {
-        var (activityRepository, _, service) = CreateService();
+        var (activityRepository, _, _, service) = CreateService();
 
         await service.GetMany(ModuleId, new ActivitySearchParams(null, null, null), page: 1, pageSize: 1);
 
@@ -337,7 +350,7 @@ public class ActivitiesServiceTests
     [Fact]
     public async Task GetMany_PassesModuleIdAndSearchParamsThrough()
     {
-        var (activityRepository, _, service) = CreateService();
+        var (activityRepository, _, _, service) = CreateService();
         var searchParams = new ActivitySearchParams(name: "Docker", search: null, type: ActivityType.Lecture);
 
         await service.GetMany(ModuleId, searchParams, page: 1, pageSize: 20);
@@ -351,7 +364,7 @@ public class ActivitiesServiceTests
     [Fact]
     public async Task GetOne_ReturnsExtendedDto_WhenActivityExists()
     {
-        var (activityRepository, _, service) = CreateService();
+        var (activityRepository, _, _, service) = CreateService();
         var activity = NewActivity();
         activityRepository.ReadOnlyActivities.Add(activity);
 
@@ -364,7 +377,7 @@ public class ActivitiesServiceTests
     [Fact]
     public async Task GetOne_ThrowsNotFoundException_WhenActivityDoesNotExist()
     {
-        var (_, _, service) = CreateService();
+        var (_, _, _, service) = CreateService();
         var id = Guid.NewGuid();
 
         var ex = await Assert.ThrowsAsync<NotFoundException>(() => service.GetOne(ModuleId, id));
@@ -374,7 +387,7 @@ public class ActivitiesServiceTests
     [Fact]
     public async Task GetOne_ThrowsNotFoundException_WhenModuleIdDoesNotMatch()
     {
-        var (activityRepository, _, service) = CreateService();
+        var (activityRepository, _, _, service) = CreateService();
         var activity = NewActivity();
         activityRepository.ReadOnlyActivities.Add(activity);
 
@@ -386,7 +399,7 @@ public class ActivitiesServiceTests
     [Fact]
     public async Task Remove_DeletesAndSaves_WhenActivityExists()
     {
-        var (activityRepository, _, service) = CreateService();
+        var (activityRepository, _, _, service) = CreateService();
         var activity = NewActivity();
         activityRepository.TrackedActivities.Add(activity);
 
@@ -399,7 +412,7 @@ public class ActivitiesServiceTests
     [Fact]
     public async Task Remove_DoesNothing_WhenActivityDoesNotExist()
     {
-        var (activityRepository, _, service) = CreateService();
+        var (activityRepository, _, _, service) = CreateService();
 
         await service.Remove(ModuleId, Guid.NewGuid());
 
@@ -412,7 +425,7 @@ public class ActivitiesServiceTests
     [Fact]
     public async Task DetachResource_DetachesAndSaves_WhenActivityExists()
     {
-        var (activityRepository, _, service) = CreateService();
+        var (activityRepository, _, _, service) = CreateService();
         var activity = NewActivity();
         activityRepository.TrackedActivities.Add(activity);
         var resourceId = Guid.NewGuid();
@@ -426,7 +439,7 @@ public class ActivitiesServiceTests
     [Fact]
     public async Task DetachResource_ThrowsNotFoundException_WhenActivityDoesNotExist()
     {
-        var (_, _, service) = CreateService();
+        var (_, _, _, service) = CreateService();
 
         await Assert.ThrowsAsync<NotFoundException>(() => service.DetachResource(ModuleId, Guid.NewGuid(), Guid.NewGuid()));
     }
@@ -436,9 +449,9 @@ public class ActivitiesServiceTests
     [Fact]
     public async Task Update_AppliesChangesAndSaves_WhenValidAndNoOverlap()
     {
-        var (activityRepository, _, service) = CreateService();
+        var (activityRepository, _, _, service) = CreateService();
         var activity = NewActivity();
-        activityRepository.ReadOnlyActivities.Add(activity);
+        activityRepository.TrackedActivities.Add(activity);
         var data = ValidChangeDto();
 
         await service.Update(activity.ModuleId, activity.Id, data);
@@ -454,7 +467,7 @@ public class ActivitiesServiceTests
     [Fact]
     public async Task Update_ThrowsNotFoundException_WhenActivityDoesNotExist()
     {
-        var (_, _, service) = CreateService();
+        var (_, _, _, service) = CreateService();
 
         await Assert.ThrowsAsync<NotFoundException>(() => service.Update(ModuleId, Guid.NewGuid(), ValidChangeDto()));
     }
@@ -462,9 +475,9 @@ public class ActivitiesServiceTests
     [Fact]
     public async Task Update_ThrowsValidationException_AndDoesNotSave_WhenDataIsInvalid()
     {
-        var (activityRepository, _, service) = CreateService();
+        var (activityRepository, _, _, service) = CreateService();
         var activity = NewActivity();
-        activityRepository.ReadOnlyActivities.Add(activity);
+        activityRepository.TrackedActivities.Add(activity);
         var data = ValidChangeDto();
         data.Name = "ab";
 
@@ -477,9 +490,9 @@ public class ActivitiesServiceTests
     [Fact]
     public async Task Update_ThrowsValidationException_AndExcludesSelf_WhenActivityOverlaps()
     {
-        var (activityRepository, _, service) = CreateService();
+        var (activityRepository, _, _, service) = CreateService();
         var activity = NewActivity();
-        activityRepository.ReadOnlyActivities.Add(activity);
+        activityRepository.TrackedActivities.Add(activity);
         activityRepository.HasOverlappingActivityResult = true;
 
         await Assert.ThrowsAsync<ValidationException>(() => service.Update(activity.ModuleId, activity.Id, ValidChangeDto()));
@@ -493,9 +506,9 @@ public class ActivitiesServiceTests
     [Fact]
     public async Task Update_JsonPatch_AppliesPatchOnTopOfExistingValuesAndSaves()
     {
-        var (activityRepository, _, service) = CreateService();
+        var (activityRepository, _, _, service) = CreateService();
         var activity = NewActivity();
-        activityRepository.ReadOnlyActivities.Add(activity);
+        activityRepository.TrackedActivities.Add(activity);
         var patch = new JsonPatchDocument<ActivityForChangeDto>();
         patch.Replace(dto => dto.Name, "Patched name");
 
@@ -509,7 +522,7 @@ public class ActivitiesServiceTests
     [Fact]
     public async Task Update_JsonPatch_ThrowsNotFoundException_WhenActivityDoesNotExist()
     {
-        var (_, _, service) = CreateService();
+        var (_, _, _, service) = CreateService();
         var patch = new JsonPatchDocument<ActivityForChangeDto>();
         patch.Replace(dto => dto.Name, "Patched name");
 
@@ -519,9 +532,9 @@ public class ActivitiesServiceTests
     [Fact]
     public async Task Update_JsonPatch_ThrowsValidationException_WhenPatchProducesInvalidData()
     {
-        var (activityRepository, _, service) = CreateService();
+        var (activityRepository, _, _, service) = CreateService();
         var activity = NewActivity();
-        activityRepository.ReadOnlyActivities.Add(activity);
+        activityRepository.TrackedActivities.Add(activity);
         var patch = new JsonPatchDocument<ActivityForChangeDto>();
         patch.Replace(dto => dto.Name, "ab");
 
@@ -536,7 +549,7 @@ public class ActivitiesServiceTests
     [Fact]
     public async Task UpdateResource_AppliesChangesAndSaves_WhenResourceIsAttached()
     {
-        var (activityRepository, resourceRepository, service) = CreateService();
+        var (activityRepository, resourceRepository, _, service) = CreateService();
         var activity = NewActivity();
         var resource = NewResource();
         activityRepository.TrackedActivities.Add(activity);
@@ -557,7 +570,7 @@ public class ActivitiesServiceTests
     [Fact]
     public async Task UpdateResource_ThrowsNotFoundException_WhenActivityDoesNotExist()
     {
-        var (_, _, service) = CreateService();
+        var (_, _, _, service) = CreateService();
 
         await Assert.ThrowsAsync<NotFoundException>(() => service.UpdateResource(ModuleId, Guid.NewGuid(), Guid.NewGuid(), ValidResourceChangeDto()));
     }
@@ -565,7 +578,7 @@ public class ActivitiesServiceTests
     [Fact]
     public async Task UpdateResource_ThrowsNotFoundException_WhenResourceIsNotAttachedToActivity()
     {
-        var (activityRepository, _, service) = CreateService();
+        var (activityRepository, _, _, service) = CreateService();
         var activity = NewActivity();
         activityRepository.TrackedActivities.Add(activity);
 
@@ -575,7 +588,7 @@ public class ActivitiesServiceTests
     [Fact]
     public async Task UpdateResource_ThrowsValidationException_AndDoesNotSave_WhenDataIsInvalid()
     {
-        var (activityRepository, resourceRepository, service) = CreateService();
+        var (activityRepository, resourceRepository, _, service) = CreateService();
         var activity = NewActivity();
         var resource = NewResource();
         activityRepository.TrackedActivities.Add(activity);
@@ -595,7 +608,7 @@ public class ActivitiesServiceTests
     [Fact]
     public async Task UpdateResource_JsonPatch_AppliesPatchOnTopOfExistingValuesAndSaves()
     {
-        var (activityRepository, resourceRepository, service) = CreateService();
+        var (activityRepository, resourceRepository, _, service) = CreateService();
         var activity = NewActivity();
         var resource = NewResource();
         activityRepository.TrackedActivities.Add(activity);
@@ -614,7 +627,7 @@ public class ActivitiesServiceTests
     [Fact]
     public async Task UpdateResource_JsonPatch_ThrowsNotFoundException_WhenResourceIsNotAttachedToActivity()
     {
-        var (activityRepository, _, service) = CreateService();
+        var (activityRepository, _, _, service) = CreateService();
         var activity = NewActivity();
         activityRepository.TrackedActivities.Add(activity);
         var patch = new JsonPatchDocument<ResourceForChangeDto>();

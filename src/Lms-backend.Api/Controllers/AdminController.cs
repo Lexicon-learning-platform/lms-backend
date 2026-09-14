@@ -1,4 +1,4 @@
-﻿using Lms_backend.Application.Interfaces;
+using Lms_backend.Application.Interfaces;
 using Lms_backend.Application.Models;
 using Lms_backend.Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
@@ -13,9 +13,9 @@ namespace Lms_backend.Api.Controllers
     {
         // POST: api/admin/register?role=Teacher
         [HttpPost("register")]
-        public IActionResult Register([FromBody] RegisterDto model, [FromQuery] string role = "Student")
+        public async Task<IActionResult> Register([FromBody] RegisterDto model, [FromQuery] string role = "Student")
         {
-            var result = service.Register(model, role);
+            var result = await service.Register(model, role);
 
             if (result == ActionResponse.Success)
                 return Ok("User registered successfully.");
@@ -37,9 +37,9 @@ namespace Lms_backend.Api.Controllers
 
         // DELETE: api/admin/deleteuser/{userId}
         [HttpDelete("deleteuser/{userId}")]
-        public IActionResult DeleteUser(string userId)
+        public async Task<IActionResult> DeleteUser(string userId)
         {
-            var result = service.DeleteUser(userId);
+            var result = await service.DeleteUser(userId);
 
             if (result == ActionResponse.Success)
                 return Ok("User deleted successfully.");
@@ -51,9 +51,9 @@ namespace Lms_backend.Api.Controllers
 
         // PUT: api/admin/disableuser/{userId}
         [HttpPut("disableuser/{userId}")]
-        public IActionResult DisableUser(string userId)
+        public async Task<IActionResult> DisableUser(string userId)
         {
-            var result = service.DisableUser(userId);
+            var result = await service.DisableUser(userId);
 
             if (result == ActionResponse.Success)
                 return Ok("User disabled successfully.");
@@ -65,9 +65,9 @@ namespace Lms_backend.Api.Controllers
 
         // GET: api/admin/getuserstats/{userId}
         [HttpGet("getuserstats/{userId}")]
-        public IActionResult GetUserStatistics(string userId)
+        public async Task<IActionResult> GetUserStatistics(string userId)
         {
-            var (response, statistics) = service.GetUserStatistics(userId);
+            var (response, statistics) = await service.GetUserStatistics(userId);
 
             if (response == ActionResponse.Success)
                 return Ok(statistics);
@@ -79,9 +79,9 @@ namespace Lms_backend.Api.Controllers
 
         // PUT: api/admin/updateuser/{userId}
         [HttpPut("updateuser/{userId}")]
-        public IActionResult UpdateUser(string userId, [FromBody] UpdateUserDto model)
+        public async Task<IActionResult> UpdateUser(string userId, [FromBody] UpdateUserDto model)
         {
-            var result = service.UpdateUser(userId, model);
+            var result = await service.UpdateUser(userId, model);
 
             if (result == ActionResponse.Success)
                 return Ok("User updated successfully.");
@@ -97,9 +97,9 @@ namespace Lms_backend.Api.Controllers
 
         // PUT: api/admin/resetpassword/{userId}
         [HttpPut("resetpassword/{userId}")]
-        public IActionResult ResetPassword(string userId, [FromBody] string newPassword)
+        public async Task<IActionResult> ResetPassword(string userId, [FromBody] string newPassword)
         {
-            var result = service.ResetPassword(userId, newPassword);
+            var result = await service.ResetPassword(userId, newPassword);
 
             if (result == ActionResponse.Success)
                 return Ok("Password reset successfully.");
@@ -111,9 +111,9 @@ namespace Lms_backend.Api.Controllers
 
         // PUT: api/admin/addcoursetouser/{userId}/{courseId}
         [HttpPut("addcoursetouser/{userId}/{courseId}")]
-        public IActionResult AddCourseToUser(string userId, string courseId)
+        public async Task<IActionResult> AddCourseToUser(string userId, string courseId)
         {
-            var result = service.AddCourseToUser(userId, courseId);
+            var result = await service.AddCourseToUser(userId, courseId);
 
             if (result == ActionResponse.Success)
                 return Ok("Course added to user successfully.");
@@ -129,9 +129,9 @@ namespace Lms_backend.Api.Controllers
 
         // PUT: api/admin/removecoursefromuser/{userId}/{courseId}
         [HttpPut("removecoursefromuser/{userId}/{courseId}")]
-        public IActionResult RemoveCourseFromUser(string userId, string courseId)
+        public async Task<IActionResult> RemoveCourseFromUser(string userId, string courseId)
         {
-            var result = service.RemoveCourseFromUser(userId, courseId);
+            var result = await service.RemoveCourseFromUser(userId, courseId);
 
             if (result == ActionResponse.Success)
                 return Ok("Course removed from user successfully.");
@@ -146,9 +146,9 @@ namespace Lms_backend.Api.Controllers
 
         // PUT: api/admin/enableuser/{userId}
         [HttpPut("enableuser/{userId}")]
-        public IActionResult EnableUser(string userId)
+        public async Task<IActionResult> EnableUser(string userId)
         {
-            var result = service.EnableUser(userId);
+            var result = await service.EnableUser(userId);
 
             if (result == ActionResponse.Success)
                 return Ok("User enabled successfully.");

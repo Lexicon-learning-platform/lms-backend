@@ -30,7 +30,7 @@ public class ResourcesService(IResourceRepository repository) : IResourcesServic
     public async Task<(IEnumerable<ResourceDto>, PaginationMetadata?)> GetMany(ResourceSearchParams searchParams, int? page = 1, int? pageSize = 10, CancellationToken token = default)
     {
         if (page == null || page < DefaultValues.page) page = DefaultValues.page;
-        if (pageSize == null || pageSize <= DefaultValues.pageSize) pageSize = DefaultValues.pageSize;
+        if (pageSize == null || pageSize <= 0) pageSize = DefaultValues.pageSize;
 
         var (entities, pagination) = await repository.GetResourcesReadOnlyAsync(searchParams, (int)page, (int)pageSize, token);
         return (ResourceMapper.ToStandardDto(entities), pagination);

@@ -9,21 +9,21 @@ namespace Lms_backend.Application.Interfaces
 {
     public interface IAdminService
     {
-        ActionResponse Register(RegisterDto model, string role);
+        Task<ActionResponse> Register(RegisterDto model, string role);
 
-        ActionResponse DisableUser(string userId);
-        ActionResponse EnableUser(string userId);
+        Task<ActionResponse> DisableUser(string userId);
+        Task<ActionResponse> EnableUser(string userId);
 
-        ActionResponse DeleteUser(string userId);
+        Task<ActionResponse> DeleteUser(string userId);
 
-        ActionResponse UpdateUser(string userId, UpdateUserDto model);
-        ActionResponse ResetPassword(string userId, string newPassword);
+        Task<ActionResponse> UpdateUser(string userId, UpdateUserDto model);
+        Task<ActionResponse> ResetPassword(string userId, string newPassword);
 
-        ActionResponse AddCourseToUser(string userId, string courseId);
+        Task<ActionResponse> AddCourseToUser(string userId, string courseId);
 
-        ActionResponse RemoveCourseFromUser(string userId, string courseId);
+        Task<ActionResponse> RemoveCourseFromUser(string userId, string courseId);
 
-        (ActionResponse response, UserStatsDto? statistics) GetUserStatistics(string userId);
+        Task<(ActionResponse response, UserStatsDto? statistics)> GetUserStatistics(string userId);
 
         List<ApplicationUser> GetAllUsers();
 
