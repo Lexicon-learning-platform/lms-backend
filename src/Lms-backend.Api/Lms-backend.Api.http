@@ -39,8 +39,10 @@ Content-Type: application/json
   "password": "{{newStudentPassword}}"
 }
 
+
+###
+
 ### Login - Student
-# @name loginStudent
 POST {{baseUrl}}/api/auth/login
 Content-Type: application/json
 
@@ -49,12 +51,13 @@ Content-Type: application/json
   "password": "{{studentPassword}}"
 }
 
+> {%
+    client.global.set("studentToken", response.body.accessToken);
+%}
+
 ###
 
-@studentToken = {{loginStudent.response.body.$.accessToken}}
-
 ### Login - Teacher
-# @name loginTeacher
 POST {{baseUrl}}/api/auth/login
 Content-Type: application/json
 
@@ -63,12 +66,13 @@ Content-Type: application/json
   "password": "{{teacherPassword}}"
 }
 
+> {%
+    client.global.set("teacherToken", response.body.accessToken);
+%}
+
 ###
 
-@teacherToken = {{loginTeacher.response.body.$.accessToken}}
-
 ### Login - Admin
-# @name loginAdmin
 POST {{baseUrl}}/api/auth/login
 Content-Type: application/json
 
@@ -77,9 +81,11 @@ Content-Type: application/json
   "password": "{{adminPassword}}"
 }
 
-###
+> {%
+    client.global.set("adminToken", response.body.accessToken);
+%}
 
-@adminToken = {{loginAdmin.response.body.$.accessToken}}
+###
 
 ### Refresh Access Token
 # Reads the "refreshToken" HttpOnly cookie set by Login/Register - the REST Client

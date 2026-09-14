@@ -84,7 +84,7 @@ namespace Lms_backend.Api.Controllers
                 service.Logout(refreshToken);
                 Response.Cookies.Delete("refreshToken");
             }
-            return Ok("Utloggad.");
+            return NoContent();
         }
 
         [HttpPost("register")]
