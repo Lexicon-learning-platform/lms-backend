@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.JsonPatch.SystemTextJson;
 
 namespace Lms_backend.Application.Services;
 
-public class ActivitiesService(IActivityRepository repository, IResourceRepository resourceRepository) : IActivitiesService
+public class ActivitiesService(IActivityRepository repository, IResourceRepository resourceRepository, IModuleRepository moduleRepository) : IActivitiesService
 {
     public async Task<IEnumerable<ResourceDto>> GetResources(Guid moduleId, Guid id, CancellationToken token = default)
     {
@@ -53,6 +53,7 @@ public class ActivitiesService(IActivityRepository repository, IResourceReposito
     public async Task<ActivityDto> Create(Guid moduleId, Guid userId, ActivityForChangeDto data, CancellationToken token = default)
     {
         ActivityValidator.ValidateChangeDto(data);
+        _ = await moduleRepository.GetModuleReadOnlyAsync(moduleId, token) ?? throw new NotFoundException($"Module '{moduleId}' not found");
         await EnsureNoOverlapAsync(moduleId, data, null, token);
 
         var entity = ActivityMapper.ToEntity(data, moduleId);
@@ -98,13 +99,13 @@ public class ActivitiesService(IActivityRepository repository, IResourceReposito
 
     public async Task Update(Guid moduleId, Guid id, ActivityForChangeDto data, CancellationToken token = default)
     {
-        var entity = await repository.GetActivityReadOnlyAsync(moduleId, id, token) ?? throw new NotFoundException($"Activity '{id}' not found");
+        var entity = await repository.GetActivityAsync(moduleId, id, token) ?? throw new NotFoundException($"Activity '{id}' not found");
         await ApplyUpdateAsync(entity, data, token);
     }
 
     public async Task Update(Guid moduleId, Guid id, JsonPatchDocument<ActivityForChangeDto> data, CancellationToken token = default)
     {
-        var entity = await repository.GetActivityReadOnlyAsync(moduleId, id, token) ?? throw new NotFoundException($"Activity '{id}' not found");
+        var entity = await repository.GetActivityAsync(moduleId, id, token) ?? throw new NotFoundException($"Activity '{id}' not found");
 
         var dto = ActivityMapper.ToChangeDto(entity);
         data.ApplyTo(dto);

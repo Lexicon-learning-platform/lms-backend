@@ -29,12 +29,13 @@ public class AuthServiceTests
         return (userManager, authRepository, service);
     }
 
-    private static ApplicationUser NewUser(Guid? id = null, string userName = "existing.user") => new()
+    private static ApplicationUser NewUser(Guid? id = null, string userName = "existing.user", string role = "Student") => new()
     {
         Id = id ?? Guid.NewGuid(),
         UserName = userName,
         GivenName = "Existing",
         LastName = "User",
+        Role = role,
     };
 
     private static string BuildRefreshTokenString(Guid userId, string username, string role)
@@ -58,7 +59,7 @@ public class AuthServiceTests
         var user = NewUser(userName: "jane.doe");
         userManager.UsersList.Add(user);
         userManager.CheckPasswordHandler = (u, p) => u == user && p == "correct-password";
-        var model = new LoginDto { Username = "jane.doe", Password = "correct-password", Role = "Student" };
+        var model = new LoginDto { Username = "jane.doe", Password = "correct-password" };
 
         var (tokens, response) = await service.Login(model);
 
@@ -69,7 +70,7 @@ public class AuthServiceTests
         var accessToken = tokens[0];
         Assert.Equal(user.Id.ToString(), accessToken.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value);
         Assert.Equal(model.Username, accessToken.Claims.First(c => c.Type == ClaimTypes.Name).Value);
-        Assert.Equal(model.Role, accessToken.Claims.First(c => c.Type == ClaimTypes.Role).Value);
+        Assert.Equal(user.Role, accessToken.Claims.First(c => c.Type == ClaimTypes.Role).Value);
         Assert.True(accessToken.ValidTo <= DateTime.UtcNow.AddMinutes(15).AddSeconds(5));
         Assert.True(accessToken.ValidTo >= DateTime.UtcNow.AddMinutes(15).AddSeconds(-30));
 
@@ -78,10 +79,26 @@ public class AuthServiceTests
     }
 
     [Fact]
+    public async Task Login_UsesTheUsersActualRoleFromTheDatabase()
+    {
+        // Regression test: the role claim must come from the user's account, never from client
+        // input, or any authenticated user could request an elevated role at login.
+        var (userManager, _, service) = CreateService();
+        var user = NewUser(userName: "jane.doe", role: "Admin");
+        userManager.UsersList.Add(user);
+        userManager.CheckPasswordHandler = (_, _) => true;
+        var model = new LoginDto { Username = "jane.doe", Password = "correct-password" };
+
+        var (tokens, _) = await service.Login(model);
+
+        Assert.Equal("Admin", tokens![0].Claims.First(c => c.Type == ClaimTypes.Role).Value);
+    }
+
+    [Fact]
     public async Task Login_ReturnsUserNotFound_WhenUserDoesNotExist()
     {
         var (_, authRepository, service) = CreateService();
-        var model = new LoginDto { Username = "missing.user", Password = "any", Role = "Student" };
+        var model = new LoginDto { Username = "missing.user", Password = "any" };
 
         var (tokens, response) = await service.Login(model);
 
@@ -97,7 +114,7 @@ public class AuthServiceTests
         var user = NewUser(userName: "jane.doe");
         userManager.UsersList.Add(user);
         userManager.CheckPasswordHandler = (_, _) => false;
-        var model = new LoginDto { Username = "jane.doe", Password = "wrong-password", Role = "Student" };
+        var model = new LoginDto { Username = "jane.doe", Password = "wrong-password" };
 
         var (tokens, response) = await service.Login(model);
 

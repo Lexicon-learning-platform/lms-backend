@@ -149,9 +149,9 @@ public class ResourcesServiceTests
 
     [Theory]
     [InlineData(null)]
-    [InlineData(1)]
-    [InlineData(10)]
-    public async Task GetMany_DefaultsPageSizeToTen_WhenPageSizeIsNullOrAtMostTen(int? pageSize)
+    [InlineData(0)]
+    [InlineData(-3)]
+    public async Task GetMany_DefaultsPageSizeToTen_WhenPageSizeIsNullOrNotPositive(int? pageSize)
     {
         var repository = new FakeResourceRepository();
         var service = new ResourcesService(repository);
@@ -161,15 +161,18 @@ public class ResourcesServiceTests
         Assert.Equal(10, repository.LastGetResourcesReadOnlyCall!.Value.PageSize);
     }
 
-    [Fact]
-    public async Task GetMany_KeepsProvidedPageSize_WhenGreaterThanTen()
+    [Theory]
+    [InlineData(1)]
+    [InlineData(10)]
+    [InlineData(25)]
+    public async Task GetMany_KeepsProvidedPageSize_WhenPositive(int pageSize)
     {
         var repository = new FakeResourceRepository();
         var service = new ResourcesService(repository);
 
-        await service.GetMany(new ResourceSearchParams(null, null, null), page: 1, pageSize: 25);
+        await service.GetMany(new ResourceSearchParams(null, null, null), page: 1, pageSize: pageSize);
 
-        Assert.Equal(25, repository.LastGetResourcesReadOnlyCall!.Value.PageSize);
+        Assert.Equal(pageSize, repository.LastGetResourcesReadOnlyCall!.Value.PageSize);
     }
 
     [Fact]

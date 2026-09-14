@@ -1,4 +1,4 @@
-﻿using Lms_backend.Application.Interfaces;
+using Lms_backend.Application.Interfaces;
 using Lms_backend.Application.Models;
 using Lms_backend.Domain.Entities;
 using Lms_backend.Domain.Enums;
@@ -13,32 +13,32 @@ namespace Lms_backend.Application.Services
         private readonly RoleManager<ApplicationRole> _roleManager = roleManager;
         private readonly ICourseRepository _courseRepository = courseRepository;
 
-        public ActionResponse DeleteUser(string userId)
+        public async Task<ActionResponse> DeleteUser(string userId)
         {
-            var user = _userManager.FindByIdAsync(userId).Result;
+            var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
                 return ActionResponse.UserNotFound;
 
-            _userManager.DeleteAsync(user);
+            await _userManager.DeleteAsync(user);
             return ActionResponse.Success;
         }
 
-        public ActionResponse DisableUser(string userId)
+        public async Task<ActionResponse> DisableUser(string userId)
         {
-            var user = _userManager.FindByIdAsync(userId).Result;
+            var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
                 return ActionResponse.UserNotFound;
 
-            _userManager.SetLockoutEndDateAsync(user, DateTimeOffset.MaxValue);
+            await _userManager.SetLockoutEndDateAsync(user, DateTimeOffset.MaxValue);
             return ActionResponse.Success;
         }
 
-        public ActionResponse EnableUser(string userId)
+        public async Task<ActionResponse> EnableUser(string userId)
         {
-            var user = _userManager.FindByIdAsync(userId).Result;
+            var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
                 return ActionResponse.UserNotFound;
-            _userManager.SetLockoutEndDateAsync(user, null);
+            await _userManager.SetLockoutEndDateAsync(user, null);
             return ActionResponse.Success;
         }
 
@@ -48,9 +48,9 @@ namespace Lms_backend.Application.Services
             return users;
         }
 
-        public (ActionResponse response, UserStatsDto? statistics) GetUserStatistics(string userId)
+        public async Task<(ActionResponse response, UserStatsDto? statistics)> GetUserStatistics(string userId)
         {
-            var user = GetUserById(userId);
+            var user = await GetUserById(userId);
             if (user == null) return (ActionResponse.UserNotFound, null);
 
             UserStatsDto userStatsDto = new()
@@ -63,22 +63,22 @@ namespace Lms_backend.Application.Services
                 LastName = user.LastName ?? string.Empty,
                 Courses = []
                 //TODO: Populate the Courses property with the user's courses.
-            }; 
+            };
 
             return (ActionResponse.Success, userStatsDto);
         }
 
-        public ActionResponse Register(RegisterDto model, string role)
+        public async Task<ActionResponse> Register(RegisterDto model, string role)
         {
             //Check if the user already exists
-            var existingUser = _userManager.FindByNameAsync(model.Username).Result;
+            var existingUser = await _userManager.FindByNameAsync(model.Username);
             if (existingUser != null)
                 return ActionResponse.UserAlreadyExists;
 
             //Create a new user and store it in the database
 
             //Check if the role exists
-            var roleExists = _roleManager.RoleExistsAsync(role).Result;
+            var roleExists = await _roleManager.RoleExistsAsync(role);
             if (!roleExists)
                 return ActionResponse.InvalidRole;
 
@@ -91,69 +91,67 @@ namespace Lms_backend.Application.Services
                 Role = role
             };
 
-            _userManager.CreateAsync(newUser);
+            await _userManager.CreateAsync(newUser);
 
-            _userManager.AddPasswordAsync(newUser, model.Password);
+            await _userManager.AddPasswordAsync(newUser, model.Password);
 
             return ActionResponse.Success;
         }
-        public ActionResponse AddCourseToUser(string userId, string courseId)
+        public async Task<ActionResponse> AddCourseToUser(string userId, string courseId)
         {
-            var user = GetUserById(userId);
+            var user = await GetUserById(userId);
             if(user == null) return ActionResponse.UserNotFound;
 
             var success = Guid.TryParse(courseId, out var parsedCourseId);
             if (!success) return ActionResponse.BadData;
 
-            var course = _courseRepository.GetCourseReadOnlyAsync(parsedCourseId, CancellationToken.None).Result;
+            var course = await _courseRepository.GetCourseReadOnlyAsync(parsedCourseId, CancellationToken.None);
             if (course == null) return ActionResponse.NotFound;
 
             user.Course = course;
             user.CourseId = course.Id;
 
-            _userManager.UpdateAsync(user);
+            await _userManager.UpdateAsync(user);
             return ActionResponse.Success;
 
         }
 
-        public ActionResponse RemoveCourseFromUser(string userId, string courseId)
+        public async Task<ActionResponse> RemoveCourseFromUser(string userId, string courseId)
         {
-            var user = GetUserById(userId);
+            var user = await GetUserById(userId);
             if (user == null) return ActionResponse.UserNotFound;
 
-            var course = _courseRepository.GetCourseReadOnlyAsync(Guid.Parse(courseId), CancellationToken.None).Result;
+            var course = await _courseRepository.GetCourseReadOnlyAsync(Guid.Parse(courseId), CancellationToken.None);
             if (course == null) return ActionResponse.NotFound;
 
             user.Course = null;
             user.CourseId = null;
 
-            _userManager.UpdateAsync(user);
+            await _userManager.UpdateAsync(user);
             return ActionResponse.Success;
         }
 
-        public ActionResponse ResetPassword(string userId, string newPassword)
+        public async Task<ActionResponse> ResetPassword(string userId, string newPassword)
         {
-            var user = GetUserById(userId);
+            var user = await GetUserById(userId);
             if (user == null) return ActionResponse.UserNotFound;
 
-            var currentPassword = user.PasswordHash;
+            if (await _userManager.HasPasswordAsync(user))
+                await _userManager.RemovePasswordAsync(user);
 
-            if(currentPassword != null)
-                _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
-            else
-                _userManager.AddPasswordAsync(user, newPassword);
+            await _userManager.AddPasswordAsync(user, newPassword);
 
             return ActionResponse.Success;
         }
 
-        public ActionResponse UpdateUser(string userId, UpdateUserDto model)
+        public async Task<ActionResponse> UpdateUser(string userId, UpdateUserDto model)
         {
             if(model == null) return ActionResponse.BadData;
 
-            if(model.Role != null && _roleManager.FindByNameAsync(model.Role).Result == null)
+            if(model.Role != null && await _roleManager.FindByNameAsync(model.Role) == null)
                 return ActionResponse.InvalidRole;
 
-            var user = GetUserById(userId);
+            var user = await GetUserById(userId);
             if (user == null) return ActionResponse.UserNotFound;
 
             user.UserName = model.Username ?? user.UserName;
@@ -162,13 +160,13 @@ namespace Lms_backend.Application.Services
             user.Email = model.Email ?? user.Email;
             user.Role = model.Role ?? user.Role;
 
-            _userManager.UpdateAsync(user);
+            await _userManager.UpdateAsync(user);
             return ActionResponse.Success;
         }
 
-        private ApplicationUser? GetUserById(string userId)
+        private async Task<ApplicationUser?> GetUserById(string userId)
         {
-            var user = _userManager.FindByIdAsync(userId).Result;
+            var user = await _userManager.FindByIdAsync(userId);
             return user;
         }
 
