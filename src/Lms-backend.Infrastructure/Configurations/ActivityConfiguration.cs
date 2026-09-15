@@ -2,6 +2,7 @@
 using Lms_backend.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace Lms_backend.Infrastructure.Configurations
 {
@@ -37,6 +38,17 @@ namespace Lms_backend.Infrastructure.Configurations
 
             builder.Property(a => a.DurationMinutes)
                     .IsRequired();
+            
+            var requiredSubmissionsComparer = new ValueComparer<List<string>>(
+                (a, b) => a!.SequenceEqual(b!),
+                list => list.Aggregate(0, (hash, value) =>
+                    HashCode.Combine(hash, value.GetHashCode())),
+                list => list.ToList());
+
+            builder.Property(a => a.RequiredSubmissions)
+                .HasColumnType("text[]")
+                .Metadata.SetValueComparer(requiredSubmissionsComparer);
+            
 
             builder.HasData(
                 new Activity

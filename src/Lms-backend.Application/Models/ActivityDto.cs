@@ -10,5 +10,5 @@ public class ActivityDto
     public int StartOffset { get; set; }
     public int Duration { get; set; }
     public ActivityType Type { get; set; }
-    public List<string> RequiredSubmissions { get; set; } = new List<string>();
+    //public List<string> RequiredSubmissions { get; set; } = new List<string>();
 }

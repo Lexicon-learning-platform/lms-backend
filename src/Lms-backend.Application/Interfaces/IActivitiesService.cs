@@ -20,5 +20,5 @@ public interface IActivitiesService
     Task UpdateResource(Guid moduleId, Guid id, Guid resourceId, ResourceForChangeDto data, CancellationToken token = default);
     Task UpdateResource(Guid moduleId, Guid id, Guid resourceId, JsonPatchDocument<ResourceForChangeDto> data, CancellationToken token = default);
     Task DetachResource(Guid moduleId, Guid id, Guid resourceId, CancellationToken token = default);
-    Task<CompletedSubsDto?> CheckForCompletion(Guid moduleId, Guid id, Guid userId, CancellationToken token);
+    //Task<CompletedSubsDto?> CheckForCompletion(Guid moduleId, Guid id, Guid userId, CancellationToken token);
 }
