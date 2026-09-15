@@ -51,9 +51,8 @@ Content-Type: application/json
   "password": "{{studentPassword}}"
 }
 
-> {%
+###
     client.global.set("studentToken", response.body.accessToken);
-%}
 
 ###
 
@@ -66,9 +65,8 @@ Content-Type: application/json
   "password": "{{teacherPassword}}"
 }
 
-> {%
+###
     client.global.set("teacherToken", response.body.accessToken);
-%}
 
 ###
 
@@ -81,9 +79,8 @@ Content-Type: application/json
   "password": "{{adminPassword}}"
 }
 
-> {%
+###
     client.global.set("adminToken", response.body.accessToken);
-%}
 
 ###
 

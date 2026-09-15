@@ -13,6 +13,7 @@ namespace Lms_backend.Application.Models;
     public string UserName { get; set; } = string.Empty;
     public string GivenName { get; set; } = string.Empty;
     public string LastName { get; set; } = string.Empty;
+    public string Role { get; set; } = string.Empty;
     public string[] Courses { get; set; } = [];
 }
 
