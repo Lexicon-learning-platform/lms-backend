@@ -1,5 +1,6 @@
 using Lms_backend.Application.Models;
 using Lms_backend.Domain.Constants;
+using Lms_backend.Domain.Entities;
 using Lms_backend.Infrastructure.Models;
 using Microsoft.AspNetCore.JsonPatch.SystemTextJson;
 
@@ -21,4 +22,5 @@ public interface ICoursesService
     Task UpdateResource(Guid id, Guid resourceId, JsonPatchDocument<ResourceForChangeDto> data, CancellationToken token = default);
     Task DetachResource(Guid id, Guid resourceId, CancellationToken token = default);
     Task<CourseWithActivitiesDto?> GetByUserId(Guid userId, CancellationToken token = default);
+    Task<List<ApplicationUser>?> GetClassmates(Guid currentUserId, CancellationToken token);
 }

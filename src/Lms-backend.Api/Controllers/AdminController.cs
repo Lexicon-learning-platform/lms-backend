@@ -18,7 +18,7 @@ namespace Lms_backend.Api.Controllers
             var result = await service.Register(model, role);
 
             if (result == ActionResponse.Success)
-                return Ok("User registered successfully.");
+                return NoContent();
             else if (result == ActionResponse.UserAlreadyExists)
                 return Conflict("User already exists.");
             else if (result == ActionResponse.InvalidRole)
@@ -42,7 +42,7 @@ namespace Lms_backend.Api.Controllers
             var result = await service.DeleteUser(userId);
 
             if (result == ActionResponse.Success)
-                return Ok("User deleted successfully.");
+                return NoContent();
             else if (result == ActionResponse.UserNotFound)
                 return NotFound("User not found.");
             else
@@ -56,7 +56,7 @@ namespace Lms_backend.Api.Controllers
             var result = await service.DisableUser(userId);
 
             if (result == ActionResponse.Success)
-                return Ok("User disabled successfully.");
+                return NoContent();
             else if (result == ActionResponse.UserNotFound)
                 return NotFound("User not found.");
             else
@@ -84,7 +84,7 @@ namespace Lms_backend.Api.Controllers
             var result = await service.UpdateUser(userId, model);
 
             if (result == ActionResponse.Success)
-                return Ok("User updated successfully.");
+                return NoContent();
             else if (result == ActionResponse.UserNotFound)
                 return NotFound("User not found.");
             else if (result == ActionResponse.BadData)
@@ -102,7 +102,7 @@ namespace Lms_backend.Api.Controllers
             var result = await service.ResetPassword(userId, newPassword);
 
             if (result == ActionResponse.Success)
-                return Ok("Password reset successfully.");
+                return NoContent();
             else if (result == ActionResponse.UserNotFound)
                 return NotFound("User not found.");
             else
@@ -151,7 +151,7 @@ namespace Lms_backend.Api.Controllers
             var result = await service.EnableUser(userId);
 
             if (result == ActionResponse.Success)
-                return Ok("User enabled successfully.");
+                return NoContent();
             else if (result == ActionResponse.UserNotFound)
                 return NotFound("User not found.");
             else

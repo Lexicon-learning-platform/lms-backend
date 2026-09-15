@@ -42,6 +42,19 @@ public class CourseController : ControllerBase
         return Ok(result);
     }
 
+    [HttpGet]
+    [Authorize]
+    public async Task<IActionResult> GetClassmates(CancellationToken token = default)
+    {
+        var result = await _service.GetClassmates(CurrentUserId, token);
+
+        if(result!= null)
+            return Ok(result);
+        else
+            return NotFound();
+    }
+    
+
     [HttpGet("{id}", Name = "GetCourse")]
     public async Task<IActionResult> GetCourse(Guid id, CancellationToken token = default)
     {
