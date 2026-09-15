@@ -26,5 +26,7 @@ namespace Lms_backend.Domain.Entities
         public int DurationMinutes { get; set; }
 
         public ICollection<ActivityResource> Resources { get; set; } = [];
+
+        public List<string> RequiredSubmissions { get; set; } = new List<string>();
     }
 }
