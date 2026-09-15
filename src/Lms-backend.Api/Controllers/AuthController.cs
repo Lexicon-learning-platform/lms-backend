@@ -77,14 +77,16 @@ namespace Lms_backend.Api.Controllers
         }
 
         [HttpPost("logout")]
-        public IActionResult Logout()
+        public async Task<IActionResult> Logout()
         {
             var refreshToken = Request.Cookies["refreshToken"];
+
             if (!string.IsNullOrEmpty(refreshToken))
             {
-                service.Logout(refreshToken);
+                await service.Logout(refreshToken);
                 Response.Cookies.Delete("refreshToken");
             }
+
             return NoContent();
         }
 
