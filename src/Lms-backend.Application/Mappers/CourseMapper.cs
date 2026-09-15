@@ -15,8 +15,8 @@ public static class CourseMapper
             StartDate = entity.StartDate,
             Duration = entity.Duration,
             Modules = entity.Modules
-                .Select(m =>
-                ModuleMapper.ToStandardDto(m.Module)),
+                .OrderBy(m => m.StartTimeOffset)
+                .Select(m => ModuleMapper.ToStandardDto(m.Module, m)),
         };
     }
 
@@ -29,7 +29,7 @@ public static class CourseMapper
             Description = entity.Description,
             StartDate = entity.StartDate,
             Duration = entity.Duration,
-            Modules = entity.Modules.Select(m => ModuleMapper.ToSimpleDto(m.Module)),
+            Modules = entity.Modules.OrderBy(m => m.StartTimeOffset).Select(m => ModuleMapper.ToSimpleDto(m.Module)),
         };
     }
 
@@ -62,7 +62,7 @@ public static class CourseMapper
             Description = entity.Description,
             StartDate = entity.StartDate,
             Duration = entity.Duration,
-            Modules = entity.Modules.Select(m => ModuleMapper.ToStandardDto(m.Module)),
+            Modules = entity.Modules.OrderBy(m => m.StartTimeOffset).Select(m => ModuleMapper.ToStandardDto(m.Module, m)),
             Resources = entity.Resources.Select(r => ResourceMapper.ToStandardDto(r.Resource)),
         };
     }
@@ -75,7 +75,7 @@ public static class CourseMapper
             Description = entity.Description,
             StartDate = entity.StartDate,
             Duration = entity.Duration,
-            ModuleIds = [.. entity.Modules.Select(m => m.ModuleId)]
+            ModuleIds = [.. entity.Modules.OrderBy(m => m.StartTimeOffset).Select(m => m.ModuleId)]
         };
     }
 

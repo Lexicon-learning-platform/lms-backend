@@ -88,4 +88,13 @@ public class FakeModuleRepository : IModuleRepository
 
     public Task<Module?> GetModuleReadOnlyAsync(Guid id, CancellationToken token) =>
         Task.FromResult(ReadOnlyModules.FirstOrDefault(m => m.Id == id) ?? TrackedModules.FirstOrDefault(m => m.Id == id));
+
+    public Task<IEnumerable<Module>> GetModulesByIdsAsync(ICollection<Guid> ids, CancellationToken token)
+    {
+        var matches = TrackedModules.Concat(ReadOnlyModules)
+            .Where(m => ids.Contains(m.Id))
+            .DistinctBy(m => m.Id);
+
+        return Task.FromResult<IEnumerable<Module>>([.. matches]);
+    }
 }

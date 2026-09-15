@@ -53,6 +53,11 @@ public class ModuleRepository(AppDbContext context) : RepositoryWithResourceBase
         return (courses, pagination);
     }
 
+    public async Task<IEnumerable<Module>> GetModulesByIdsAsync(ICollection<Guid> ids, CancellationToken token)
+    {
+        return await Set.AsNoTracking().Where(m => ids.Contains(m.Id)).ToListAsync(token);
+    }
+
     public Task<Module?> GetModuleAsync(Guid id, CancellationToken token)
     {
         return GetModuleInternalAsync(id, false, token);
