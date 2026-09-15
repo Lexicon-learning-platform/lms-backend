@@ -41,20 +41,17 @@ public class CourseController : ControllerBase
         if (pagination != null) Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(pagination));
         return Ok(result);
     }
-
-    [HttpGet("getclassmates")]
+    
+    [HttpGet("{courseId}/members")]
     [Authorize]
-    public async Task<IActionResult> GetClassmates(CancellationToken token = default)
+    public async Task<IActionResult> GetCourseMembers(
+        Guid courseId,
+        CancellationToken token = default)
     {
-        var result = await _service.GetClassmates(CurrentUserId, token);
-
-        if(result!= null)
-            return Ok(result);
-        else
-            return NotFound();
+        var members = await _service.GetCourseMembers(CurrentUserId, courseId, token);
+        return Ok(members);
     }
     
-
     [HttpGet("{id}", Name = "GetCourse")]
     public async Task<IActionResult> GetCourse(Guid id, CancellationToken token = default)
     {

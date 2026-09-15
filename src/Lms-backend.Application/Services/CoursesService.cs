@@ -232,16 +232,41 @@ public class CoursesService(ICourseRepository repository, IResourceRepository re
 
         await resourceRepository.SaveChangesAsync(token);
     }
-
-    public async Task<List<ApplicationUser>?> GetClassmates(Guid currentUserId, CancellationToken token)
+    
+    public async Task<List<CourseMemberDto>?> GetCourseMembers(
+        Guid currentUserId,
+        Guid courseId,
+        CancellationToken token = default)
     {
-        var course = await repository.GetCourseAsync(currentUserId, token);
+        var user = await userManager.FindByIdAsync(currentUserId.ToString());
 
-        if (course != null)
+        if (user == null)
+            return null;
+
+        var roles = await userManager.GetRolesAsync(user);
+
+        var course = await repository.GetCourseAsync(courseId, token);
+
+        if (course == null)
+            return null;
+
+        if (roles.Contains("Student") && course.Users.All(u => u.Id != currentUserId))
         {
-            var students = course.Users.ToList();
-            return students;
+            return null;
         }
-        else return null;
+
+        if (!roles.Contains("Student") && !roles.Contains("Teacher") && !roles.Contains("Admin"))
+        {
+            return null;
+        }
+
+        return course.Users.Select(u => new CourseMemberDto
+        {
+            Id = u.Id,
+            UserName = u.UserName,
+            GivenName = u.GivenName,
+            LastName = u.LastName,
+            Role = u.Role
+        }).ToList();
     }
 }
