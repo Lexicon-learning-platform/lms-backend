@@ -63,8 +63,11 @@ public class CoursesService(ICourseRepository repository, IResourceRepository re
     {
         CourseValidator.ValidateChangeDto(data, isNew: true);
 
+        var orderedModules = await GetOrderedModulesAsync(data.ModuleIds, token);
+        ValidateModuleDurations(orderedModules, data.Duration);
+
         var entity = CourseMapper.ToEntity(data);
-        entity.Modules = await BuildModuleJoinsAsync(data.ModuleIds, token);
+        entity.Modules = BuildModuleJoins(orderedModules);
 
         await repository.AddAsync(entity, token);
         await repository.SaveChangesAsync(token);
@@ -125,42 +128,72 @@ public class CoursesService(ICourseRepository repository, IResourceRepository re
     {
         CourseValidator.ValidateChangeDto(update, isNew: false);
 
+        var orderedModules = await GetOrderedModulesAsync(update.ModuleIds, token);
+        ValidateModuleDurations(orderedModules, update.Duration);
+
         entity.Name = update.Name;
         entity.Description = update.Description;
         entity.StartDate = update.StartDate;
         entity.Duration = update.Duration;
 
-        await SyncModulesAsync(entity, update.ModuleIds, token);
+        SyncModules(entity, orderedModules);
 
         await repository.SaveChangesAsync(token);
     }
 
-    private async Task<ICollection<CourseModule>> BuildModuleJoinsAsync(Guid[] moduleIds, CancellationToken token)
+    // Fetches the requested modules (deduplicated, order preserved) and fails
+    // fast if any id doesn't exist - callers use the result to compute each
+    // module's sequential StartTimeOffset from its Duration.
+    private async Task<IReadOnlyList<Module>> GetOrderedModulesAsync(Guid[] moduleIds, CancellationToken token)
     {
-        await EnsureModulesExistAsync(moduleIds, token);
-        return [.. moduleIds.Distinct().Select(moduleId => new CourseModule { ModuleId = moduleId })];
+        var distinctIds = moduleIds.Distinct().ToArray();
+        if (distinctIds.Length == 0) return [];
+
+        var missing = await moduleRepository.GetMissingIdsAsync(distinctIds, token);
+        if (missing.Count > 0) throw new NotFoundException($"Module(s) '{string.Join(", ", missing)}' not found");
+
+        var modules = await moduleRepository.GetModulesByIdsAsync(distinctIds, token);
+        var modulesById = modules.ToDictionary(m => m.Id);
+
+        return [.. distinctIds.Select(id => modulesById[id])];
     }
 
-    private async Task SyncModulesAsync(Course entity, Guid[] moduleIds, CancellationToken token)
+    private static void ValidateModuleDurations(IReadOnlyList<Module> orderedModules, int courseDuration)
     {
-        await EnsureModulesExistAsync(moduleIds, token);
-
-        var toRemove = entity.Modules.Where(m => !moduleIds.Contains(m.ModuleId)).ToList();
-        foreach (var join in toRemove) entity.Modules.Remove(join);
-
-        var existingIds = entity.Modules.Select(m => m.ModuleId).ToHashSet();
-        foreach (var moduleId in moduleIds.Distinct().Where(moduleId => !existingIds.Contains(moduleId)))
+        var totalDuration = orderedModules.Sum(m => m.Duration);
+        if (totalDuration > courseDuration)
         {
-            entity.Modules.Add(new CourseModule { CourseId = entity.Id, ModuleId = moduleId });
+            throw new ValidationException(
+                $"Modules' total duration ({totalDuration}) exceeds the course duration ({courseDuration})");
         }
     }
 
-    private async Task EnsureModulesExistAsync(Guid[] moduleIds, CancellationToken token)
+    // Modules are placed back-to-back in the given order: each one starts
+    // right after the previous one ends, so they can never overlap.
+    private static ICollection<CourseModule> BuildModuleJoins(IReadOnlyList<Module> orderedModules)
     {
-        if (moduleIds.Length == 0) return;
+        var joins = new List<CourseModule>();
+        var offset = 0;
 
-        var missing = await moduleRepository.GetMissingIdsAsync(moduleIds, token);
-        if (missing.Count > 0) throw new NotFoundException($"Module(s) '{string.Join(", ", missing)}' not found");
+        foreach (var module in orderedModules)
+        {
+            joins.Add(new CourseModule { ModuleId = module.Id, StartTimeOffset = offset });
+            offset += module.Duration;
+        }
+
+        return joins;
+    }
+
+    private static void SyncModules(Course entity, IReadOnlyList<Module> orderedModules)
+    {
+        entity.Modules.Clear();
+
+        var offset = 0;
+        foreach (var module in orderedModules)
+        {
+            entity.Modules.Add(new CourseModule { CourseId = entity.Id, ModuleId = module.Id, StartTimeOffset = offset });
+            offset += module.Duration;
+        }
     }
 
     public async Task UpdateResource(Guid id, Guid resourceId, ResourceForChangeDto data, CancellationToken token = default)

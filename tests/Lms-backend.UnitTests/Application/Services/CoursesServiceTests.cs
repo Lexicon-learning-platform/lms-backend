@@ -28,6 +28,18 @@ public class CoursesServiceTests
         Duration = duration,
     };
 
+    private static Module NewModule(
+        Guid? id = null,
+        string name = "Existing module",
+        string description = "Existing description",
+        int duration = 10) => new()
+    {
+        Id = id ?? Guid.NewGuid(),
+        Name = name,
+        Description = description,
+        Duration = duration,
+    };
+
     private static Resource NewResource(Guid? id = null) => new()
     {
         Id = id ?? Guid.NewGuid(),
@@ -70,7 +82,7 @@ public class CoursesServiceTests
         var courseRepository = new FakeCourseRepository();
         var resourceRepository = new FakeResourceRepository();
         var moduleRepository = new FakeModuleRepository();
-        var service = new CoursesService(courseRepository, resourceRepository, moduleRepository);
+        var service = new CoursesService(courseRepository, resourceRepository, moduleRepository, FakeUserManager.Create());
         return (courseRepository, resourceRepository, moduleRepository, service);
     }
 
@@ -264,16 +276,18 @@ public class CoursesServiceTests
     public async Task Create_AddsEntityWithModuleJoins_AndReturnsRefetchedDto_WhenValid()
     {
         var (courseRepository, _, moduleRepository, service) = CreateService();
-        var moduleId = Guid.NewGuid();
+        var module = NewModule(duration: 10);
         moduleRepository.MissingIds = [];
-        var data = ValidCreateDto([moduleId]);
+        moduleRepository.ReadOnlyModules.Add(module);
+        var data = ValidCreateDto([module.Id]);
 
         var result = await service.Create(data);
 
         var added = Assert.Single(courseRepository.AddedEntities);
         Assert.Equal(data.Name, added.Name);
-        Assert.Equal([moduleId], added.Modules.Select(m => m.ModuleId));
-        Assert.Equal([moduleId], moduleRepository.LastGetMissingIdsCall);
+        Assert.Equal([module.Id], added.Modules.Select(m => m.ModuleId));
+        Assert.Equal(0, added.Modules.Single().StartTimeOffset);
+        Assert.Equal([module.Id], moduleRepository.LastGetMissingIdsCall);
         Assert.Equal(1, courseRepository.SaveChangesCallCount);
         Assert.Equal(data.Name, result.Name);
     }
@@ -529,36 +543,61 @@ public class CoursesServiceTests
         var (courseRepository, _, moduleRepository, service) = CreateService();
         var course = NewCourse();
         var staleModuleId = Guid.NewGuid();
-        var newModuleId = Guid.NewGuid();
+        var newModule = NewModule(duration: 20);
         course.Modules.Add(new CourseModule { CourseId = course.Id, ModuleId = staleModuleId });
         courseRepository.TrackedCourses.Add(course);
         moduleRepository.MissingIds = [];
-        var data = ValidUpdateDto([newModuleId]);
+        moduleRepository.ReadOnlyModules.Add(newModule);
+        var data = ValidUpdateDto([newModule.Id]);
 
         await service.Update(course.Id, data);
 
-        Assert.Equal([newModuleId], course.Modules.Select(m => m.ModuleId));
+        Assert.Equal([newModule.Id], course.Modules.Select(m => m.ModuleId));
+        Assert.Equal(0, course.Modules.Single().StartTimeOffset);
         Assert.Equal(1, courseRepository.SaveChangesCallCount);
     }
 
     [Fact]
-    public async Task Update_SyncsModules_KeepsExistingJoinInstance_ForUnchangedModuleId()
+    public async Task Update_SyncsModules_RecomputesOffsetsSequentially_FromGivenOrderAndDuration()
     {
+        // StartTimeOffset is derived from each module's position in ModuleIds and the
+        // preceding modules' Duration - it's not a value callers can preserve or set
+        // directly, so every Update rebuilds the join rows from scratch rather than
+        // patching in place (unlike the old behavior this replaces, which kept an
+        // unchanged module's existing - and never actually meaningful - offset).
         var (courseRepository, _, moduleRepository, service) = CreateService();
         var course = NewCourse();
-        var keptModuleId = Guid.NewGuid();
-        var addedModuleId = Guid.NewGuid();
-        var keptJoin = new CourseModule { CourseId = course.Id, ModuleId = keptModuleId, StartTimeOffset = 42 };
-        course.Modules.Add(keptJoin);
+        var keptModule = NewModule(duration: 15);
+        var addedModule = NewModule(duration: 25);
+        course.Modules.Add(new CourseModule { CourseId = course.Id, ModuleId = keptModule.Id, StartTimeOffset = 42 });
         courseRepository.TrackedCourses.Add(course);
         moduleRepository.MissingIds = [];
-        var data = ValidUpdateDto([keptModuleId, addedModuleId]);
+        moduleRepository.ReadOnlyModules.Add(keptModule);
+        moduleRepository.ReadOnlyModules.Add(addedModule);
+        var data = ValidUpdateDto([keptModule.Id, addedModule.Id]);
 
         await service.Update(course.Id, data);
 
         Assert.Equal(2, course.Modules.Count);
-        Assert.Same(keptJoin, course.Modules.Single(m => m.ModuleId == keptModuleId));
-        Assert.Equal(42, course.Modules.Single(m => m.ModuleId == keptModuleId).StartTimeOffset);
+        Assert.Equal(0, course.Modules.Single(m => m.ModuleId == keptModule.Id).StartTimeOffset);
+        Assert.Equal(15, course.Modules.Single(m => m.ModuleId == addedModule.Id).StartTimeOffset);
+    }
+
+    [Fact]
+    public async Task Update_ThrowsValidationException_AndDoesNotSave_WhenModulesTotalDurationExceedsCourseDuration()
+    {
+        var (courseRepository, _, moduleRepository, service) = CreateService();
+        var course = NewCourse();
+        courseRepository.TrackedCourses.Add(course);
+        var oversizedModule = NewModule(duration: 1000);
+        moduleRepository.MissingIds = [];
+        moduleRepository.ReadOnlyModules.Add(oversizedModule);
+        var data = ValidUpdateDto([oversizedModule.Id]);
+        data.Duration = 10;
+
+        await Assert.ThrowsAsync<ValidationException>(() => service.Update(course.Id, data));
+
+        Assert.Equal(0, courseRepository.SaveChangesCallCount);
     }
 
     // --- Update (JsonPatchDocument) ---
