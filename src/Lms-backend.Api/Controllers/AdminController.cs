@@ -116,7 +116,7 @@ namespace Lms_backend.Api.Controllers
             var result = await service.AddCourseToUser(userId, courseId);
 
             if (result == ActionResponse.Success)
-                return Ok("Course added to user successfully.");
+                return NoContent();
             else if (result == ActionResponse.UserNotFound)
                 return NotFound("User not found.");
             else if (result == ActionResponse.NotFound)
@@ -127,14 +127,14 @@ namespace Lms_backend.Api.Controllers
                 return BadRequest("Failed to add course to user.");
         }
 
-        // PUT: api/admin/removecoursefromuser/{userId}/{courseId}
-        [HttpPut("removecoursefromuser/{userId}/{courseId}")]
-        public async Task<IActionResult> RemoveCourseFromUser(string userId, string courseId)
+        // PUT: api/admin/removecoursefromuser/{userId}
+        [HttpPut("removecoursefromuser/{userId}")]
+        public async Task<IActionResult> RemoveCourseFromUser(string userId)
         {
-            var result = await service.RemoveCourseFromUser(userId, courseId);
+            var result = await service.RemoveCourseFromUser(userId);
 
             if (result == ActionResponse.Success)
-                return Ok("Course removed from user successfully.");
+                return NoContent();
             else if (result == ActionResponse.UserNotFound)
                 return NotFound("User not found.");
             else if (result == ActionResponse.NotFound)

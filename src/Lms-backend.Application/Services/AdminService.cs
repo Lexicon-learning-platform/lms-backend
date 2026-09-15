@@ -117,13 +117,10 @@ namespace Lms_backend.Application.Services
 
         }
 
-        public async Task<ActionResponse> RemoveCourseFromUser(string userId, string courseId)
+        public async Task<ActionResponse> RemoveCourseFromUser(string userId)
         {
             var user = await GetUserById(userId);
             if (user == null) return ActionResponse.UserNotFound;
-
-            var course = await _courseRepository.GetCourseReadOnlyAsync(Guid.Parse(courseId), CancellationToken.None);
-            if (course == null) return ActionResponse.NotFound;
 
             user.Course = null;
             user.CourseId = null;
