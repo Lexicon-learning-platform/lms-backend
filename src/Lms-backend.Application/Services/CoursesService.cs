@@ -8,11 +8,13 @@ using Lms_backend.Domain.Entities;
 using Lms_backend.Domain.Entities.Joins;
 using Lms_backend.Infrastructure.Interfaces;
 using Lms_backend.Infrastructure.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.JsonPatch.SystemTextJson;
+using System.Reflection.Metadata.Ecma335;
 
 namespace Lms_backend.Application.Services;
 
-public class CoursesService(ICourseRepository repository, IResourceRepository resourceRepository, IModuleRepository moduleRepository) : ICoursesService
+public class CoursesService(ICourseRepository repository, IResourceRepository resourceRepository, IModuleRepository moduleRepository, UserManager<ApplicationUser> userManager) : ICoursesService
 {
     public async Task<CourseWithActivitiesDto?> GetByUserId(Guid userId, CancellationToken token = default)
     {
@@ -196,5 +198,17 @@ public class CoursesService(ICourseRepository repository, IResourceRepository re
         entity.Data = update.Data;
 
         await resourceRepository.SaveChangesAsync(token);
+    }
+
+    public async Task<List<ApplicationUser>?> GetClassmates(Guid currentUserId, CancellationToken token)
+    {
+        var course = await repository.GetCourseAsync(currentUserId, token);
+
+        if (course != null)
+        {
+            var students = course.Users.ToList();
+            return students;
+        }
+        else return null;
     }
 }
