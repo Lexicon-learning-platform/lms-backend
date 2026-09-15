@@ -21,7 +21,7 @@ namespace Lms_backend.Application.Interfaces
 
         Task<ActionResponse> AddCourseToUser(string userId, string courseId);
 
-        Task<ActionResponse> RemoveCourseFromUser(string userId, string courseId);
+        Task<ActionResponse> RemoveCourseFromUser(string userId);
 
         Task<(ActionResponse response, UserStatsDto? statistics)> GetUserStatistics(string userId);
 
