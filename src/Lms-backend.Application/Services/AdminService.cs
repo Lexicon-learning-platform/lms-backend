@@ -61,6 +61,7 @@ namespace Lms_backend.Application.Services
                 UserName = user.UserName ?? string.Empty,
                 GivenName = user.GivenName ?? string.Empty,
                 LastName = user.LastName ?? string.Empty,
+                Role = user.Role ?? string.Empty,
                 Courses = []
                 //TODO: Populate the Courses property with the user's courses.
             };
