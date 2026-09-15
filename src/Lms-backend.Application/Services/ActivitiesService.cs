@@ -171,7 +171,7 @@ public class ActivitiesService(IActivityRepository repository, IResourceReposito
         if (overlaps) throw new ValidationException($"Activity overlaps with an existing '{dto.Type}' activity");
     }
 
-    public async Task<CompletedSubsDto?> CheckForCompletion(Guid moduleId, Guid id, Guid userId, CancellationToken token)
+    /*public async Task<CompletedSubsDto?> CheckForCompletion(Guid moduleId, Guid id, Guid userId, CancellationToken token)
     {
         var user = await userManager.FindByIdAsync(userId.ToString());
         var course = await repository.GetActivityAsync(moduleId, id, token);
@@ -191,5 +191,5 @@ public class ActivitiesService(IActivityRepository repository, IResourceReposito
             CompletedSubs = complete,
             UnCompletedSubs = incomplete
         };
-    }
+    }*/
 }

@@ -129,7 +129,7 @@ public class ActivitiesController : ControllerBase
         return NoContent();
     }
 
-    [HttpGet("{id}/completion/{userId}")]
+    /*[HttpGet("{id}/completion/{userId}")]
     [Authorize(Roles = Roles.TeacherAndAbove)]
     public async Task<IActionResult> CheckForCompletion([FromRoute] Guid moduleId, [FromRoute] Guid id, [FromRoute] Guid userId, CancellationToken token = default)
     {
@@ -138,5 +138,5 @@ public class ActivitiesController : ControllerBase
         if(result == null) return NotFound();
 
         return Ok(result);
-    }
+    }*/
 }

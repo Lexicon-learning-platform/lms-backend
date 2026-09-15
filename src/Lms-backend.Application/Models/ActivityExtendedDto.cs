@@ -13,6 +13,6 @@ public class ActivityExtendedDto
     public int Duration { get; set; }
     public ActivityType Type { get; set; }
     public IEnumerable<ResourceSimpleDto> Resources { get; set; } = [];
-    public List<string> RequiredSubmissions { get; set; } = new List<string>();
+    //public List<string> RequiredSubmissions { get; set; } = new List<string>();
 
 }
