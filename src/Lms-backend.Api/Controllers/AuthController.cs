@@ -5,6 +5,7 @@ using Lms_backend.Domain.Enums;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Lms_backend.Api.Controllers
 {
@@ -122,6 +123,56 @@ namespace Lms_backend.Api.Controllers
             ApplicationUser? user = userManager.GetUserAsync(User).Result;
 
             return user==null ? NotFound() : Ok(user);
+        }
+        
+        [Authorize]
+        [HttpDelete("deregister")]
+        public async Task<IActionResult> Deregister()
+        {
+            var user = await userManager.GetUserAsync(User);
+
+            if (user == null)
+                return Unauthorized();
+
+            var result = await userManager.DeleteAsync(user);
+
+            if (!result.Succeeded)
+            {
+                return BadRequest(new
+                {
+                    errors = result.Errors.Select(e => e.Description)
+                });
+            }
+
+            Response.Cookies.Delete("refreshToken");
+
+            return NoContent();
+        }
+        
+        [Authorize]
+        [HttpPost("change-password")]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto model)
+        {
+            var user = await userManager.GetUserAsync(User);
+
+            if (user == null)
+                return Unauthorized();
+
+            var result = await userManager.ChangePasswordAsync(
+                user,
+                model.CurrentPassword,
+                model.NewPassword
+            );
+
+            if (!result.Succeeded)
+            {
+                return BadRequest(new
+                {
+                    errors = result.Errors.Select(e => e.Description)
+                });
+            }
+
+            return NoContent();
         }
 
     }
