@@ -48,13 +48,23 @@ public class CourseController : ControllerBase
     {
         var result = await _service.GetClassmates(CurrentUserId, token);
 
-        if(result!= null)
-            return Ok(result);
-        else
-            return NotFound();
+        if (result == null)
+            return NotFound("GetClassmates returned null");
+
+        return Ok(result);
     }
     
+    [HttpGet("{courseId}/members")]
+    [Authorize]
+    public async Task<IActionResult> GetCourseMembers(
+        Guid courseId,
+        CancellationToken token = default)
+    {
+        var members = await _service.GetCourseMembers(CurrentUserId, courseId, token
+        );
 
+        return Ok(members);
+    }
     [HttpGet("{id}", Name = "GetCourse")]
     public async Task<IActionResult> GetCourse(Guid id, CancellationToken token = default)
     {
