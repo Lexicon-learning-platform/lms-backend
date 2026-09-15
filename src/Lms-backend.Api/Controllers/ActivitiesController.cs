@@ -128,4 +128,15 @@ public class ActivitiesController : ControllerBase
         await _service.DetachResource(moduleId, id, resourceId, token);
         return NoContent();
     }
+
+    [HttpGet("{id}/completion/{userId}")]
+    [Authorize(Roles = Roles.TeacherAndAbove)]
+    public async Task<IActionResult> CheckForCompletion([FromRoute] Guid moduleId, [FromRoute] Guid id, [FromRoute] Guid userId, CancellationToken token = default)
+    {
+        var result = await _service.CheckForCompletion(moduleId, id, userId, token);
+
+        if(result == null) return NotFound();
+
+        return Ok(result);
+    }
 }
