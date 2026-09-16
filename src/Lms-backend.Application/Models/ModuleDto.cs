@@ -6,6 +6,7 @@ public class ModuleDto
     public string Name { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public int Duration { get; set; }
+    public int? StartOffset { get; set; }
     public IEnumerable<ActivitySimpleDto> Activities { get; set; } = [];
 
 }

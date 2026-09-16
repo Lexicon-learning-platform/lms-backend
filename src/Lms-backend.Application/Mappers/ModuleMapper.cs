@@ -5,7 +5,7 @@ namespace Lms_backend.Application.Mappers;
 
 public static class ModuleMapper
 {
-    public static ModuleDto ToStandardDto(Module entity)
+    public static ModuleDto ToStandardDto(Module entity, CourseModule? join = null)
     {
         return new ModuleDto
         {
@@ -13,6 +13,7 @@ public static class ModuleMapper
             Name = entity.Name,
             Description = entity.Description,
             Duration = entity.Duration,
+            StartOffset = join?.StartTimeOffset,
             Activities = entity.Activities.Select(ActivityMapper.ToSimpleDto),
         };
     }

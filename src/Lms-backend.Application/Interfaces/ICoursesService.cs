@@ -22,5 +22,6 @@ public interface ICoursesService
     Task UpdateResource(Guid id, Guid resourceId, JsonPatchDocument<ResourceForChangeDto> data, CancellationToken token = default);
     Task DetachResource(Guid id, Guid resourceId, CancellationToken token = default);
     Task<CourseWithActivitiesDto?> GetByUserId(Guid userId, CancellationToken token = default);
-    Task<List<ApplicationUser>?> GetClassmates(Guid currentUserId, CancellationToken token);
+    Task<List<CourseMemberDto>?> GetCourseMembers(Guid currentUserId, Guid courseId, CancellationToken token = default);
+
 }

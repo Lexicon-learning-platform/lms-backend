@@ -10,4 +10,5 @@ public interface IModuleRepository : IRepositoryWithResourceBase<Module, ModuleR
     Task<(IEnumerable<Module>, PaginationMetadata?)> GetModulesReadOnlyAsync(ModuleSearchParams searchParams, int page, int pageSize, CancellationToken token);
     Task<Module?> GetModuleAsync(Guid id, CancellationToken token);
     Task<Module?> GetModuleReadOnlyAsync(Guid id, CancellationToken token);
+    Task<IEnumerable<Module>> GetModulesByIdsAsync(ICollection<Guid> ids, CancellationToken token);
 }
