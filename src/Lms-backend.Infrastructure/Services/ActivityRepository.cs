@@ -95,6 +95,7 @@ public class ActivityRepository(AppDbContext context) : RepositoryWithResourceBa
                 && a.Modules.Courses.Any(cm => cm.CourseId == courseId))
             .Include(a => a.Resources.Where(ar => ar.Resource.ResourceType == ResourceType.AssignmentTurnin && ar.Resource.OwnerId == user))
                 .ThenInclude(ar => ar.Resource)
+                .ThenInclude(r => r.Owner)
             .AsSplitQuery()
             .ToListAsync(token);
 

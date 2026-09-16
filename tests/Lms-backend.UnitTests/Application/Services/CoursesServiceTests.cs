@@ -82,7 +82,8 @@ public class CoursesServiceTests
         var courseRepository = new FakeCourseRepository();
         var resourceRepository = new FakeResourceRepository();
         var moduleRepository = new FakeModuleRepository();
-        var service = new CoursesService(courseRepository, resourceRepository, moduleRepository, FakeUserManager.Create());
+        var activityRepository = new FakeActivityRepository();
+        var service = new CoursesService(courseRepository, resourceRepository, moduleRepository, activityRepository, FakeUserManager.Create());
         return (courseRepository, resourceRepository, moduleRepository, service);
     }
 

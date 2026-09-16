@@ -52,6 +52,14 @@ public class CourseController : ControllerBase
         return Ok(members);
     }
     
+    [HttpGet("my-assignments")]
+    [Authorize]
+    public async Task<IActionResult> GetMyAssignments(CancellationToken token = default)
+    {
+        var result = await _service.GetMyAssignments(CurrentUserId, token);
+        return Ok(result);
+    }
+
     [HttpGet("{id}", Name = "GetCourse")]
     public async Task<IActionResult> GetCourse(Guid id, CancellationToken token = default)
     {

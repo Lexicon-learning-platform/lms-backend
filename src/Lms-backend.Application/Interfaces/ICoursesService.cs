@@ -23,5 +23,6 @@ public interface ICoursesService
     Task DetachResource(Guid id, Guid resourceId, CancellationToken token = default);
     Task<CourseWithActivitiesDto?> GetByUserId(Guid userId, CancellationToken token = default);
     Task<List<CourseMemberDto>?> GetCourseMembers(Guid currentUserId, Guid courseId, CancellationToken token = default);
+    Task<MyAssignmentsDto> GetMyAssignments(Guid userId, CancellationToken token = default);
 
 }

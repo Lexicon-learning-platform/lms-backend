@@ -14,7 +14,7 @@ using System.Reflection.Metadata.Ecma335;
 
 namespace Lms_backend.Application.Services;
 
-public class CoursesService(ICourseRepository repository, IResourceRepository resourceRepository, IModuleRepository moduleRepository, UserManager<ApplicationUser> userManager) : ICoursesService
+public class CoursesService(ICourseRepository repository, IResourceRepository resourceRepository, IModuleRepository moduleRepository, IActivityRepository activityRepository, UserManager<ApplicationUser> userManager) : ICoursesService
 {
     public async Task<CourseWithActivitiesDto?> GetByUserId(Guid userId, CancellationToken token = default)
     {
@@ -268,5 +268,18 @@ public class CoursesService(ICourseRepository repository, IResourceRepository re
             LastName = u.LastName,
             Role = u.Role
         }).ToList();
+    }
+
+    public async Task<MyAssignmentsDto> GetMyAssignments(Guid userId, CancellationToken token = default)
+    {
+        var user = await userManager.FindByIdAsync(userId.ToString()) ?? throw new NotFoundException($"User '{userId}' not found");
+
+        var (activities, _) = await activityRepository.GetAssignmentData(user.CourseId, userId, token);
+
+        return new MyAssignmentsDto
+        {
+            Activities = activities.Select(ActivityMapper.ToSimpleDto),
+            Turnins = activities.SelectMany(a => a.Resources.Select(ar => ResourceMapper.ToTurninDto(ar.Resource, ar.ActivityId))),
+        };
     }
 }
