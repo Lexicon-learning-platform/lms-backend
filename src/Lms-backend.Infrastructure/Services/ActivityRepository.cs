@@ -93,16 +93,12 @@ public class ActivityRepository(AppDbContext context) : RepositoryWithResourceBa
         var activities = await Set
             .Where(a => a.ActivityType == ActivityType.Assignment
                 && a.Modules.Courses.Any(cm => cm.CourseId == courseId))
+            .Include(a => a.Resources.Where(ar => ar.Resource.ResourceType == ResourceType.AssignmentTurnin && ar.Resource.OwnerId == user))
+                .ThenInclude(ar => ar.Resource)
+            .AsSplitQuery()
             .ToListAsync(token);
 
-        var activityIds = activities.Select(a => a.Id);
-
-        var turnIns = await Context.ActivityResources
-            .Where(ar => activityIds.Contains(ar.ActivityId)
-                && ar.Resource.ResourceType == ResourceType.AssignmentTurnin
-                && ar.Resource.OwnerId == user)
-            .Select(ar => ar.Resource)
-            .ToListAsync(token);
+        var turnIns = activities.SelectMany(a => a.Resources.Select(ar => ar.Resource));
 
         return (activities, turnIns);
     }
