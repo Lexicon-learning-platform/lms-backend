@@ -41,7 +41,7 @@ public class CourseController : ControllerBase
         if (pagination != null) Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(pagination));
         return Ok(result);
     }
-    
+
     [HttpGet("{courseId}/members")]
     [Authorize]
     public async Task<IActionResult> GetCourseMembers(
@@ -51,8 +51,8 @@ public class CourseController : ControllerBase
         var members = await _service.GetCourseMembers(CurrentUserId, courseId, token);
         return Ok(members);
     }
-    
-    [HttpGet("my-assignments")]
+
+    [HttpGet("myassignments")]
     [Authorize]
     public async Task<IActionResult> GetMyAssignments(CancellationToken token = default)
     {
