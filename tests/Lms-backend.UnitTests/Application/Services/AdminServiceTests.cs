@@ -265,7 +265,7 @@ public class AdminServiceTests
     // --- RemoveCourseFromUser ---
 
     [Fact]
-    public async Task RemoveCourseFromUser_ClearsCourseAndReturnsSuccess_WhenUserAndCourseExist()
+    public async Task RemoveCourseFromUser_ClearsCourseAndReturnsSuccess_WhenUserExists()
     {
         var (userManager, _, courseRepository, service) = CreateService();
         var course = new Course { Id = Guid.NewGuid(), Name = "Course", Description = "Description", StartDate = DateOnly.FromDateTime(DateTime.UtcNow), Duration = 10 };
@@ -275,7 +275,7 @@ public class AdminServiceTests
         userManager.UsersList.Add(user);
         courseRepository.ReadOnlyCourses.Add(course);
 
-        var result = await service.RemoveCourseFromUser(user.Id.ToString(), course.Id.ToString());
+        var result = await service.RemoveCourseFromUser(user.Id.ToString());
 
         Assert.Equal(ActionResponse.Success, result);
         Assert.Null(user.CourseId);
@@ -288,21 +288,9 @@ public class AdminServiceTests
     {
         var (_, _, _, service) = CreateService();
 
-        var result = await service.RemoveCourseFromUser(Guid.NewGuid().ToString(), Guid.NewGuid().ToString());
+        var result = await service.RemoveCourseFromUser(Guid.NewGuid().ToString());
 
         Assert.Equal(ActionResponse.UserNotFound, result);
-    }
-
-    [Fact]
-    public async Task RemoveCourseFromUser_ReturnsNotFound_WhenCourseDoesNotExist()
-    {
-        var (userManager, _, _, service) = CreateService();
-        var user = NewUser();
-        userManager.UsersList.Add(user);
-
-        var result = await service.RemoveCourseFromUser(user.Id.ToString(), Guid.NewGuid().ToString());
-
-        Assert.Equal(ActionResponse.NotFound, result);
     }
 
     // --- ResetPassword ---

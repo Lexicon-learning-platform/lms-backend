@@ -78,7 +78,7 @@ public class AdminControllerTests(IntegrationTestWebAppFactory factory) : IAsync
     public async Task Register_WithNewUsernameAndValidRole_CreatesUserWithThatRole()
     {
         var response = await _client.PostAsJsonAsync("/api/admin/register?role=Teacher", new { username = "new.teacher", password = "P@ssw0rd!" });
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
 
         var users = await _client.GetFromJsonAsync<JsonElement>("/api/admin/getusers");
         var created = users.EnumerateArray().Single(u => u.GetProperty("userName").GetString() == "new.teacher");
@@ -121,7 +121,7 @@ public class AdminControllerTests(IntegrationTestWebAppFactory factory) : IAsync
         var userId = usersBefore.EnumerateArray().Single(u => u.GetProperty("userName").GetString() == "throwaway.user").GetProperty("id").GetString();
 
         var response = await _client.DeleteAsync($"/api/admin/deleteuser/{userId}");
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
 
         var usersAfter = await _client.GetFromJsonAsync<JsonElement>("/api/admin/getusers");
         Assert.DoesNotContain(usersAfter.EnumerateArray(), u => u.GetProperty("userName").GetString() == "throwaway.user");
@@ -143,7 +143,7 @@ public class AdminControllerTests(IntegrationTestWebAppFactory factory) : IAsync
         var (userId, _) = SeededUser("johan.berg");
 
         var response = await _client.PutAsync($"/api/admin/disableuser/{userId}", null);
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
 
         var user = await ReloadUserAsync(userId);
         Assert.NotNull(user.LockoutEnd);
@@ -157,7 +157,7 @@ public class AdminControllerTests(IntegrationTestWebAppFactory factory) : IAsync
         await _client.PutAsync($"/api/admin/disableuser/{userId}", null);
 
         var response = await _client.PutAsync($"/api/admin/enableuser/{userId}", null);
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
 
         var user = await ReloadUserAsync(userId);
         Assert.Null(user.LockoutEnd);
@@ -201,7 +201,7 @@ public class AdminControllerTests(IntegrationTestWebAppFactory factory) : IAsync
         var (userId, _) = SeededUser("johan.berg");
 
         var response = await _client.PutAsJsonAsync($"/api/admin/updateuser/{userId}", new { givenName = "Updated", role = "Teacher" });
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
 
         var user = await ReloadUserAsync(userId);
         Assert.Equal("Updated", user.GivenName);
@@ -234,7 +234,7 @@ public class AdminControllerTests(IntegrationTestWebAppFactory factory) : IAsync
         var (userId, userName) = SeededUser("johan.berg");
 
         var response = await _client.PutAsJsonAsync($"/api/admin/resetpassword/{userId}", "BrandNewP@ssw0rd!");
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
 
         using var freshClient = factory.CreateAuthClient();
         var loginResponse = await freshClient.PostAsJsonAsync("/api/auth/login", new { username = userName, password = "BrandNewP@ssw0rd!" });
@@ -258,13 +258,13 @@ public class AdminControllerTests(IntegrationTestWebAppFactory factory) : IAsync
         var course = await CreateCourseAsync();
 
         var addResponse = await _client.PutAsync($"/api/admin/addcoursetouser/{userId}/{course.Id}", null);
-        Assert.Equal(HttpStatusCode.OK, addResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.NoContent, addResponse.StatusCode);
 
         var userAfterAdd = await ReloadUserAsync(userId);
         Assert.Equal(course.Id, userAfterAdd.CourseId);
 
-        var removeResponse = await _client.PutAsync($"/api/admin/removecoursefromuser/{userId}/{course.Id}", null);
-        Assert.Equal(HttpStatusCode.OK, removeResponse.StatusCode);
+        var removeResponse = await _client.PutAsync($"/api/admin/removecoursefromuser/{userId}", null);
+        Assert.Equal(HttpStatusCode.NoContent, removeResponse.StatusCode);
 
         var userAfterRemove = await ReloadUserAsync(userId);
         Assert.Null(userAfterRemove.CourseId);
