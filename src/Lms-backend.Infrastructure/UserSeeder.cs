@@ -15,6 +15,18 @@ public static class UserSeeder
         (new Guid("44444444-0000-0000-0000-000000000002"), "maria.svensson", "maria.svensson@example.com", Roles.Student),
         (new Guid("44444444-0000-0000-0000-000000000003"), "johan.berg", "johan.berg@example.com", Roles.Student),
         (new Guid("44444444-0000-0000-0000-000000000004"), "sara.lindqvist", "sara.lindqvist@example.com", Roles.Student),
+        (new Guid("44444444-0000-0000-0000-000000000006"), "emma.karlsson", "emma.karlsson@example.com", Roles.Student),
+        (new Guid("44444444-0000-0000-0000-000000000007"), "oskar.lindberg", "oskar.lindberg@example.com", Roles.Student),
+        (new Guid("44444444-0000-0000-0000-000000000008"), "lina.hakansson", "lina.hakansson@example.com", Roles.Student),
+        (new Guid("44444444-0000-0000-0000-000000000009"), "viktor.astrom", "viktor.astrom@example.com", Roles.Student),
+        (new Guid("44444444-0000-0000-0000-000000000010"), "erik.holm", "erik.holm@example.com", Roles.Student),
+        (new Guid("44444444-0000-0000-0000-000000000011"), "sofia.bergstrom", "sofia.bergstrom@example.com", Roles.Student),
+        (new Guid("44444444-0000-0000-0000-000000000012"), "anders.nystrom", "anders.nystrom@example.com", Roles.Student),
+        (new Guid("44444444-0000-0000-0000-000000000013"), "elin.forsberg", "elin.forsberg@example.com", Roles.Student),
+        (new Guid("44444444-0000-0000-0000-000000000014"), "fredrik.dahl", "fredrik.dahl@example.com", Roles.Student),
+        (new Guid("44444444-0000-0000-0000-000000000015"), "nina.ekstrom", "nina.ekstrom@example.com", Roles.Student),
+        (new Guid("44444444-0000-0000-0000-000000000016"), "josefin.lund", "josefin.lund@example.com", Roles.Student),
+        (new Guid("44444444-0000-0000-0000-000000000017"), "martin.oberg", "martin.oberg@example.com", Roles.Student),
     ];
 
     private static readonly Guid AdminId = new("44444444-0000-0000-0000-000000000005");

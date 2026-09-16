@@ -127,7 +127,7 @@ public class AuthControllerTests(IntegrationTestWebAppFactory factory) : IAsyncL
         await LoginAsync();
 
         var logoutResponse = await _client.PostAsync("/api/auth/logout", null);
-        Assert.Equal(HttpStatusCode.OK, logoutResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.NoContent, logoutResponse.StatusCode);
 
         var tokenResponse = await _client.PostAsync("/api/auth/token", null);
         Assert.Equal(HttpStatusCode.Unauthorized, tokenResponse.StatusCode);

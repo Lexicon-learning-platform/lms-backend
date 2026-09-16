@@ -10,6 +10,24 @@ internal static class SeedIds
         public static readonly Guid Maria = Guid.Parse("44444444-0000-0000-0000-000000000002");
         public static readonly Guid Johan = Guid.Parse("44444444-0000-0000-0000-000000000003");
         public static readonly Guid Sara = Guid.Parse("44444444-0000-0000-0000-000000000004");
+
+        // FullStack course
+        public static readonly Guid Emma = Guid.Parse("44444444-0000-0000-0000-000000000006");
+        public static readonly Guid Oskar = Guid.Parse("44444444-0000-0000-0000-000000000007");
+        public static readonly Guid Lina = Guid.Parse("44444444-0000-0000-0000-000000000008");
+        public static readonly Guid Viktor = Guid.Parse("44444444-0000-0000-0000-000000000009");
+
+        // Backend course
+        public static readonly Guid Erik = Guid.Parse("44444444-0000-0000-0000-000000000010");
+        public static readonly Guid Sofia = Guid.Parse("44444444-0000-0000-0000-000000000011");
+        public static readonly Guid Anders = Guid.Parse("44444444-0000-0000-0000-000000000012");
+        public static readonly Guid Elin = Guid.Parse("44444444-0000-0000-0000-000000000013");
+
+        // CloudDevOps course
+        public static readonly Guid Fredrik = Guid.Parse("44444444-0000-0000-0000-000000000014");
+        public static readonly Guid Nina = Guid.Parse("44444444-0000-0000-0000-000000000015");
+        public static readonly Guid Josefin = Guid.Parse("44444444-0000-0000-0000-000000000016");
+        public static readonly Guid Martin = Guid.Parse("44444444-0000-0000-0000-000000000017");
     }
 
     public static class Courses
@@ -41,6 +59,21 @@ internal static class SeedIds
         public static readonly Guid ConsoleAppAssignment = Guid.Parse("66666666-0000-0000-0000-000000000007");
         public static readonly Guid DockerFundamentals = Guid.Parse("66666666-0000-0000-0000-000000000008");
         public static readonly Guid DockerfileReview = Guid.Parse("66666666-0000-0000-0000-000000000009");
+        public static readonly Guid GitWorkflowAssignment = Guid.Parse("66666666-0000-0000-0000-000000000010");
+        public static readonly Guid HtmlCssFundamentals = Guid.Parse("66666666-0000-0000-0000-000000000011");
+        public static readonly Guid ResponsiveLayoutExercise = Guid.Parse("66666666-0000-0000-0000-000000000012");
+        public static readonly Guid PortfolioPageAssignment = Guid.Parse("66666666-0000-0000-0000-000000000013");
+        public static readonly Guid ReactComponentsProps = Guid.Parse("66666666-0000-0000-0000-000000000014");
+        public static readonly Guid StateHooksExercise = Guid.Parse("66666666-0000-0000-0000-000000000015");
+        public static readonly Guid TodoAppAssignment = Guid.Parse("66666666-0000-0000-0000-000000000016");
+        public static readonly Guid BuildingRestApis = Guid.Parse("66666666-0000-0000-0000-000000000017");
+        public static readonly Guid EfCoreMigrationsExercise = Guid.Parse("66666666-0000-0000-0000-000000000018");
+        public static readonly Guid CrudApiAssignment = Guid.Parse("66666666-0000-0000-0000-000000000019");
+        public static readonly Guid CustomDockerImageExercise = Guid.Parse("66666666-0000-0000-0000-000000000020");
+        public static readonly Guid DockerizeAppAssignment = Guid.Parse("66666666-0000-0000-0000-000000000021");
+        public static readonly Guid CiCdPipelineConcepts = Guid.Parse("66666666-0000-0000-0000-000000000022");
+        public static readonly Guid GithubActionsExercise = Guid.Parse("66666666-0000-0000-0000-000000000023");
+        public static readonly Guid DeploymentPipelineAssignment = Guid.Parse("66666666-0000-0000-0000-000000000024");
     }
 
     public static class Resources
@@ -55,6 +88,51 @@ internal static class SeedIds
         public static readonly Guid CourseSyllabusFullStack = Guid.Parse("55555555-0000-0000-0000-000000000008");
         public static readonly Guid MariaGitNotes = Guid.Parse("55555555-0000-0000-0000-000000000009");
         public static readonly Guid JohanConsoleAppTurnIn = Guid.Parse("55555555-0000-0000-0000-000000000010");
+
+        // Git Workflow Assignment turn-ins
+        public static readonly Guid GitWorkflowMariaTurnin = Guid.Parse("55555555-0000-0000-0000-000000000011");
+        public static readonly Guid GitWorkflowEmmaTurnin = Guid.Parse("55555555-0000-0000-0000-000000000012");
+        public static readonly Guid GitWorkflowOskarTurnin = Guid.Parse("55555555-0000-0000-0000-000000000013");
+        public static readonly Guid GitWorkflowLinaTurnin = Guid.Parse("55555555-0000-0000-0000-000000000014");
+        public static readonly Guid GitWorkflowJohanTurnin = Guid.Parse("55555555-0000-0000-0000-000000000015");
+        public static readonly Guid GitWorkflowErikTurnin = Guid.Parse("55555555-0000-0000-0000-000000000016");
+        public static readonly Guid GitWorkflowSofiaTurnin = Guid.Parse("55555555-0000-0000-0000-000000000017");
+        public static readonly Guid GitWorkflowAndersTurnin = Guid.Parse("55555555-0000-0000-0000-000000000018");
+
+        // Console App Assignment turn-ins (additional)
+        public static readonly Guid ConsoleAppErikTurnin = Guid.Parse("55555555-0000-0000-0000-000000000019");
+        public static readonly Guid ConsoleAppSofiaTurnin = Guid.Parse("55555555-0000-0000-0000-000000000020");
+        public static readonly Guid ConsoleAppAndersTurnin = Guid.Parse("55555555-0000-0000-0000-000000000021");
+
+        // Portfolio Page Assignment turn-ins
+        public static readonly Guid PortfolioMariaTurnin = Guid.Parse("55555555-0000-0000-0000-000000000022");
+        public static readonly Guid PortfolioEmmaTurnin = Guid.Parse("55555555-0000-0000-0000-000000000023");
+        public static readonly Guid PortfolioOskarTurnin = Guid.Parse("55555555-0000-0000-0000-000000000024");
+        public static readonly Guid PortfolioLinaTurnin = Guid.Parse("55555555-0000-0000-0000-000000000025");
+
+        // Todo App Assignment turn-ins
+        public static readonly Guid TodoAppMariaTurnin = Guid.Parse("55555555-0000-0000-0000-000000000026");
+        public static readonly Guid TodoAppEmmaTurnin = Guid.Parse("55555555-0000-0000-0000-000000000027");
+        public static readonly Guid TodoAppOskarTurnin = Guid.Parse("55555555-0000-0000-0000-000000000028");
+        public static readonly Guid TodoAppViktorTurnin = Guid.Parse("55555555-0000-0000-0000-000000000029");
+
+        // CRUD API Assignment turn-ins
+        public static readonly Guid CrudApiJohanTurnin = Guid.Parse("55555555-0000-0000-0000-000000000030");
+        public static readonly Guid CrudApiErikTurnin = Guid.Parse("55555555-0000-0000-0000-000000000031");
+        public static readonly Guid CrudApiAndersTurnin = Guid.Parse("55555555-0000-0000-0000-000000000032");
+        public static readonly Guid CrudApiElinTurnin = Guid.Parse("55555555-0000-0000-0000-000000000033");
+
+        // Dockerize App Assignment turn-ins
+        public static readonly Guid DockerizeSaraTurnin = Guid.Parse("55555555-0000-0000-0000-000000000034");
+        public static readonly Guid DockerizeFredrikTurnin = Guid.Parse("55555555-0000-0000-0000-000000000035");
+        public static readonly Guid DockerizeNinaTurnin = Guid.Parse("55555555-0000-0000-0000-000000000036");
+        public static readonly Guid DockerizeJosefinTurnin = Guid.Parse("55555555-0000-0000-0000-000000000037");
+
+        // Deployment Pipeline Assignment turn-ins
+        public static readonly Guid DeployPipelineSaraTurnin = Guid.Parse("55555555-0000-0000-0000-000000000038");
+        public static readonly Guid DeployPipelineFredrikTurnin = Guid.Parse("55555555-0000-0000-0000-000000000039");
+        public static readonly Guid DeployPipelineJosefinTurnin = Guid.Parse("55555555-0000-0000-0000-000000000040");
+        public static readonly Guid DeployPipelineMartinTurnin = Guid.Parse("55555555-0000-0000-0000-000000000041");
     }
 
     public static class CourseModules
@@ -84,6 +162,44 @@ internal static class SeedIds
         public static readonly Guid GitBranchingExerciseCheatSheet = Guid.Parse("99999999-0000-0000-0000-000000000002");
         public static readonly Guid OopPracticeExerciseInstructions = Guid.Parse("99999999-0000-0000-0000-000000000003");
         public static readonly Guid ConsoleAppAssignmentTurnIn = Guid.Parse("99999999-0000-0000-0000-000000000004");
+
+        public static readonly Guid GitWorkflowMariaTurnin = Guid.Parse("99999999-0000-0000-0000-000000000005");
+        public static readonly Guid GitWorkflowEmmaTurnin = Guid.Parse("99999999-0000-0000-0000-000000000006");
+        public static readonly Guid GitWorkflowOskarTurnin = Guid.Parse("99999999-0000-0000-0000-000000000007");
+        public static readonly Guid GitWorkflowLinaTurnin = Guid.Parse("99999999-0000-0000-0000-000000000008");
+        public static readonly Guid GitWorkflowJohanTurnin = Guid.Parse("99999999-0000-0000-0000-000000000009");
+        public static readonly Guid GitWorkflowErikTurnin = Guid.Parse("99999999-0000-0000-0000-000000000010");
+        public static readonly Guid GitWorkflowSofiaTurnin = Guid.Parse("99999999-0000-0000-0000-000000000011");
+        public static readonly Guid GitWorkflowAndersTurnin = Guid.Parse("99999999-0000-0000-0000-000000000012");
+
+        public static readonly Guid ConsoleAppErikTurnin = Guid.Parse("99999999-0000-0000-0000-000000000013");
+        public static readonly Guid ConsoleAppSofiaTurnin = Guid.Parse("99999999-0000-0000-0000-000000000014");
+        public static readonly Guid ConsoleAppAndersTurnin = Guid.Parse("99999999-0000-0000-0000-000000000015");
+
+        public static readonly Guid PortfolioMariaTurnin = Guid.Parse("99999999-0000-0000-0000-000000000016");
+        public static readonly Guid PortfolioEmmaTurnin = Guid.Parse("99999999-0000-0000-0000-000000000017");
+        public static readonly Guid PortfolioOskarTurnin = Guid.Parse("99999999-0000-0000-0000-000000000018");
+        public static readonly Guid PortfolioLinaTurnin = Guid.Parse("99999999-0000-0000-0000-000000000019");
+
+        public static readonly Guid TodoAppMariaTurnin = Guid.Parse("99999999-0000-0000-0000-000000000020");
+        public static readonly Guid TodoAppEmmaTurnin = Guid.Parse("99999999-0000-0000-0000-000000000021");
+        public static readonly Guid TodoAppOskarTurnin = Guid.Parse("99999999-0000-0000-0000-000000000022");
+        public static readonly Guid TodoAppViktorTurnin = Guid.Parse("99999999-0000-0000-0000-000000000023");
+
+        public static readonly Guid CrudApiJohanTurnin = Guid.Parse("99999999-0000-0000-0000-000000000024");
+        public static readonly Guid CrudApiErikTurnin = Guid.Parse("99999999-0000-0000-0000-000000000025");
+        public static readonly Guid CrudApiAndersTurnin = Guid.Parse("99999999-0000-0000-0000-000000000026");
+        public static readonly Guid CrudApiElinTurnin = Guid.Parse("99999999-0000-0000-0000-000000000027");
+
+        public static readonly Guid DockerizeSaraTurnin = Guid.Parse("99999999-0000-0000-0000-000000000028");
+        public static readonly Guid DockerizeFredrikTurnin = Guid.Parse("99999999-0000-0000-0000-000000000029");
+        public static readonly Guid DockerizeNinaTurnin = Guid.Parse("99999999-0000-0000-0000-000000000030");
+        public static readonly Guid DockerizeJosefinTurnin = Guid.Parse("99999999-0000-0000-0000-000000000031");
+
+        public static readonly Guid DeployPipelineSaraTurnin = Guid.Parse("99999999-0000-0000-0000-000000000032");
+        public static readonly Guid DeployPipelineFredrikTurnin = Guid.Parse("99999999-0000-0000-0000-000000000033");
+        public static readonly Guid DeployPipelineJosefinTurnin = Guid.Parse("99999999-0000-0000-0000-000000000034");
+        public static readonly Guid DeployPipelineMartinTurnin = Guid.Parse("99999999-0000-0000-0000-000000000035");
     }
 
     public static class CourseResources
