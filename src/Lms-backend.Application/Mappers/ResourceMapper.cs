@@ -56,6 +56,20 @@ public static class ResourceMapper
         }
     }
 
+    public static TurninDto ToTurninDto(Resource entity, Guid activityId)
+    {
+        return new TurninDto()
+        {
+            Id = entity.Id,
+            CreatedBy = UserMapper.ToSimpleDto(entity.Owner),
+            Name = entity.Name,
+            Description = entity.Description,
+            Type = entity.ResourceType,
+            Data = entity.Data ?? string.Empty,
+            ActivityId = activityId,
+        };
+    }
+
     public static Resource ToEntity(ResourceForChangeDto data, Guid creatorId)
     {
         return new Resource()

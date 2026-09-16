@@ -34,6 +34,9 @@ public class FakeActivityRepository : IActivityRepository
     public bool HasOverlappingActivityResult { get; set; }
     public (Guid ModuleId, ActivityType Type, int StartOffset, int Duration, Guid? ExcludeId)? LastHasOverlappingActivityCall { get; private set; }
 
+    public IEnumerable<Activity> GetAssignmentDataResult { get; set; } = [];
+    public (Guid? CourseId, Guid User)? LastGetAssignmentDataCall { get; private set; }
+
     public Task<bool> ExistsAsync(Guid id, CancellationToken token) =>
         Task.FromResult(TrackedActivities.Any(a => a.Id == id));
 
@@ -95,5 +98,11 @@ public class FakeActivityRepository : IActivityRepository
     {
         LastHasOverlappingActivityCall = (moduleId, type, startOffset, durationMinutes, excludeId);
         return Task.FromResult(HasOverlappingActivityResult);
+    }
+
+    public Task<IEnumerable<Activity>> GetAssignmentData(Guid? courseId, Guid user, CancellationToken token)
+    {
+        LastGetAssignmentDataCall = (courseId, user);
+        return Task.FromResult(GetAssignmentDataResult);
     }
 }

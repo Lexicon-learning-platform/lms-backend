@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using Lms_backend.Domain.Entities.Joins;
 using Lms_backend.Domain.Enums;
 using Lms_backend.Domain.Interfaces;
@@ -27,6 +28,5 @@ namespace Lms_backend.Domain.Entities
 
         public ICollection<ActivityResource> Resources { get; set; } = [];
 
-        public List<string> RequiredSubmissions { get; set; } = new List<string>();
     }
 }

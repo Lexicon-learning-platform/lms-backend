@@ -5,15 +5,13 @@ using Lms_backend.Application.Models;
 using Lms_backend.Application.Validators;
 using Lms_backend.Domain.Constants;
 using Lms_backend.Domain.Entities;
-using Lms_backend.Domain.Enums;
 using Lms_backend.Infrastructure.Interfaces;
 using Lms_backend.Infrastructure.Models;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.JsonPatch.SystemTextJson;
 
 namespace Lms_backend.Application.Services;
 
-public class ActivitiesService(IActivityRepository repository, IResourceRepository resourceRepository, IModuleRepository moduleRepository, UserManager<ApplicationUser> userManager) : IActivitiesService
+public class ActivitiesService(IActivityRepository repository, IResourceRepository resourceRepository, IModuleRepository moduleRepository) : IActivitiesService
 {
     public async Task<IEnumerable<ResourceDto>> GetResources(Guid moduleId, Guid id, CancellationToken token = default)
     {
@@ -169,27 +167,5 @@ public class ActivitiesService(IActivityRepository repository, IResourceReposito
     {
         var overlaps = await repository.HasOverlappingActivityAsync(moduleId, dto.Type, dto.StartOffset, dto.Duration, excludeId, token);
         if (overlaps) throw new ValidationException($"Activity overlaps with an existing '{dto.Type}' activity");
-    }
-
-    public async Task<CompletedSubsDto?> CheckForCompletion(Guid moduleId, Guid id, Guid userId, CancellationToken token)
-    {
-        var user = await userManager.FindByIdAsync(userId.ToString());
-        var course = await repository.GetActivityAsync(moduleId, id, token);
-
-        if (user == null || course == null) return null;
-
-        var userSubs = user.Resources.
-            Where(resource => resource.Resource.ResourceType == ResourceType.AssignmentTurnin)
-            .Select(turnin => turnin.Resource.Name).ToList();
-        var courseSubs = course.RequiredSubmissions;
-
-        var complete = courseSubs.Intersect(userSubs).ToList();
-        var incomplete = courseSubs.Except(complete).ToList();
-
-        return new CompletedSubsDto()
-        {
-            CompletedSubs = complete,
-            UnCompletedSubs = incomplete
-        };
     }
 }
