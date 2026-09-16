@@ -232,7 +232,7 @@ public class CoursesService(ICourseRepository repository, IResourceRepository re
 
         await resourceRepository.SaveChangesAsync(token);
     }
-    
+
     public async Task<List<CourseMemberDto>?> GetCourseMembers(
         Guid currentUserId,
         Guid courseId,
@@ -278,7 +278,7 @@ public class CoursesService(ICourseRepository repository, IResourceRepository re
 
         return new MyAssignmentsDto
         {
-            Activities = activities.Select(ActivityMapper.ToSimpleDto),
+            Assignments = activities.Select(ActivityMapper.ToSimpleDto),
             Turnins = activities.SelectMany(a => a.Resources.Select(ar => ResourceMapper.ToTurninDto(ar.Resource, ar.ActivityId))),
         };
     }
