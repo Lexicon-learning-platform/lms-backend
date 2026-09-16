@@ -82,6 +82,7 @@ public class CourseRepository(AppDbContext context) : RepositoryWithResourceBase
         var query = Set
             .Include(c => c.Modules).ThenInclude(cm => cm.Module)
             .Include(c => c.Resources).ThenInclude(cr => cr.Resource).ThenInclude(crr => crr.Owner)
+            .Include(c => c.Users)
             .AsSplitQuery()
             .AsQueryable();
 
