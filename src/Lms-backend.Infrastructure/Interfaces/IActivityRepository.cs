@@ -12,4 +12,5 @@ public interface IActivityRepository : IRepositoryWithResourceBase<Activity, Act
     Task<Activity?> GetActivityAsync(Guid moduleId, Guid id, CancellationToken token);
     Task<Activity?> GetActivityReadOnlyAsync(Guid moduleId, Guid id, CancellationToken token);
     Task<bool> HasOverlappingActivityAsync(Guid moduleId, ActivityType type, int startOffset, int durationMinutes, Guid? excludeId, CancellationToken token);
+    Task<(IEnumerable<Activity>, IEnumerable<Resource>)> GetAssignmentData(Guid? courseId, Guid user, CancellationToken token);
 }

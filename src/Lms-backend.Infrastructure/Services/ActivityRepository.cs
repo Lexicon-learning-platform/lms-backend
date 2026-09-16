@@ -86,4 +86,24 @@ public class ActivityRepository(AppDbContext context) : RepositoryWithResourceBa
 
         return query.AnyAsync(token);
     }
+    public async Task<(IEnumerable<Activity>, IEnumerable<Resource>)> GetAssignmentData(Guid? courseId, Guid user, CancellationToken token)
+    {
+        if (courseId is null) return ([], []);
+
+        var activities = await Set
+            .Where(a => a.ActivityType == ActivityType.Assignment
+                && a.Modules.Courses.Any(cm => cm.CourseId == courseId))
+            .ToListAsync(token);
+
+        var activityIds = activities.Select(a => a.Id);
+
+        var turnIns = await Context.ActivityResources
+            .Where(ar => activityIds.Contains(ar.ActivityId)
+                && ar.Resource.ResourceType == ResourceType.AssignmentTurnin
+                && ar.Resource.OwnerId == user)
+            .Select(ar => ar.Resource)
+            .ToListAsync(token);
+
+        return (activities, turnIns);
+    }
 }
