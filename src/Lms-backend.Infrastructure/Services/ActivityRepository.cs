@@ -86,11 +86,11 @@ public class ActivityRepository(AppDbContext context) : RepositoryWithResourceBa
 
         return query.AnyAsync(token);
     }
-    public async Task<(IEnumerable<Activity>, IEnumerable<Resource>)> GetAssignmentData(Guid? courseId, Guid user, CancellationToken token)
+    public async Task<IEnumerable<Activity>> GetAssignmentData(Guid? courseId, Guid user, CancellationToken token)
     {
-        if (courseId is null) return ([], []);
+        if (courseId is null) return [];
 
-        var activities = await Set
+        return await Set
             .Where(a => a.ActivityType == ActivityType.Assignment
                 && a.Modules.Courses.Any(cm => cm.CourseId == courseId))
             .Include(a => a.Resources.Where(ar => ar.Resource.ResourceType == ResourceType.AssignmentTurnin && ar.Resource.OwnerId == user))
@@ -98,9 +98,5 @@ public class ActivityRepository(AppDbContext context) : RepositoryWithResourceBa
                 .ThenInclude(r => r.Owner)
             .AsSplitQuery()
             .ToListAsync(token);
-
-        var turnIns = activities.SelectMany(a => a.Resources.Select(ar => ar.Resource));
-
-        return (activities, turnIns);
     }
 }

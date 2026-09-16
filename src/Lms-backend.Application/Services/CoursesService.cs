@@ -274,7 +274,7 @@ public class CoursesService(ICourseRepository repository, IResourceRepository re
     {
         var user = await userManager.FindByIdAsync(userId.ToString()) ?? throw new NotFoundException($"User '{userId}' not found");
 
-        var (activities, _) = await activityRepository.GetAssignmentData(user.CourseId, userId, token);
+        var activities = await activityRepository.GetAssignmentData(user.CourseId, userId, token);
 
         return new MyAssignmentsDto
         {
